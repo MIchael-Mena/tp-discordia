@@ -1,0 +1,12 @@
+{
+  "_ayuda": "folder: carpeta relativa a esta raíz. branch: override opcional de la rama a mantener (si falta se autodetecta: develop si existe; si no, main). enabled=false: se ignora sin aviso (útil para repos aún no clonados). keep: nombres de ramas extra que nunca se borran.",
+  "repos": [
+    { "folder": "auth-service" },
+    { "folder": "gateway" },
+    { "folder": "profile" },
+    { "folder": "web-client" },
+    { "folder": "text-channel" },
+    { "folder": "server" },
+    { "folder": "infra", "branch": "main" }
+  ]
+}

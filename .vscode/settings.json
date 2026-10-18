@@ -1,0 +1,26 @@
+{
+  "python-envs.defaultEnvManager": "ms-python.python:conda",
+  "python-envs.defaultPackageManager": "ms-python.python:conda",
+
+  // Desactivar detección e inicio automático de Gradle
+  "gradle.autoDetect": "off",
+  "gradle.nestedProjects": false,
+
+  // Desactivar importación y build de Gradle en la extensión de Java
+  "java.import.gradle.enabled": false,
+  "java.import.gradle.wrapper.enabled": false,
+  "java.autobuild.enabled": false,
+  
+  // Evitar que Java/Gradle escaneen node_modules
+  "java.import.exclusions": [
+    "**/node_modules/**",
+    "**/.metadata/**",
+    "**/infra/**",
+    "**/web-client/**"
+  ],
+
+  // Word wrap en JSON para evitar scroll horizontal (ej. backlog.json)
+  "[json]": {
+    "editor.wordWrap": "on"
+  }
+}

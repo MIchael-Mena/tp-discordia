@@ -1,0 +1,11 @@
+discordia-key.pem
+
+# Repositorios independientes (no versionar desde este root)
+auth-service/
+gateway/
+infra/
+profile/
+server/
+text-channel/
+web-client/
+web client/
