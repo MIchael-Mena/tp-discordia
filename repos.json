@@ -7,6 +7,7 @@
     { "folder": "web-client" },
     { "folder": "text-channel" },
     { "folder": "server" },
+    { "folder": "voice-calls" },
     { "folder": "infra", "branch": "main" }
   ]
 }

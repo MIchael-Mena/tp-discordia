@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-10-18T16:08:03Z",
+  "last_updated": "2026-10-18T23:02:51Z",
   "description": "Backlog del proyecto TP-Discordia. Migrado desde PENDIENTES.md (2026-09-30). Ver AGENTS.md §6 para las reglas de uso.",
   "checkpoints": {
     "1": {
@@ -379,14 +379,11 @@
       "pull_request": "text-channel PR #2; server PR #11; gateway PR #39; web-client PR #130",
       "exception_note": null,
       "discovered_pending_tasks": [
-        "Desplegar text-channel + MongoDB en compose.prod.yaml, ECR y CI/CD (infra).",
         "Integrar permisos por rol (epica Roles) en SendMessagePolicy.",
-        "Broadcast multi-replica (Redis pub/sub) si text-channel escala.",
         "Invitaciones con expiracion y limite de usos (el join actual usa el link compartido como invitacion abierta).",
         "Listar servidores unidos en el sidebar del web-client.",
         "Relayar DELETE /servers/{id}/members/me en el gateway.",
-        "Mover server completamente detras del gateway y limpiar headers de identidad del cliente (preexistente).",
-        "Actualizar infra/README.local.md con INTERNAL_SERVICE_TOKEN."
+        "Mover server completamente detras del gateway y limpiar headers de identidad del cliente (preexistente)."
       ]
     },
     {
@@ -395,17 +392,38 @@
       "title": "Desplegar text-channel en produccion y broadcast multi-replica",
       "status": "completed",
       "start_date": "2026-10-18",
-      "context": "text-channel difunde cada mensaje por un topic de Redis para que llegue a las conexiones de todas las replicas (REDIS_URL opcional, degradacion local si el broker falla), gana pipeline propio (ECR discordia/text-channel + deploy SSM con TEXT_CHANNEL_TAG) y badges; infra suma los contenedores discordia-text-channel, -db (mongo:7) y -redis con su red interna, arregla SERVER_SERVICE_URL del gateway y maneja INTERNAL_SERVICE_TOKEN (prod.env + apply-prod-env.sh, generado en la VM si falta). Specs/ADR docs en ambos repos. PRs abiertos con CI en verde.",
-      "pull_request": "text-channel PR #3 (develop, abierto); infra PR #20 (main, mergeado 2026-10-18)",
+      "context": "text-channel difunde cada mensaje por un topic de Redis para que llegue a las conexiones de todas las replicas (REDIS_URL opcional, degradacion local si el broker falla), gana pipeline propio (ECR discordia/text-channel + deploy SSM con TEXT_CHANNEL_TAG) y badges; infra suma los contenedores discordia-text-channel, -db (mongo:7) y -redis con su red interna, arregla SERVER_SERVICE_URL del gateway y maneja INTERNAL_SERVICE_TOKEN (prod.env + apply-prod-env.sh, generado en la VM si falta). Specs/ADR docs en ambos repos. PRs abiertos con CI en verde. La guia completa de badges quedo documentada en infra/docs/ci-cd.md y la instancia se migro de t3.small a t3.medium por RAM (infra PR #22). Badges de text-channel resueltos: el workflow apuntaba al gist de gateway (de otro usuario) y fallaba con 404, se repunto al gist propio 90bdf9bf38bc2c319d5662b992875740 (commit 0f321e6 en PR #3) y se cargo GIST_SECRET; CI ya publica 29 passed y 88% de cobertura.",
+      "pull_request": "text-channel PR #3 (develop, abierto); infra PR #20 (main, mergeado 2026-10-18); infra PR #22 (t3.medium + runbook de badges, abierto)",
       "exception_note": null,
       "discovered_pending_tasks": [
         "Backups de MongoDB de text-channel (mongodump a S3) y evaluar replica set o servicio gestionado.",
         "Balanceador delante de varias replicas de text-channel para escalar (quitar container_name).",
         "Reconexion automatica de la suscripcion Redis si el broker se recupera (hoy la replica queda en modo local hasta reiniciar).",
-        "Vigilar la RAM del t3.small con Mongo + Redis; evaluar t3.medium.",
-        "Crear a mano los archivos text-channel-tests.json / text-channel-coverage.json del gist de badges + el secret GIST_SECRET, y confirmar que existe el repositorio ECR discordia/text-channel (el rol OIDC github-push-text-channel ya fue creado por consola).",
-        "Aplicar en la VM el compose nuevo (runbook en infra/docs/servicios/text-channel.md)."
+        "Aplicar en la VM el compose nuevo (runbook en infra/docs/servicios/text-channel.md).",
       ]
+    },
+    {
+      "id": "TSK-032",
+      "checkpoint": 2,
+      "title": "Badges de tests y cobertura en web-client y server",
+      "status": "completed",
+      "start_date": "2026-10-18",
+      "context": "web-client agrega jest-junit + cobertura Istanbul en CI, script generate_badges.py adaptado y publicacion al gist 90bdf9bf38bc2c319d5662b992875740; server agrega JaCoCo + JUnit XML de Gradle, script adaptado y la misma publicacion. READMEs con badges y runbook actualizado en infra/docs/ci-cd.md.",
+      "pull_request": "web-client PR #133 (develop, mergeado 2026-10-18); server PR #15 (develop, mergeado 2026-10-18); infra PR #22 (main, abierto)",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+      ]
+    },
+    {
+      "id": "TSK-033",
+      "checkpoint": 2,
+      "title": "Badges de tests y cobertura en voice-calls",
+      "status": "completed",
+      "start_date": "2026-10-18",
+      "context": "voice-calls suma report.xml (JUnit) y coverage.xml (Cobertura) al paso de pytest, la misma variante de .github/scripts/generate_badges.py que profile/text-channel y los dos pasos de publicacion al gist 90bdf9bf38bc2c319d5662b992875740; README con badges y .gitignore con los reportes. Se mergeo antes la implementacion de 001 (33 tests, 93.22% de cobertura sobre 354 sentencias) para que el badge no publique nunca el 100% del scaffold vacio: hoy el README muestra 33 passed / 93%.",
+      "pull_request": "voice-calls PR #2 (develop, mergeado 2026-10-18); voice-calls PR #1 (implementacion de 001, mergeado 2026-10-18)",
+      "exception_note": null,
+      "discovered_pending_tasks": []
     }
   ]
 }
