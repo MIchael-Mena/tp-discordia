@@ -35,18 +35,22 @@ Discordia es una plataforma tipo Discord compuesta por microservicios:
 - **gateway**: API Gateway central. Autentica el JWT (lo firma `auth-service`) e inyecta `X-User-Id` en cada request hacia los servicios internos. Verifica el token localmente (sin llamar a auth en cada request). Expone `POST /login`, `POST /register`, `POST /token/refresh`, `POST /logout`, `GET /me`, y hace relay hacia `profile`.
 - **auth-service**: Gestión de cuentas y sesiones. Emite `access_token` (JWT, firmado con `JWT_SECRET`, 15 min) + `refresh_token` (opaco, tabla `sessions` en PostgreSQL). Publica eventos RabbitMQ (`UserCreated`, `UsernameSet`). Base: `discordia_auth` en Amazon RDS.
 - **profile**: Perfil de usuario. Consume el evento `UserCreated` (cola `create_perfil`) para crear perfiles de forma asíncrona. También consume `update_username` (cola `update_username`) via ADR-005. Base: `discordia_profile` en Amazon RDS. Esquema versionado con **Alembic** (`db/migrate.sh`).
-- **server**: Servicio Quarkus (Java). Gestiona "servidores" (canales de la plataforma). Expone `/server/` y `/server/greetings/{uuid}`.
+- **server**: Servicio Quarkus (Java). Gestiona "servidores" y canales de la plataforma. Solo interno: el gateway expone `/api/servers...`; el servicio no tiene ruta pública. Base: `discordia_server` en Amazon RDS (Flyway al arrancar).
+- **text-channel**: Mensajería por canal (historial REST + WebSocket). Store principal: MongoDB en **Atlas** (`TEXT_CHANNEL_MONGO_URL`); el contenedor `mongo:7` queda solo para el modo de contingencia (`mongo-mode.sh`). Redis como bus pub/sub entre réplicas.
+- **voice-calls**: Orquestación de canales de voz contra **LiveKit Cloud**. Estado de presencia **en memoria** (sin base de datos). Solo interno: el gateway expone `/api/voice/...`. Tiene `/livez` y `/readyz` (chequeo de LiveKit).
 - **web-client**: App Expo/React Native. Interfaces web y mobile. Login por password y Google (Google Identity Services / `@react-native-google-signin`).
 - **infra**: Configuración de infraestructura AWS (EC2, RDS, ECR), `compose.prod.yaml`, scripts (`script/startup-infra.sh`, `script/startup-servers.sh`, `script/apply-prod-env.sh`), documentación ADR y CI/CD.
 
 ### Comunicación
-- **HTTP**: web-client → gateway → (auth-service | profile | server).
+- **HTTP**: web-client → gateway → (auth-service | profile | server | text-channel | voice-calls). Solo el gateway (y Traefik para `/api`) es público.
+- **WebSocket**: web-client → gateway → text-channel (`/api/ws/channels/{id}`).
+- **Media**: voice-calls → LiveKit Cloud (externo).
 - **Async (RabbitMQ)**: auth-service publica → profile consume.
 - El gateway **no llama a auth en cada request**; verifica el JWT localmente con `JWT_SECRET` compartido.
 
 ### URLs de producción
 - Base pública: `http://44.221.105.52/api`
-- Sondas: `/api/livez`, `/api/readyz` (el `readyz` del gateway verifica auth-service y profile internamente). Los prefijos `/auth-service` y `/profile` ya no se exponen: solo gateway (`/api`) y server (`/server`) son públicos.
+- Sondas: `/api/livez`, `/api/readyz` (el `readyz` del gateway verifica auth-service y profile internamente). Los prefijos `/auth-service`, `/profile` y `/server` ya no se exponen: solo gateway (`/api`) es público.
 
 ---
 
@@ -90,6 +94,9 @@ Discordia es una plataforma tipo Discord compuesta por microservicios:
 | `AUTH_REQUIRE_IDENTITY`| `profile`                     | `false` en dev sin gateway; `true` en prod         |
 | `DATABASE_URL`        | `auth-service`, `profile`      | Apunta a RDS en producción                         |
 | `GOOGLE_CLIENT_ID`    | `auth-service`, `web-client`   | Mismo Web Client ID en ambos                       |
+| `TEXT_CHANNEL_MONGO_URL` / `TEXT_CHANNEL_MONGO_URL_ATLAS` | `text-channel` | URI completa de MongoDB Atlas; `_ATLAS` es la persistente y `mongo-mode.sh` conmuta la activa |
+| `LIVEKIT_URL` / `LIVEKIT_API_KEY` / `LIVEKIT_API_SECRET` | `voice-calls` | Credenciales de LiveKit Cloud; obligatorias en el compose |
+| `INTERNAL_SERVICE_TOKEN` | `server`, `text-channel` | Token compartido del endpoint interno de permiso; **mismo valor** en ambos |
 
 ---
 
@@ -154,6 +161,7 @@ El backlog del proyecto se encuentra en **`Backlog.json`** en la raíz de este d
 ## 7. Notas operativas
 
 - **Stack local:** levantarlo con `infra/script/startup-infra.sh` (RabbitMQ + bases) y luego `infra/script/startup-servers.sh` (los servicios). Cada servicio tiene su propio `.env` (copiar desde `.env.example`).
+- **Pruebas locales:** el ciclo completo para probar el proyecto está automatizado por esos scripts y documentado en [`infra/README.local.md`](infra/README.local.md).
 - **Conexión a bases RDS:** usar `infra/script/db-shell.sh` (solo desde la EC2).
 - **Regla de oro de compose:** el `compose.prod.yaml` del repo `infra` y el `/opt/discordia/docker-compose.yml` de la EC2 deben ser idénticos (`git show HEAD:compose.prod.yaml | diff --strip-trailing-cr - /opt/discordia/docker-compose.yml` → vacío). Si hay cambio en el compose, sincronizar el archivo en la VM antes de redesplegar.
 - **`discordia-key.pem`** en la raíz de `TP-Discordia/` es la clave privada SSH de la EC2. No commitear ni exponer.

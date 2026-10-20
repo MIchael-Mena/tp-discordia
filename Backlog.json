@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-10-18T23:02:51Z",
+  "last_updated": "2026-10-19T23:55:15.937Z",
   "description": "Backlog del proyecto TP-Discordia. Migrado desde PENDIENTES.md (2026-09-30). Ver AGENTS.md §6 para las reglas de uso.",
   "checkpoints": {
     "1": {
@@ -376,14 +376,41 @@
       "status": "completed",
       "start_date": "2026-10-17",
       "context": "text-channel consulta el permiso a server por mensaje con cache TTL/LRU (5 s) y fail-closed; server agrega el alta idempotente por link compartido (UPSERT) y el endpoint interno protegido; gateway relaya el join y documenta el flujo WebSocket; web-client agrega solo-lectura, join y contador/limite. Specs/ADRs/docs en los cuatro repos. CI de los 4 PRs en pass y suites locales en verde.",
-      "pull_request": "text-channel PR #2; server PR #11; gateway PR #39; web-client PR #130",
+      "pull_request": "text-channel PR #2; server PR #11; gateway PR #39; web-client PR #130 (todos mergeados el 2026-10-19); web-client PR #134 + server PR #16 + gateway PR #42 (014 member list, mergeados el 2026-10-19); infra PR #24 + gateway PR #48 + server PR #18 (server detrás del gateway)",
       "exception_note": null,
       "discovered_pending_tasks": [
-        "Integrar permisos por rol (epica Roles) en SendMessagePolicy.",
-        "Invitaciones con expiracion y limite de usos (el join actual usa el link compartido como invitacion abierta).",
-        "Listar servidores unidos en el sidebar del web-client.",
-        "Relayar DELETE /servers/{id}/members/me en el gateway.",
-        "Mover server completamente detras del gateway y limpiar headers de identidad del cliente (preexistente)."
+        {
+          "description": "Integrar permisos por rol (épica Roles) en SendMessagePolicy: la política solo distingue dueño vs. miembro y su javadoc deja la épica Roles como reemplazo futuro. Ninguna rama ni PR implementa roles todavía.",
+          "resolved": false
+        },
+        {
+          "description": "Invitaciones con expiración y límite de usos: resuelto en TSK-036. server #14/#17, gateway #41/#44 y web-client #132/#137 revisados y corregidos con CI verde; gateway #45 y web-client #139 cerrados por duplicados ya mergeados en develop.",
+          "resolved": true
+        },
+        {
+          "description": "Listar servidores unidos en el sidebar del web-client. Resuelto: web-client #134 + server #16 + gateway #42 mergeados a develop el 2026-10-19.",
+          "resolved": true
+        },
+        {
+          "description": "Relayar DELETE /servers/{id}/members/me en el gateway. Resuelto: gateway #42 mergeado a develop el 2026-10-19 (el endpoint de server ya existía).",
+          "resolved": true
+        },
+        {
+          "description": "Mover server completamente detrás del gateway: compose.prod.yaml publicaba el router de Traefik con PathPrefix(/server) en :80/:443. Resuelto: infra PR #24 retira las labels y deja server solo en la red proxy; gateway PR #48 suma el relay de transferencias; server PR #18 actualiza el README. Pendiente de aplicar en la EC2: requiere el release del gateway con app/servers.py desde main.",
+          "resolved": true
+        },
+        {
+          "description": "Limpiar los headers de identidad del cliente: el web-client ya no envía X-User-Id (solo quedan menciones en comentarios y specs); todas sus llamadas pasan por EXPO_PUBLIC_API_URL (gateway).",
+          "resolved": true
+        },
+        {
+          "description": "Resolver el nombre del autor en el chat de punta a punta: profile exige el X-User-Id del propio usuario (require_profile_owner), así que getProfile(otroAutor) devuelve 403 y los autores ajenos se ven como «Usuario desconocido». Detectado al revisar web-client #135; requiere lectura pública de perfiles (HU-36) o que text-channel embeba el nombre.",
+          "resolved": false
+        },
+        {
+          "description": "Validar server_id en las rutas del relay de gateway antes de interpolarlo en la URL upstream. Resuelto: gateway #46 (mergeado el 2026-10-19) tipa server_id/channel_id como uuid.UUID en las 10 rutas /servers*; un id malformado responde 422 y nunca llega al upstream.",
+          "resolved": true
+        }
       ]
     },
     {
@@ -392,14 +419,14 @@
       "title": "Desplegar text-channel en produccion y broadcast multi-replica",
       "status": "completed",
       "start_date": "2026-10-18",
-      "context": "text-channel difunde cada mensaje por un topic de Redis para que llegue a las conexiones de todas las replicas (REDIS_URL opcional, degradacion local si el broker falla), gana pipeline propio (ECR discordia/text-channel + deploy SSM con TEXT_CHANNEL_TAG) y badges; infra suma los contenedores discordia-text-channel, -db (mongo:7) y -redis con su red interna, arregla SERVER_SERVICE_URL del gateway y maneja INTERNAL_SERVICE_TOKEN (prod.env + apply-prod-env.sh, generado en la VM si falta). Specs/ADR docs en ambos repos. PRs abiertos con CI en verde. La guia completa de badges quedo documentada en infra/docs/ci-cd.md y la instancia se migro de t3.small a t3.medium por RAM (infra PR #22). Badges de text-channel resueltos: el workflow apuntaba al gist de gateway (de otro usuario) y fallaba con 404, se repunto al gist propio 90bdf9bf38bc2c319d5662b992875740 (commit 0f321e6 en PR #3) y se cargo GIST_SECRET; CI ya publica 29 passed y 88% de cobertura.",
+      "context": "text-channel difunde cada mensaje por un topic de Redis para que llegue a las conexiones de todas las replicas (REDIS_URL opcional, degradacion local si el broker falla), gana pipeline propio (ECR discordia/text-channel + deploy SSM con TEXT_CHANNEL_TAG) y badges; infra suma los contenedores discordia-text-channel, -db (mongo:7) y -redis con su red interna, arregla SERVER_SERVICE_URL del gateway y maneja INTERNAL_SERVICE_TOKEN (prod.env + apply-prod-env.sh, generado en la VM si falta). Specs/ADR docs en ambos repos. PRs abiertos con CI en verde. La guia completa de badges quedo documentada en infra/docs/ci-cd.md y la instancia se migro de t3.small a t3.medium por RAM (infra PR #22). Badges de text-channel resueltos: el workflow apuntaba al gist de gateway (de otro usuario) y fallaba con 404, se repunto al gist propio 90bdf9bf38bc2c319d5662b992875740 (commit 0f321e6 en PR #3) y se cargo GIST_SECRET; CI ya publica 29 passed y 88% de cobertura. Conflictos de merge con develop (PR #2, autorizacion de envio) resueltos en el commit 1339f1a: se conservaron los dos bloques de configuracion (REDIS_URL/BROADCAST_TOPIC y SERVER_SERVICE_URL/INTERNAL_SERVICE_TOKEN/cache), el arranque y cierre de ambos gateways en el lifespan, y httpx como dependencia de produccion (la promovio develop para el cliente de server) con fakeredis en dev; uv.lock regenerado sin cambios. PR #3 quedo MERGEABLE/CLEAN con Lint & Tests y Build & Deploy en pass.",
       "pull_request": "text-channel PR #3 (develop, abierto); infra PR #20 (main, mergeado 2026-10-18); infra PR #22 (t3.medium + runbook de badges, abierto)",
       "exception_note": null,
       "discovered_pending_tasks": [
         "Backups de MongoDB de text-channel (mongodump a S3) y evaluar replica set o servicio gestionado.",
         "Balanceador delante de varias replicas de text-channel para escalar (quitar container_name).",
         "Reconexion automatica de la suscripcion Redis si el broker se recupera (hoy la replica queda en modo local hasta reiniciar).",
-        "Aplicar en la VM el compose nuevo (runbook en infra/docs/servicios/text-channel.md).",
+        "Aplicar en la VM el compose nuevo (runbook en infra/docs/servicios/text-channel.md)."
       ]
     },
     {
@@ -411,8 +438,7 @@
       "context": "web-client agrega jest-junit + cobertura Istanbul en CI, script generate_badges.py adaptado y publicacion al gist 90bdf9bf38bc2c319d5662b992875740; server agrega JaCoCo + JUnit XML de Gradle, script adaptado y la misma publicacion. READMEs con badges y runbook actualizado en infra/docs/ci-cd.md.",
       "pull_request": "web-client PR #133 (develop, mergeado 2026-10-18); server PR #15 (develop, mergeado 2026-10-18); infra PR #22 (main, abierto)",
       "exception_note": null,
-      "discovered_pending_tasks": [
-      ]
+      "discovered_pending_tasks": []
     },
     {
       "id": "TSK-033",
@@ -424,6 +450,106 @@
       "pull_request": "voice-calls PR #2 (develop, mergeado 2026-10-18); voice-calls PR #1 (implementacion de 001, mergeado 2026-10-18)",
       "exception_note": null,
       "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-034",
+      "checkpoint": 2,
+      "title": "HU-16: historial paginado y reconexión sin pérdida de mensajes",
+      "status": "completed",
+      "start_date": "2026-10-18",
+      "context": "text-channel agrega cursores opacos (created_at|id en Base64, sin find_one del ancla), paginación before/after con has_more y next/prev_cursor, y resume del WebSocket con resume_after + frame ready. El catch-up se bufferiza en PausableConnection para no perder ni duplicar mensajes en la carrera con el stream en vivo; si se supera RESUME_MAX_MESSAGES (200) o el cursor es inválido, se responde truncated=true y el cliente hace catch-up REST. gateway relaya resume_after URL-encoded y los cursores REST; web-client agrega backoff con jitter, resume desde el último cursor, catch-up truncado y botón de mensajes anteriores. Validado con pytest (89, 90.48%), ruff, behave (9 escenarios), jest (165 tests), eslint, tsc y un smoke test local real (Mongo + text-channel + gateway). Integrado con web-client #135 (nombres de autor + cierre del socket) y revalidado tras el merge: 46 suites / 282 tests, lint y tsc OK.",
+      "pull_request": "text-channel PR #4, gateway PR #43, web-client PR #136 (mergeados el 2026-10-19)",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+        {
+          "description": "Validar autorización de lectura del historial por membresía del canal: hoy solo se exige identidad, igual que antes de la HU-16.",
+          "resolved": false
+        },
+        {
+          "description": "Cubrir end-to-end el resume cuando el mensaje ancla fue eliminado (HU #45); ya hay un test de repositorio que prueba que el cursor sigue paginando.",
+          "resolved": false
+        },
+        {
+          "description": "Evaluar un id ordenable (ULID/UUIDv7) para que dos mensajes del mismo milisegundo respeten el orden de emisión; hoy el desempate es determinista por _id, no por orden de envío.",
+          "resolved": false
+        }
+      ]
+    },
+    {
+      "id": "TSK-035",
+      "checkpoint": 2,
+      "title": "Épica Canales (HU 11/12/13): ciclo de vida de canales de punta a punta",
+      "status": "completed",
+      "start_date": "2026-10-19",
+      "context": "Se revisaron y corrigieron los PRs de lautiland y se mergearon a develop. server #10 (ciclo de vida de canales) quedo rebasado sobre el develop actual y con las correcciones de la review: autorizacion owner-only (ServerOwnerChannelAuthorizer reemplaza al allow-all, con 403 de no-dueno testeados), orden 404 -> 403 -> 428 en DELETE (la confirmacion ya no sirve de oraculo), PATCH que rechaza valores no textuales, save() que persiste todos los campos, mensaje de 409 alineado a la unicidad por categoria, trim de la identidad, y type opcional segun el contrato ya mergeado de 003. El esquema pasa a un unico V1__init.sql de Flyway (se retira db/init_database.sql) y la base de produccion se cablea a RDS. web-client #129 (gestion de canales) quedo rebasado y corregido: abandonar la llamada de voz al borrar su canal (antes quedaba el microfono abierto sin boton de salir), 403 mapeado en espanol, boton '...' visible y accion de accesibilidad para abrir el menu, header con servidor + topico y trim en la confirmacion. Se reviso ademas gateway #37 (ya mergeado): el relay era correcto, y se abrio y mergeo gateway #46 para validar server_id/channel_id como UUID (un segmento '..' permitia alcanzar otra ruta upstream). infra #23 cablea QUARKUS_DATASOURCE_* de discordia-server a RDS (discordia_server / server_db), con SERVER_DB_PASSWORD como unica clave nueva de prod.env. Validado con gradlew build (213 tests), jest (51 suites / 311 tests), eslint, tsc, pytest (184, 97.31%) y ruff.",
+      "pull_request": "server PR #10, web-client PR #129, gateway PR #46, infra PR #23 (mergeados el 2026-10-19)",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+        {
+          "description": "Dos creates concurrentes de canal pueden compartir position (max+1 es read-then-write y no hay constraint que lo detecte); anotado en specs/002-channel-lifecycle/research.md §7 para la HU de reorden.",
+          "resolved": false
+        },
+        {
+          "description": "El orden 404 -> 403 -> 428 deja que un caller autenticado distinga si un channelId existe (404) de si no tiene permiso (403); es el mismo criterio que DeleteServer y no se corrige hasta que existan roles.",
+          "resolved": false
+        },
+        {
+          "description": "Categorias (category_id/categoryId) se persisten y se usan para la unicidad pero no hay tabla ni endpoint: queda para la HU de categorias.",
+          "resolved": false
+        }
+      ]
+    },
+    {
+      "id": "TSK-036",
+      "checkpoint": 2,
+      "title": "HU 7/8/9: invitaciones, unirse y abandonar servidor — revisión y corrección de PRs de hmaldonado12",
+      "status": "completed",
+      "start_date": "2026-10-19",
+      "context": "Se revisaron y corrigieron los PRs abiertos de hmaldonado12 en server (#14 generar invitación, #17 unirse), gateway (#41 invitaciones, #44 bans) y web-client (#132 UI de invitación, #137 UI de unirse). server #14: se retiró db/init_database.sql y server_invitations pasó a Flyway V2; maxUses<=0 ahora responde 400; la reserva de usos es atómica (insertIfAbsent + update condicional) y los códigos duplicados mapean a 409. server #17: se conservó ListServers/ServerAccess de 014 (el PR lo revertía); server_bans pasó a V3; bans quedó owner-only (v1 sin roles) e idempotente; la unión devuelve 200 con alreadyMember sin duplicar ni consumir uso. gateway #41/#44: se conservó el README de develop, ids tipados como UUID y code validado contra Base58 (422 sin llamar al upstream). web-client #132/#137: merge con canales/voz/chat/relationship, tipos de invitación en su módulo, redirect tras login para no perder la invitación, estado por invitación y eliminación de banUser sin uso. gateway #45 y web-client #139 se cerraron como superados: \"Abandonar servidor\" ya estaba implementado en develop (gateway #42 / web-client #134). Verificado con gradlew test (Docker), pytest+ruff y tsc+eslint+jest; los 6 PRs abiertos quedaron MERGEABLE/CLEAN y con CI verde.",
+      "pull_request": "server PR #14/#17, gateway PR #41/#44, web-client PR #132/#137 (revisados y corregidos; CI verde); gateway PR #45 y web-client PR #139 cerrados por duplicados ya mergeados en develop",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+        {
+          "description": "Moderación por roles: los bans quedaron owner-only (v1) porque no existe el modelo de roles/jerarquía que exige la HU obligatoria de moderación. Implementar permisos de moderación y restricción por jerarquía.",
+          "resolved": false
+        },
+        {
+          "description": "Rutas dinámicas en el export web estático: /invitations/[code] y /pages/servers/[serverId] no tienen generateStaticParams y dependen del hosting (EAS). Verificar el deep link en producción o pasar a output single/SPA con catch-all.",
+          "resolved": false
+        },
+        {
+          "description": "Mergear los 6 PRs corregidos (server #14/#17, gateway #41/#44, web-client #132/#137) una vez aprobados; el trabajo de revisión ya está cerrado.",
+          "resolved": false
+        }
+      ]
+    },
+    {
+      "id": "TSK-037",
+      "checkpoint": 2,
+      "title": "Release prep: text-channel con MongoDB Atlas y voice-calls en producción",
+      "status": "completed",
+      "start_date": "2026-10-19",
+      "context": "Hallazgos de la revisión previa al release: (1) text-channel leía SERVER_INTERNAL_TOKEN mientras compose/.env/server usan INTERNAL_SERVICE_TOKEN, así que enviaba dev-internal-token, server respondía 404 y todo envío se denegaba; (2) el compose apuntaba al Mongo local y las MONGODB_* de prod.env eran inertes; (3) voice-calls no tenía entrada productiva ni /readyz. Se corrigió el token y el entrypoint (MONGO_URL desde os.environ, sin exponerla en ps) en text-channel; prod.env.example/apply-prod-env.sh aceptan TEXT_CHANNEL_MONGO_URL_ATLAS (o MONGODB_URI), verifican el ping a Atlas y suman claves opcionales; el contenedor mongo:7 queda con el perfil mongo-contingencia y script/mongo-mode.sh (local|atlas|backup). voice-calls suma /readyz (LiveKit list_rooms, 200/503), CI con ECR+SSM (VOICE_CALLS_TAG) y Dockerfile con PORT. infra agrega discordia-voice-calls en la red proxy (sin Traefik), VOICE_CALLS_SERVICE_URL en el gateway, LIVEKIT_* obligatorias y fichas/runbooks. Validado: text-channel 92 tests/90.42% + behave 9; voice-calls 49 tests/94.75% + behave 5 + smoke real (/livez 200, /readyz 503); compose config sin Mongo por defecto y con --profile mongo-contingencia; DRY_RUN de apply-prod-env con alias MONGODB_URI. voice-calls NO usa base de datos (estado en memoria).",
+      "pull_request": "text-channel PR #5; voice-calls PR #5; infra PR #25 (todos abiertos, pendientes de merge)",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+        {
+          "description": "Aplicar el release en la EC2: crear ECR/IAM github-push-voice-calls, aplicar prod.env (TEXT_CHANNEL_MONGO_URL_ATLAS + LIVEKIT_*), sincronizar compose.prod.yaml y recrear gateway/text-channel/voice-calls; Atlas debe permitir la IP 44.221.105.52. Runbook en infra PR #25 y voice-calls/docs/operacion/despliegue.md.",
+          "resolved": false
+        },
+        {
+          "description": "Verificar en producción el /readyz de voice-calls (LiveKit reachable) y el envío de un mensaje real (valida el fix de INTERNAL_SERVICE_TOKEN).",
+          "resolved": false
+        },
+        {
+          "description": "Backups de MongoDB Atlas: M0 no incluye snapshots; programar mongodump a S3 o evaluar un plan con backups gestionados (ver ficha de text-channel).",
+          "resolved": false
+        },
+        {
+          "description": "Limpiar MONGODB_USERNAME y MONGODB_PASSWORD de infra/prod.env: son redundantes (la URI ya incluye credenciales) y apply-prod-env.sh los ignora.",
+          "resolved": false
+        }
+      ]
     }
   ]
 }

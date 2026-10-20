@@ -21,7 +21,7 @@ Historias de usuario de la épica **Mensajería** de [discordia-tp.md](infra/doc
 | # | Historia | Tipo | Puntos | Dependencias / motivo | Estado en `text-channel` |
 | --: | --- | --- | ---: | --- | --- |
 | 15 | Enviar mensaje en un canal | Obligatoria | 8 | Motivo de obligatoriedad: comunicación central en tiempo real y multiinstancia. | Implementado |
-| 16 | Historial y reconexión | Obligatoria | 13 | Motivo de obligatoriedad: persistencia, paginación y recuperación sin pérdidas. | Parcial |
+| 16 | Historial y reconexión | Obligatoria | 13 | Motivo de obligatoriedad: persistencia, paginación y recuperación sin pérdidas. | Implementado |
 | 42 | Enviar mensaje directo (DM) | Optativa | 8 | Dependencias: Bloquear y desbloquear usuarios; sesiones e historial de mensajería. | Pendiente |
 | 43 | Bloquear y desbloquear usuarios | Optativa | 3 | Dependencias: Usuarios; complementa mensajes directos. | Pendiente |
 | 44 | Editar mensaje | Optativa | 3 | Dependencias: Enviar mensaje en un canal o DM. | Pendiente |
@@ -79,7 +79,17 @@ PRs: `text-channel` #2 y #3, `server` #11, `gateway` #39, `web-client` #130, `in
 
 **Motivo de obligatoriedad: persistencia, paginación y recuperación sin pérdidas.**
 
-**Estado en `text-channel`:** Parcial. `GET /channels/{channel_id}/messages` implementa paginación y orden (CA 1 y CA 3). La reconexión y el catch-up son responsabilidad del cliente (`gateway/specs/012-*` y `web-client/specs/013-*`): no hay reanudación del WebSocket del lado del servidor (CA 2).
+**Estado en `text-channel`:** Implementado en código (PRs abiertos, CI en verde).
+
+- **CA 1 — paginación:** `GET /channels/{channel_id}/messages` mantiene `limit`/`offset` y agrega cursores opacos `before`/`after`, `has_more`, `next_cursor`/`prev_cursor` y un `cursor` por mensaje. El cursor codifica `(created_at, _id)`, así que sigue paginando aunque el mensaje ancla se borre (HU #45) y no requiere una consulta extra para resolverlo.
+- **CA 2 — reconexión:** `WS /ws/channels/{id}?resume_after=<cursor>` reproduce los mensajes perdidos antes del stream en vivo y responde `ready` con `resumed`/`count`/`truncated`. Si se supera `RESUME_MAX_MESSAGES` (200) o el cursor es inválido, responde `truncated: true` y el cliente hace catch-up REST con `after`. `PausableConnection` cierra la ventana de carrera entre el registro y la consulta: no se pierde ni se duplica un mensaje.
+- **CA 3 — orden:** orden determinista `(created_at, _id)` en la API, el resume y el cliente; el cliente ordena y deduplica por id.
+
+Documentación: `text-channel/docs/arquitectura/adr-003-historial-paginado-y-reanudacion.md` y `docs/arquitectura/flujo-historial-y-reconexion.md`; docs equivalentes en `gateway/docs/historial-y-reconexion.md` y `web-client/docs/historial-y-reconexion.md`.
+
+PRs: `text-channel` #4 (base #3), `gateway` #43, `web-client` #136 (base #130). Sin cambios de código en `server`/`infra`.
+
+Pendientes descubiertos: autorización de lectura del historial por membresía; caso end-to-end de resume con el mensaje ancla borrado cuando exista #45; evaluar ids ordenables (ULID/UUIDv7) para los empates de milisegundo.
 
 **Descripción:** Como **miembro de un canal**, quiero **ver el historial de mensajes y no perder mensajes si me desconecto brevemente** para **mantener el contexto de la conversación**. Si el grupo implementa mensajes directos, el mismo comportamiento aplica también a esas conversaciones.
 
