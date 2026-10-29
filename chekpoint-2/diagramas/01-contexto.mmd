@@ -1,0 +1,23 @@
+%%{init: {'theme':'base','htmlLabels':false,'themeCSS':'.edgeLabel rect{opacity:1!important;fill:#f9eeff!important;stroke:none!important}.edgeLabel,.edgeLabel p,.labelBkg{background-color:#f9eeff!important}','themeVariables':{'fontSize':'24px','fontFamily':'Segoe UI, Arial, Helvetica, sans-serif'},'flowchart':{'useMaxWidth':false,'curve':'basis','nodeSpacing':45,'rankSpacing':65,'padding':12,'wrappingWidth':400}}}%%
+flowchart LR
+    User["Usuario<br/>web y mobile"] -->|"HTTPS :443"| Traefik["Traefik v3.7<br/>TLS · Let's Encrypt"]
+
+    subgraph plataforma["Discordia — Amazon EC2"]
+        direction LR
+        Traefik --> GW["Gateway<br/>valida el JWT"]
+        GW --> Micros["5 microservicios<br/>auth · profile · server<br/>text-channel · voice-calls"]
+    end
+
+    Micros -->|"datos"| Datos["Datos gestionados<br/>RDS PostgreSQL · Atlas · S3"]
+    Micros -->|"media y mail"| Ext["Proveedores externos<br/>LiveKit Cloud · Resend"]
+    Micros <-->|"eventos AMQP"| Broker["RabbitMQ<br/>stack Docker aparte"]
+
+    class User,Traefik borde
+    class GW,Micros svc
+    class Datos dato
+    class Ext,Broker externo
+    classDef borde fill:#1f6feb,stroke:#0b3d91,color:#ffffff,stroke-width:2px
+    classDef svc fill:#dbeafe,stroke:#1f6feb,color:#0b2a5b
+    classDef dato fill:#ede9fe,stroke:#6d28d9,color:#2e1065
+    classDef externo fill:#ffedd5,stroke:#c2410c,color:#7c2d12
+    classDef apagado fill:#f1f5f9,stroke:#94a3b8,color:#475569

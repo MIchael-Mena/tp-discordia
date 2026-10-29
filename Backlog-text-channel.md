@@ -24,7 +24,7 @@ Historias de usuario de la épica **Mensajería** de [discordia-tp.md](infra/doc
 | 16 | Historial y reconexión | Obligatoria | 13 | Motivo de obligatoriedad: persistencia, paginación y recuperación sin pérdidas. | Implementado |
 | 42 | Enviar mensaje directo (DM) | Optativa | 8 | Dependencias: Bloquear y desbloquear usuarios; sesiones e historial de mensajería. | Pendiente |
 | 43 | Bloquear y desbloquear usuarios | Optativa | 3 | Dependencias: Usuarios; complementa mensajes directos. | Pendiente |
-| 44 | Editar mensaje | Optativa | 3 | Dependencias: Enviar mensaje en un canal o DM. | Pendiente |
+| 44 | Editar mensaje | Optativa | 3 | Dependencias: Enviar mensaje en un canal o DM. | Implementado |
 | 45 | Eliminar mensaje | Optativa | 3 | Dependencias: Enviar mensaje en un canal o DM. | Pendiente |
 | 46 | Menciones | Optativa | 5 | Dependencias: Mensajería, roles y notificaciones. | Pendiente |
 | 47 | Adjuntar archivos en mensajes | Optativa | 5 | Dependencias: Mensajería y almacenamiento externo de objetos. | Pendiente |
@@ -164,7 +164,19 @@ Pendientes descubiertos: autorización de lectura del historial por membresía; 
 
 **Dependencias: Enviar mensaje en un canal o DM.**
 
-**Estado en `text-channel`:** Pendiente. El contrato actual ya expone `edited_at` en el mensaje, pero no hay endpoint ni frame de edición.
+**Estado en `text-channel`:** Implementado en código, con PRs abiertos y CI en verde.
+
+- **Contrato:** `PATCH /channels/{channel_id}/messages/{message_id}` en `text-channel`, expuesto por el gateway como `PATCH /api/channels/...`. `200` devuelve el mensaje completo con la misma forma que una entrada del historial; `401` sin identidad, `422` vacío o sobre el límite, `404` inexistente/borrado, `403` no es autor o perdió el permiso, `503` si el permiso no se pudo verificar (fail-closed).
+- **CA1:** el contenido se recorta y se persiste con `edited_at`; el mensaje mantiene `created_at`, `author_id` y `cursor`.
+- **CA2:** la autoría y el permiso de envío vigente se validan en el servicio; la escritura es un **update condicional atómico** con `{_id, channel_id, author_id, deleted_at: null}` en el filtro, así que un borrado concurrente (HU #45) no puede quedar pisado. Sólo si no modificó nada se hace una lectura para elegir entre `404` y `403`.
+- **CA3:** el cambio se difunde como frame `message_edited` con el mensaje completo a todas las conexiones del canal, por el mismo fan-out de Redis (ADR-002), incluido el autor; el cliente lo reemplaza por `id` sin reordenar.
+- **UI:** edición inline del mensaje propio y marca «editado» en `web-client` (web y mobile). `403`/`404` cierran el editor; `422` lo mantiene abierto con el texto.
+
+Documentación: `text-channel/docs/arquitectura/adr-005-edicion-de-mensajes.md`, `docs/flujo-edicion-de-mensajes.md`, `specs/005-edit-message/`; relay en `gateway/specs/015-gateway-edit-message-relay/`; cliente en `web-client/specs/017-edit-message-ui/`.
+
+PRs: `text-channel` #8, `gateway` #50, `web-client` #140. Sin cambios en `server` (se reutiliza el endpoint interno de permiso de envío) ni en `infra`.
+
+Pendientes descubiertos: estandarizar `POST /channels/{id}/messages` (el envío sigue siendo sólo WebSocket); la reanudación no re-emite ediciones anteriores al cursor (requiere un log de cambios con cursor propio); mergear la cadena en orden `text-channel` → `gateway` → `web-client`.
 
 **Descripción:** Como **autor de un mensaje**, quiero **editarlo** para **corregir errores o actualizar su contenido**.
 
@@ -189,7 +201,21 @@ Pendientes descubiertos: autorización de lectura del historial por membresía; 
 
 **Dependencias: Enviar mensaje en un canal o DM.**
 
-**Estado en `text-channel`:** Pendiente. El contrato actual ya expone `deleted_at` en el mensaje, pero no hay endpoint ni frame de borrado.
+**Estado en `server` + `text-channel` + `gateway` + `web-client`:** Implementado en código, con PRs abiertos y CI en verde (pendiente de merge).
+
+- **Contrato:** `DELETE /channels/{channel_id}/messages/{message_id}` en `text-channel`, expuesto por el gateway como `DELETE /api/channels/...`. `204` sin body; `401` sin identidad, `403` sin autoría ni moderación, `404` inexistente/ya borrado/perdió la carrera, `503` si el permiso de moderación no se pudo verificar (fail-closed); el gateway traduce el 5xx a `502`.
+- **CA1 / CA2:** `server` agrega `MANAGE_MESSAGES` (bit append-only) y `ManageMessagesPolicy` (`MANAGE_MESSAGES | ADMINISTRATOR` sobre los permisos efectivos); expone `canManageMessages` en el endpoint interno y en `GET /servers/{id}`. El autor borra lo propio sin consultar a `server`; un moderador borra lo ajeno con `canManageMessages`. El borrado es `soft delete` atómico (`deleted_at`) y el contenido no se vuelve a exponer.
+- **CA3:** sin autoría ni moderación, `403`; si `server` no responde, `503` y nada se borra.
+- **CA1/CA3 en vivo:** frame `message_deleted` (sin contenido) por el fan-out de Redis; el cliente lo trata como tombstone terminal y deja de renderizar el mensaje. Confirmación en la UI antes de borrar.
+- **Ancla y cursores:** el cursor sigue siendo autocontenido `(created_at, _id)`, así que borrar el ancla no rompe `before`/`after`; la reanudación lee el ancla sin filtrar `deleted_at` para emitir su tombstone y re-emite los borrados posteriores al cursor.
+- **UI:** «Eliminar» en mensajes propios o ajenos con `canManageMessages`; popup de confirmación; borrar lo propio sigue disponible en solo lectura.
+- **Roles:** `MANAGE_MESSAGES` se agrega al enum y a los tipos/labels de `web-client`; como la HU 22 (editar permisos de un rol) todavía no existe, hoy sólo el owner (`ALL`) o un rol preparado por SQL pueden moderar.
+
+Documentación: `text-channel/docs/arquitectura/adr-006-eliminacion-de-mensajes.md`, `docs/flujo-eliminacion-de-mensajes.md`, `specs/006-delete-message/`; `server/docs/arquitectura/adr-004-moderacion-de-mensajes.md`, `server/specs/017-manage-messages-permission/`; relay en `gateway/specs/016-gateway-delete-message-relay/`; cliente en `web-client/specs/018-delete-message-ui/`.
+
+PRs: `server` #21, `text-channel` #9, `gateway` #53, `web-client` #143 (abiertos, pendientes de merge).
+
+Pendientes descubiertos: HU 22 para otorgar `MANAGE_MESSAGES` por API; purga/retención del contenido soft-deleted; tombstones fuera de la ventana de reanudación (requiere un log de cambios); unificar la semántica global de `ADMINISTRATOR` en `ResolveMemberPermissions.hasPermission`.
 
 **Descripción:** Como **autor de un mensaje o miembro con permisos de moderación**, quiero **eliminar un mensaje** para **retirarlo de la conversación**.
 

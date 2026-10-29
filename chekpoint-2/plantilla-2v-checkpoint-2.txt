@@ -1,0 +1,605 @@
+================================================================================
+PLANTILLA 2v — CHECKPOINT 2 · GUÍA DE DIAGRAMAS PARA LAS DIAPOSITIVAS
+Proyecto Discordia — FIUBA · Ingeniería de Software II
+================================================================================
+
+QUÉ ES ESTE ARCHIVO
+--------------------------------------------------------------------------------
+Complementa `Plantilla Checkpoint 2.txt` (el texto de las diapositivas) y el
+guion de la exposición (`guion-michael-checkpoint-2.md`). No reemplaza a
+ninguno: dice, para cada diapositiva, QUÉ diagrama conviene poner, POR QUÉ y
+QUÉ frase decir mientras se lo muestra.
+
+Los diagramas ya están exportados en `diagramas/` en tres formatos con el mismo
+nombre base:
+  · `<numero>-<nombre>.svg`  -> el archivo que se inserta en la diapositiva.
+  · `<numero>-<nombre>.png`  -> la misma imagen a 2x (3570 px de ancho en los
+                                diagramas grandes), para pegar como imagen en
+                                cualquier suite o cuando el SVG no abre.
+  · `<numero>-<nombre>.mmd`  -> la fuente Mermaid, por si hay que retocar algo.
+
+La numeración de diapositivas de este archivo es la de `Plantilla Checkpoint 2.txt`
+("Diapositivas 1" a "Diapositivas 14"), más las nuevas que se sugieren.
+
+La SECCIÓN 3 es autosuficiente: contiene el texto de cada diapositiva y no cita
+ni el guion ni la plantilla, así que se puede entregar sola a quien arme el deck.
+
+--------------------------------------------------------------------------------
+1 · INVENTARIO Y PRIORIDAD
+--------------------------------------------------------------------------------
+
+IMPRESCINDIBLES (sin estos, la defensa pierde el eje técnico)
+  02-mapa-servicios.svg      Topología síncrona: gateway, 5 servicios y 2 contratos.
+  03-mensajeria-asincrona.svg RabbitMQ: colas de trabajo + fanout de cuentas.
+  05-flujo-suspension.svg    Secuencia: un evento cruza 3 servicios y cierra sesiones.
+  07-permisos-efectivos.svg  Rol de plataforma vs. rol de comunidad (bitmask + OR).
+  09-flujo-envio-mensaje.svg Secuencia end-to-end del envío de un mensaje.
+  12-progreso-obligatorias.svg   Torta 74 / 17 / 13 y tabla única por épica, con
+                                 obligatorias y optativas en la misma grilla.
+  13-flujo-recupero-password.svg Secuencia del recupero: token de un solo uso.
+
+APOYO (suman mucho si el tiempo alcanza)
+  01-contexto.svg            Vista de caja negra: qué está adentro y qué es tercero.
+  04-autenticacion-jwt.svg   Login una vez vs. requests validados en local.
+  06-persistencia-s3.svg     Database per service + subida directa a S3.
+  08-tiempo-real-redis.svg   Relay del WebSocket + fan-out entre réplicas.
+  10-canales-voz.svg         LiveKit SFU + fail-closed + presencia en memoria.
+  14-reactivacion-cuenta.svg Reactivación: qué se restaura (login, perfil) y qué
+                             no (las sesiones y las WebSockets).
+
+ANEXO (para preguntas, no para exponer)
+  11-redes-puertos.svg       Redes Docker y qué publica puertos al host.
+
+--------------------------------------------------------------------------------
+2 · MAPEO DIAPOSITIVA -> DIAGRAMA
+--------------------------------------------------------------------------------
+
+Diapositiva (plantilla)         Diagrama                       Prioridad
+--------------------------------------------------------------------------------
+Portada                         —                              —
+Diapo 1 · Evolución del Alcance  01-contexto                    apoyo
+Diapo 2 · Topología MVP 2        02-mapa-servicios              IMPRESCINDIBLE
+Diapo 2b · (NUEVA) Asíncrona     03-mensajeria-asincrona        IMPRESCINDIBLE
+Diapo 3 · Autenticación          04-autenticacion-jwt           apoyo
+Diapo 3b · (NUEVA) Recupero      13-flujo-recupero-password     IMPRESCINDIBLE
+Diapo 4 · Administración         05 + 14 (reactivación)          IMPRESCINDIBLE
+Diapo 5 · Perfiles y S3          06-persistencia-s3             apoyo
+Diapo 6 · Gestión de Servidores  07-permisos-efectivos          IMPRESCINDIBLE
+Diapo 7 · Mensajería en vivo     08-tiempo-real-redis           apoyo
+Diapo 8 · Flujo End-to-End       09-flujo-envio-mensaje         IMPRESCINDIBLE
+Diapo 9 · WebRTC / Voz           10-canales-voz                 apoyo fuerte
+Diapo 10 · Front-End             —                              —
+Diapo 11 · DevOps                11-redes-puertos               opcional/anexo
+Diapo 12 · Hoja de Ruta          12-progreso-obligatorias       IMPRESCINDIBLE
+Diapo 13 · Planificación CP3     —                              —
+Diapo 14 · Guion de Demo         —                              —
+Cierre                           —                              —
+
+Regla de oro de la presentación: el diagrama NO repite las bullets de la
+diapositiva. La diapositiva dice QUÉ hicimos; el diagrama muestra CÓMO se
+conecta. Si el diagrama se puede leer sin escuchar al orador, sobra texto en la
+diapositiva.
+
+--------------------------------------------------------------------------------
+3 · DETALLE POR DIAPOSITIVA
+--------------------------------------------------------------------------------
+Esta sección es autosuficiente: describe solo lo que va en cada diapositiva y se
+puede entregar tal cual a quien arme el deck. Los campos son siempre los mismos:
+
+  Título    el título de la slide.
+  Diagrama  archivo SVG de `diagramas/` y porción de la slide que ocupa.
+  Contenido lo que se lee en la slide: bullets, cifras y capturas.
+  Orador    nota del orador; va en speaker notes, NO en la slide.
+  Alt       texto alternativo del SVG.
+  Pie       aclaración chica al pie de la slide.
+
+--- Diapo 1 · Evolución del Alcance -------------------------------------------
+Título   : Evolución del Alcance
+Diagrama : 01-contexto.svg — media slide a la derecha
+Contenido: dos columnas.
+           MVP 1 (septiembre)
+             · Registro y login básico aislados.
+             · Perfil de usuario solo lectura.
+             · Stack local en Docker Compose.
+             · Arquitectura base sin persistencia cloud.
+           MVP 2 (actual)
+             · Gestión completa de servidores e invitaciones.
+             · Mensajería WebSocket y llamadas WebRTC.
+             · Moderación y sistema de permisos (RBAC).
+             · Seguridad robusta (HttpOnly, revocación, S3).
+Orador   : "Todo lo que sigue vive adentro de esta caja; las flechas de la
+           derecha son lo que no construimos nosotros."
+Alt      : "La plataforma como una caja: EC2 con Traefik, gateway y cinco
+           microservicios. Afuera: datos gestionados, proveedores externos y el
+           broker en un stack aparte."
+
+--- Diapo 2 · Topología Microservicios MVP 2 ----------------------------------
+Título   : Topología Microservicios MVP 2
+Diagrama : 02-mapa-servicios.svg — 65-70% del ancho; 3 o 4 bullets cortas al costado
+Contenido:
+  · Traefik es el único punto de entrada: TLS, HTTP y WebSocket.
+  · El gateway valida el JWT en local e inyecta `X-User-Id`.
+  · Cinco servicios detrás del gateway, cada uno con su puerto interno.
+  · Solo dos llamadas servicio a servicio, las dos a `server`: `text-channel`
+    pregunta por el permiso de envío y `voice-calls` por la decisión de acceso
+    al canal de voz.
+Orador   : "Todo entra por Traefik, todo pasa por el gateway, y solo dos
+           servicios se hablan entre sí: los dos le preguntan a `server` si el
+           usuario puede."
+Alt      : "Topología: cliente, Traefik, gateway y cinco servicios en la red
+           proxy; text-channel y voice-calls consultan a server."
+
+--- Diapo 2b · Comunicación Asíncrona con RabbitMQ ----------------------------
+Título   : Comunicación Asíncrona con RabbitMQ
+Diagrama : 03-mensajeria-asincrona.svg — ocupa la slide
+Contenido:
+  · Tres colas de trabajo quorum con DLQ: `send_email`, `create_perfil` y
+    `update_username`. Un mensaje, un consumidor.
+  · Un exchange fanout, `account_events`: cada consumidor tiene su propia cola
+    y recibe todos los eventos de cuenta.
+  · `profile-worker`: cola durable; envía mails, crea perfiles y replica el
+    username.
+  · `text-channel`: cola exclusiva por réplica; cierra las WebSockets cuando la
+    cuenta se suspende.
+Orador   : "Las colas de trabajo reparten: un mensaje, un consumidor. El fanout
+           difunde: cada réplica tiene su propia cola y se entera de todas."
+           Si preguntan por la voz: `voice-calls` todavía no consume
+           `account_events`; falta que el evento llegue a la réplica que tiene
+           la conexión del usuario.
+Alt      : "auth-service publica a tres colas de trabajo y a un exchange fanout
+           de cuentas; dos workers y text-channel consumen."
+
+--- Diapo 3 · Autenticación y Seguridad Robusta -------------------------------
+Título   : Autenticación y Seguridad Robusta
+Diagrama : 04-autenticacion-jwt.svg — franja inferior, media slide
+Contenido:
+           Sesiones vinculadas
+             · El access token JWT queda ligado al ID de sesión.
+             · El cierre de sesión revoca el acceso de inmediato.
+           Protección del refresh
+             · Refresh token en cookie HttpOnly segura.
+             · Nada de tokens expuestos a JavaScript: el access vive en memoria.
+           Login federado (HU-33)
+             · Google Identity Services; `POST /api/login/google` emite los
+               mismos access y refresh.
+           Recuperación segura
+             · Reset asíncrono con token de un solo uso por email worker (el
+               detalle va en la Diapo 3b).
+Orador   : "El gateway no le pregunta a auth en cada request: valida la firma
+           localmente. Por eso el access dura 15 minutos."
+Alt      : "Dos carriles: el login, que ocurre una vez, y cada request
+           protegido, que el gateway valida en local sin llamar a auth-service."
+
+--- Diapo 3b · Recupero de Contraseña -----------------------------------------
+Título   : Recupero de Contraseña
+Diagrama : 13-flujo-recupero-password.svg — ocupa la slide
+Contenido:
+  · El token se genera en auth-service (256 bits) y en la base solo se guarda
+    su SHA-256, con TTL de 1 hora.
+  · El mail se encola en RabbitMQ y lo envía el email-worker.
+  · Un solo uso, con consumo atómico: dos POST simultáneos no aplican dos veces
+    el mismo link.
+  · Al cambiar la clave se revocan todas las sesiones de la cuenta.
+Orador   : "El link no es una contraseña: es un token aleatorio del que solo
+           guardamos el hash. Si se filtra la base, no sirve."
+           Otros puntos para nombrar: la respuesta es 200 exista o no la cuenta
+           (no se pueden enumerar usuarios) y hay cooldown de 60 s; una clave
+           débil devuelve 400 sin quemar el link, porque se valida antes de
+           consumirlo.
+Pie      : Rate limit en el gateway: 3 por hora en /password/forgot y 10 por
+           hora en /password/reset.
+Alt      : "Secuencia del recupero: el cliente pide el reset, auth-service
+           hashea y guarda el token, publica el evento, el email-worker manda el
+           mail y el cliente consume el link para cambiar la clave y revocar las
+           sesiones."
+
+--- Diapo 4 · Administración y Moderación de Cuentas --------------------------
+Título   : Administración y Moderación de Cuentas
+Diagrama : 05-flujo-suspension.svg — ocupa la slide
+           Opcional: 14-reactivacion-cuenta.svg, en la misma slide o en una
+           Diapo 4b, para cerrar el ciclo suspender/reactivar.
+Contenido:
+  · Captura: tabla de cuentas del staff con las acciones suspender y reactivar.
+  · Rol de plataforma: `accounts.role` (`visitor` / `admin`) viaja en el claim
+    del JWT y habilita `/admin/*` (auth-service, ADR-001). Es un sistema
+    distinto de los roles de comunidad que se ven en la Diapo 6.
+  · Endpoint administrativo: `PATCH /admin/accounts/{id}/status` suspende y
+    reactiva cuentas.
+  · Propagación reactiva: el evento `AccountSuspended` cierra las WebSockets del
+    usuario en `text-channel` y oculta su perfil público.
+  · Reactivación simétrica: `AccountReactivated` vuelve a mostrar el perfil y
+    habilita el login. Las sesiones no se restauran: los refresh se borraron al
+    suspender, así que el usuario entra de nuevo.
+Orador   : "Suspender no es una columna en la base: es un evento que viaja a
+           todos los servicios que tienen algo abierto de ese usuario."
+           Al reactivar, el evento simétrico devuelve el perfil, pero nadie
+           reabre la sesión: el usuario vuelve a entrar y abre un socket nuevo.
+Pie      : La propagación ocurre en segundos, al publicarse el evento.
+Alt      : "Secuencia de suspensión: el staff hace el PATCH, auth-service marca
+           la cuenta y revoca los refresh, el gateway suma los sid a su lista de
+           revocación y el evento cierra las WebSockets y oculta el perfil."
+
+--- Diapo 5 · Perfiles y Almacenamiento S3 ------------------------------------
+Título   : Perfiles y Almacenamiento S3
+Diagrama : 06-persistencia-s3.svg — franja inferior a lo ancho (cinco stores)
+Contenido:
+  · Persistencia por servicio: tres PostgreSQL en RDS (`discordia_auth`,
+    `discordia_profile` y `discordia_server`) y MongoDB Atlas para
+    `text-channel`; `voice-calls` no tiene base (presencia en memoria).
+  · Captura: formulario de edición de perfil con avatar, display name y
+    @handle.
+  · Subida segura a S3: carga directa al bucket con URL POST pre-firmada; el
+    archivo no pasa por la EC2.
+  · Cleanup automático: el avatar anterior se elimina al detectar un reemplazo.
+  · Sincronización asíncrona: el username se replica desde auth-service con un
+    consumer y heartbeat activo.
+Orador   : "Cada servicio es dueño de su base y ninguna se comparte: tres
+           PostgreSQL en RDS y un MongoDB Atlas para el chat. Si mañana cambia
+           el esquema de perfiles, no toca a nadie más. Y el avatar no pasa por
+           la EC2."
+Alt      : "Tres PostgreSQL en RDS y MongoDB Atlas, uno por servicio; dos
+           escritores sobre la base de perfiles y la subida de avatar con URL
+           pre-firmada a S3."
+
+--- Diapo 6 · Gestión de Servidores -------------------------------------------
+Título   : Gestión de Servidores
+Diagrama : 07-permisos-efectivos.svg — al lado de la bullet "Sistema de roles"
+Contenido:
+           Invitaciones limitadas
+             · Códigos únicos con reserva atómica y máximo de usos
+               configurable.
+           Sistema de roles
+             · El permiso efectivo de un miembro es `DEFAULT ∪ OR(roles)`.
+             · Los roles son un bitmask append-only: agregar un permiso no
+               renumera los datos existentes.
+           Tipos de canal
+             · Separación persistente y lógica entre canales TEXT y VOICE.
+           Moderación
+             · Ban y transferencia de propiedad resueltos por API y gateway;
+               todavía sin UI. Unban pendiente.
+Orador   : "Son dos sistemas de permisos distintos: uno dice si sos staff de la
+           plataforma; el otro, qué podés hacer dentro de un servidor. El
+           efectivo de un miembro es la unión del baseline con el OR de sus
+           roles."
+Alt      : "A la izquierda, el rol de plataforma que vive en accounts; a la
+           derecha, los roles de comunidad que viven en server y se combinan con
+           OR sobre un baseline."
+
+--- Diapo 7 · Mensajería en Tiempo Real ---------------------------------------
+Título   : Mensajería en Tiempo Real
+Diagrama : 08-tiempo-real-redis.svg — franja inferior o costado
+Contenido:
+  · Captura: chat con un mensaje propio marcado "(editado)" y un borrado por
+    moderación de un mensaje ajeno.
+  · Relay WebSocket: el gateway direcciona el tráfico bidireccional al servicio
+    de texto.
+  · Historial paginado: carga por cursores y reanudación de estado al
+    reconectar.
+  · Mutación de mensajes: edición y borrado (HU-44 y HU-45) controlados por
+    `MANAGE_MESSAGES`.
+Orador   : "Hoy corre una réplica, pero el fan-out ya está resuelto: el mensaje
+           se publica en Redis y cada réplica lo entrega a sus conexiones."
+Alt      : "El WebSocket entra por el gateway a text-channel; Redis difunde cada
+           mensaje al resto de las réplicas."
+
+--- Diapo 8 · Flujo End-to-End: Envío de Mensaje ------------------------------
+Título   : Flujo End-to-End: Envío de Mensaje
+Diagrama : 09-flujo-envio-mensaje.svg — ocupa la slide
+Contenido: tres pasos numerados, en este orden.
+           1. Permiso: `text-channel` consulta a `server` con
+              `X-Internal-Token` (caché de 5 s, fail-closed).
+           2. Persistencia: el mensaje se guarda en MongoDB.
+           3. Difusión: se publica en Redis y el frame llega a todos los
+              clientes conectados del canal.
+Orador   : "Si `server` no responde, el mensaje no se guarda ni se difunde: el
+           chat queda degradado antes que aceptar un mensaje sin permiso."
+           El orden importa: permiso, persistir y recién difundir. Al revés, un
+           fallo deja mensajes fantasma en pantalla.
+Alt      : "Secuencia: cliente, gateway, text-channel, server, MongoDB y Redis."
+
+--- Diapo 9 · Infraestructura WebRTC: Canales de Voz --------------------------
+Título   : Infraestructura WebRTC: Canales de Voz
+Diagrama : 10-canales-voz.svg — franja superior o inferior
+Contenido:
+  · Captura: panel de llamada superpuesto con dos participantes, mute y
+    abandonar.
+  · LiveKit Cloud SFU: el audio viaja directo contra el proveedor; nosotros
+    firmamos un token efímero de acceso.
+  · Ciclo de presencia: estado en memoria; al cambiar de sala se desconecta la
+    anterior.
+  · Fail-closed: si `server` no responde la decisión de acceso, el join se
+    deniega.
+Orador   : "El audio nunca pasa por nuestros servidores: firmamos un token de
+           corta duración y el media va por LiveKit."
+           El healthcheck del compose usa `/livez` y no `/readyz` a propósito:
+           `/readyz` consulta LiveKit, y un hipo del proveedor no debe reiniciar
+           un contenedor sano.
+Alt      : "El join pasa por el gateway a voice-calls, que consulta la decisión
+           de acceso a server y firma un token; el audio va del cliente a
+           LiveKit Cloud."
+
+--- Diapo 10 · Evolución del Cliente Front-End --------------------------------
+Título   : Evolución del Cliente Front-End
+Diagrama : — (captura y bullets)
+Contenido:
+  · Captura: sidebar con canales agrupados y snackbar de notificación visible.
+  · Redux Toolkit: el access token vive solo en memoria; slices escalables.
+  · Experiencia no bloqueante: validación inline y snackbars en lugar de
+    modales interruptivos.
+  · WebRTC: `livekit-client` en web y un guard de degradación en móvil.
+
+--- Diapo 11 · Robustez de Infraestructura (DevOps) ---------------------------
+Título   : Robustez de Infraestructura (DevOps)
+Diagrama : 11-redes-puertos.svg — opcional, chico y al costado (anexo)
+Contenido:
+  · Dominio y TLS: certificados Let's Encrypt aprovisionados por Traefik.
+  · Migraciones en CI/CD: Alembic integrado en el pipeline de despliegue.
+  · Arranque determinístico: healthchecks en Compose que ordenan las
+    dependencias.
+  · Observabilidad: spike de Grafana sobre las métricas de los servicios.
+Orador   : "Solo Traefik tiene puertos publicados: ningún servicio interno es
+           alcanzable desde afuera, así que nadie puede falsificar
+           `X-User-Id`."
+Alt      : "El host publica solo 80 y 443; tres redes internas; el broker vive
+           en un stack Compose aparte conectado por una red external."
+
+--- Diapo 12 · Hoja de Ruta: Progreso Checkpoint 2 ----------------------------
+Título   : Hoja de Ruta: Progreso Checkpoint 2
+Diagrama : 12-progreso-obligatorias.svg — torta, media slide a la izquierda
+Contenido: tres cifras grandes a la derecha de la torta y una tabla única abajo.
+
+  Cifras: 92 pts implementados de punta a punta (74 obligatorios + 18
+  optativos) · 17 pts obligatorios con backend y gateway listos, sin UI · 13
+  pts obligatorios sin empezar.
+
+  Tabla: una fila por épica y dos grupos de columnas, obligatorias a la
+  izquierda y optativas a la derecha. Va como tabla nativa de la suite, con el
+  encabezado de optativas en gris más claro para que se lea como bonus.
+
+                               OBLIGATORIAS (104 pts)     OPTATIVAS (20 pts)
+  Épica                      Completas  Backend  Pend.   Completas  Backend
+  ---------------------------------------------------------------------------
+  Usuarios                           8        —      —           5        —
+  Perfiles                           3        —      —           —        2
+  Servidores                        13        3      —           5        —
+  Canales                            7        3      —           —        —
+  Mensajería                        21        —      —           6        —
+  Canal de Voz                      16        —      —           —        —
+  Roles y Permisos                   6        2      5           2        —
+  Moderación                         —        3      2           —        —
+  Notificaciones                     —        —      4           —        —
+  Administración                     —        6      2           —        —
+  ---------------------------------------------------------------------------
+  TOTAL                             74       17     13          18        2
+
+  Si la tabla no entra con siete columnas, partirla en dos tablas de cuatro
+  columnas apiladas, con el mismo formato y los mismos totales.
+Orador   : "El 71% del obligatorio ya se usa desde el cliente; otro 16% está
+           construido del lado del servidor y solo le falta la pantalla. Y por
+           fuera del obligatorio sumamos 18 puntos optativos completos."
+           Si preguntan cuántas optativas quedan: 31 historias del listado
+           completo siguen sin empezar y no tienen puntaje asignado en el
+           seguimiento.
+Pie      : Optativas: 20 pts identificados en el seguimiento; el resto del
+           listado no está puntuado.
+
+--- Diapo 13 · Planificación: Checkpoint 3 ------------------------------------
+Título   : Planificación: Checkpoint 3
+Diagrama : —
+Contenido: cuatro líneas, una por frente.
+  1. Backoffice y notificaciones: UI de suspensión y reactivación, listado de
+     cuentas y notificaciones no leídas (HU-27 a HU-32).
+  2. Cierre de UI de moderación y permisos: editar permisos de rol (HU-22),
+     ban y unban (HU-25 y HU-26) y transferencia de propiedad (HU-10).
+  3. Observabilidad: Grafana sobre las métricas de los servicios y el evento
+     `AccountSuspended` en voice-calls (HU-29 CA2).
+  4. Deuda técnica: réplicas balanceadas de text-channel y lista de revocación
+     del gateway en un store compartido.
+Orador   : "El próximo checkpoint cierra la deuda de UI, no la de
+           arquitectura: los endpoints ya existen."
+
+--- Diapo 14 · Guion de Demostración en Vivo ----------------------------------
+Título   : Guion de Demostración en Vivo
+Diagrama : — (o 09-flujo-envio-mensaje.svg en miniatura si la demo no se hace
+           en esta máquina)
+Contenido: cuatro pasos.
+  1. Creación y configuración: registro, subida de avatar a S3, creación de
+     servidor y asignación de roles.
+  2. Colaboración síncrona: unión por invitación; intercambio, edición y
+     borrado de mensajes por WebSocket.
+  3. Conexión WebRTC: ingreso a un canal de voz, audio concurrente y salida
+     segura.
+  4. Administración: suspensión desde el backoffice, con caída reactiva de la
+     sesión.
+
+--- Cierre ---------------------------------------------------------------------
+Título   : Cierre
+Diagrama : —
+Contenido: "Infraestructura consolidada. Comunicación en tiempo real lista.
+           ¿Preguntas arquitectónicas?" y el aviso de la demo técnica.
+
+--------------------------------------------------------------------------------
+4 · MÍNIMO VIABLE (si hay que recortar)
+--------------------------------------------------------------------------------
+Si solo entran cuatro diagramas, que sean estos y en este orden:
+
+  1. 02-mapa-servicios        -> "cómo se hablan"
+  2. 03-mensajeria-asincrona  -> "cómo se desacoplan"
+  3. 07-permisos-efectivos    -> "cómo se autoriza"
+  4. 09-flujo-envio-mensaje   -> "cómo se ve todo junto, paso a paso"
+
+El resto son apoyo. `05-flujo-suspension` es el quinto: si se muestra la
+suspensión en la demo, conviene tenerlo.
+
+--------------------------------------------------------------------------------
+5 · CÓMO INSERTAR LOS SVG
+--------------------------------------------------------------------------------
+· PowerPoint (2019/365): Insertar -> Imágenes -> Este dispositivo -> el .svg.
+  Insertar como SVG (no convertido) para que escale sin pixelarse.
+· Google Slides: acepta SVG directamente con Insertar -> Imagen -> Subir.
+· LibreOffice / Keynote: si el SVG no entra, usar el `.png` que ya está en
+  `diagramas/` (2x, fondo blanco) o regenerarlo con
+  `npx mmdc -i X.mmd -o X.png -s 2 -b white`.
+· Ocupar el ancho útil (24–30 cm en 16:9) y NO achicar por debajo del 60%: por
+  debajo de eso el texto deja de leerse en un proyector.
+· Los SVG ya salen con fondo blanco y texto seleccionable (sin `foreignObject`),
+  así que se abren bien en cualquier suite.
+· Si un color no convence: en PowerPoint, clic derecho -> Convertir en forma
+  permite recolorear cada nodo. Las fuentes `.mmd` están al lado por si se
+  prefiere regenerar con otra paleta.
+
+--------------------------------------------------------------------------------
+6 · CÓMO REGENERAR UN SVG
+--------------------------------------------------------------------------------
+Instalación (una vez, en cualquier carpeta):
+
+  npm install @mermaid-js/mermaid-cli
+
+Exportación:
+
+  npx mmdc -i 02-mapa-servicios.mmd -o 02-mapa-servicios.svg -b white --no-font-embed
+
+Si mermaid-cli no encuentra un navegador, crear un `puppeteer-config.json` con la
+ruta al Chrome instalado y pasarlo con `-p`:
+
+  {
+    "executablePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "args": ["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"]
+  }
+
+Cada `.mmd` ya trae su directiva `%%{init: ...}%%` con el tema, el tamaño de
+fuente (24–26 px), `htmlLabels:false` y un `themeCSS` que fuerza el fondo SÓLIDO
+de los rótulos de flecha (`.edgeLabel rect{opacity:1;fill:#f9eeff}`). Mermaid
+los emite con `opacity:0.5` por defecto, y con ese 50% la flecha se ve a través
+del recuadro: si se regenera sin ese `themeCSS`, el problema vuelve.
+No hace falta ningún archivo de configuración adicional de Mermaid.
+
+--------------------------------------------------------------------------------
+7 · HUECOS Y CORRECCIONES DETECTADAS EN LA PLANTILLA
+--------------------------------------------------------------------------------
+1) ADR mal citado (Diapo 4). La plantilla dice "Roles Formalizados — única
+   fuente de verdad en esquema accounts (ADR-008)". ADR-008 de `infra` es
+   MIGRACIONES AUTOMATIZADAS. Lo correcto:
+     · rol de plataforma  -> auth-service, ADR-001 (accounts.role)
+     · roles de comunidad -> server, ADR-002 y ADR-003
+   Si se deja como está, es una pregunta incómoda garantizada.
+
+2) Falta el login federado con Google (Diapo 3). HU-33, 5 puntos,
+   implementada (`POST /api/login/google` + `@react-native-google-signin`).
+   El guion lo pide; la plantilla no lo menciona.
+
+3) Falta el spike de Grafana (Diapo 11), que el guion sí menciona.
+
+4) NO afirmar que la suspensión expulsa de los canales de voz. `voice-calls`
+   no consume `account_events`: HU-29 CA2 solo está cubierto para las
+   WebSockets de `text-channel`. Decirlo como pendiente suma credibilidad.
+
+5) Faltan capturas reales. La plantilla dice SCREENSHOT en las diapositivas 2,
+   4, 5, 7, 9, 10 y 12. Los diagramas cubren la 2 (topología) y la 12 (progreso);
+   las otras cinco necesitan captura de pantalla:
+     · Diapo 4  tabla de cuentas del staff con suspender/reactivar
+     · Diapo 5  formulario de perfil con avatar, display name y @handle
+     · Diapo 7  chat con "(editado)" y un borrado por moderación
+     · Diapo 9  panel de llamada con 2 participantes
+     · Diapo 10 sidebar con canales agrupados + snackbar
+
+6) El guion referencia números de diapositiva que no coinciden con la plantilla
+   (por ejemplo, ubica Backoffice en "Slides 5 y 12", cuando en la plantilla es
+   la 4 y la 13 es la planificación). Conviene que el guion use los nombres de
+   sección, no los números.
+
+7) Diapo 4: "Eventos RabbitMQ ocultan inmediatamente el perfil público" es
+   correcto, pero "inmediatamente" depende de que el broker esté arriba. Si se
+   cae, el consumidor reintenta con backoff y la suspensión no se propaga hasta
+   que vuelva. Conviene decir "en segundos" o "al publicarse el evento".
+
+8) Diapo 12: los 19 puntos "con backend/gateway listos" cierran exacto con
+   HU-10, 14, 24, 25, 29, 30, 31 y 36. Ojo con el alcance: ese total incluye la
+   optativa HU-36, así que dentro de las 104 obligatorias son 17. La torta usa
+   los 17; si se dice 19 en la misma slide que la torta, no cierra la cuenta.
+
+9) `voice-calls` no tiene base de datos. Si se pregunta por persistencia de
+   presencia, la respuesta es "estado en memoria; escalar exige un store
+   compartido, está fuera de alcance".
+
+10) HU-36 (perfil público): el endpoint `GET /profiles/{id}/public` existe y
+    responde 200/404, pero la PANTALLA de perfil de un tercero no está hecha.
+    Evitar mostrar "perfil público" como funcionalidad terminada.
+
+11) Diapo 2: el enunciado original decía "mensajería síncrona y asíncrona". La
+    mensajería asíncrona tiene su propia diapositiva (2b); en la 2 conviene
+    dejar solo la topología síncrona, que es lo que muestra el diagrama.
+
+12) Diapo 6: "Ban/Unban idempotente y transferencia de propiedad absoluta" no
+    se puede presentar como funcionalidad terminada. HU-25 (ban) y HU-10
+    (transferencia) tienen backend y gateway pero no UI; HU-26 (unban) no está
+    implementada. La sección 3 ya lo redacta como API sin UI y coincide con la
+    columna "Backend listo" de la tabla de la Diapo 12.
+
+13) Diapo 12: la tabla de la sección 3 unifica obligatorias y optativas. Si se
+    prefiere una sola cifra de optativas en la slide, decir "18 completos + 2
+    con backend listo = 20 identificados"; nunca sumar los 20 con los 104 en un
+    mismo total, porque el listado de optativas no está puntuado por completo.
+
+--------------------------------------------------------------------------------
+8 · PREGUNTAS PROBABLES Y RESPUESTA CORTA
+--------------------------------------------------------------------------------
+¿Por qué RabbitMQ y no Kafka?
+  Necesitamos colas de trabajo con ACK y reintento, no un log retenido. RabbitMQ
+  con colas quorum + DLQ cubre el caso con menos superficie operativa.
+
+¿Qué pasa si el broker se cae?
+  auth-service sigue respondiendo: el publish se descarta con un warning y se
+  reintenta la conexión en el próximo request. Los workers reintentan con
+  backoff. text-channel arranca igual y no cierra sockets hasta que vuelva.
+  El costo real: la suspensión no se propaga mientras el broker esté caído.
+
+¿Qué pasa si Atlas o LiveKit se caen?
+  text-channel no arranca sin Atlas (el entrypoint reintenta y sale); `/livez`
+  no depende de LiveKit, así que un hipo del proveedor no reinicia el contenedor
+  y el join responde 503, pero `/readyz` marca degradado.
+
+¿Y si el gateway se reinicia?
+  La lista de revocación es por proceso: los tokens ya revocados vuelven a
+  aceptarse hasta su `exp` (máximo 15 minutos). Está documentado como límite
+  conocido; se resuelve con un store compartido.
+
+¿Cuántas historias quedan?
+  En el obligatorio, 13 puntos sin empezar y 17 con backend listo pero sin UI.
+  En optativas, 20 puntos identificados (18 completos y 2 con backend); las
+  otras 31 historias del listado no tienen puntaje asignado en el seguimiento.
+
+¿Y al reactivar una cuenta, vuelve todo?
+  Vuelve el login y el perfil público. Las sesiones no: los refresh tokens se
+  borraron al suspender y reactivar no los recrea. `text-channel` solo escucha
+  `AccountSuspended`, así que el usuario vuelve a entrar y abre una WebSocket
+  nueva. Es el comportamiento buscado, no una deuda.
+
+¿Cómo escalan?
+  text-channel ya tiene el fan-out resuelto con Redis; falta quitar el
+  `container_name` y poner un balanceador delante. voice-calls no puede escalar
+  sin mover la presencia a un store compartido.
+
+¿Por qué MongoDB para el chat y PostgreSQL para el resto?
+  El historial es un documento con forma variable por canal; el resto son
+  relaciones fuertes (cuentas, perfiles, servidores, roles). Se eligió por modelo
+  de datos, no por moda.
+
+¿Por qué el bitmask en vez de una tabla de permisos?
+  Un join + GROUP BY por cada verificación de envío. El bitmask resuelve el OR
+  con un entero y es append-only, así que insertar un permiso nuevo no renumera
+  los datos existentes.
+
+--------------------------------------------------------------------------------
+9 · CHECKLIST ANTES DE PRESENTAR
+--------------------------------------------------------------------------------
+[ ] Los 7 diagramas imprescindibles insertados como SVG (no PNG).
+[ ] Ninguno achicado por debajo del 60% del ancho útil.
+[ ] Las 5 capturas reales tomadas con la ventana limpia (sin bookmarks).
+[ ] Corregido el ADR de la Diapo 4 (ADR-008 -> auth-service ADR-001).
+[ ] Agregada la bullet de Google en la Diapo 3.
+[ ] Diapo 12: torta + tabla única por épica, con las cifras 92 / 17 / 13 cerrando.
+[ ] Ensayado en la resolución real del proyector (no en la notebook).
+[ ] Plan B: exportar todo a PDF por si la máquina de la demo no abre los SVG.
+
+================================================================================

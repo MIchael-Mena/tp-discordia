@@ -1,0 +1,25 @@
+%%{init: {'theme':'base','htmlLabels':false,'themeCSS':'.edgeLabel rect{opacity:1!important;fill:#f9eeff!important;stroke:none!important}.edgeLabel,.edgeLabel p,.labelBkg{background-color:#f9eeff!important}','themeVariables':{'fontSize':'24px','fontFamily':'Segoe UI, Arial, Helvetica, sans-serif'},'flowchart':{'useMaxWidth':false,'curve':'basis','nodeSpacing':45,'rankSpacing':55,'padding':12,'wrappingWidth':400}}}%%
+flowchart TB
+    P1["Rol de PLATAFORMA<br/>accounts.role: visitor | admin"]
+    P2["claim role<br/>del access JWT"]
+    P3["Gateway<br/>habilita /admin/*"]
+
+    C0["Rol del servidor<br/>permisos = bitmask BIGINT"]
+    C1["Miembro del servidor"]
+    C2["Permisos efectivos<br/>DEFAULT ∪ OR(roles)"]
+    C3["Permiso de envío<br/>allow / deny"]
+    C4["text-channel<br/>fail-closed"]
+
+    P1 --> P2
+    P2 --> P3
+    C0 --> C2
+    C1 --> C2
+    C2 -->|"& SEND_MESSAGES"| C3
+    C3 -.->|"consulta interna"| C4
+
+    classDef plataforma fill:#ffedd5,stroke:#c2410c,color:#7c2d12
+    classDef svc fill:#dbeafe,stroke:#1f6feb,color:#0b2a5b
+    classDef externo fill:#f1f5f9,stroke:#94a3b8,color:#475569
+    class P1,P2,P3 plataforma
+    class C0,C1,C2,C3 svc
+    class C4 externo

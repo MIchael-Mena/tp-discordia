@@ -1,0 +1,23 @@
+%%{init: {'theme':'base','themeVariables':{'fontSize':'22px','fontFamily':'Segoe UI, Arial, Helvetica, sans-serif'},'sequence':{'useMaxWidth':false,'mirrorActors':false,'messageAlign':'center','actorMargin':55,'boxMargin':10}}}%%
+sequenceDiagram
+    autonumber
+    actor AD as Backoffice Admin
+    participant G as Gateway
+    participant A as auth-service
+    participant B as RabbitMQ
+    participant T as text-channel
+    participant P as profile-worker
+    participant U as Cliente suspendido
+
+    AD->>G: PATCH /api/admin/accounts/42/status
+    G->>A: PATCH /account/42/status + X-User-Id
+    A->>A: marca la cuenta SUSPENDED
+    A->>A: revoca todos los refresh tokens
+    A-->>G: revoked_session_ids
+    G->>G: los suma a la lista de revocación
+    A->>B: AccountSuspended (account_events)
+    B-->>T: fan-out a la cola de cada réplica
+    B-->>P: AccountSuspended
+    P->>P: oculta el perfil
+    T-->>U: frame session_ended
+    T-xU: cierra todas sus WebSockets

@@ -1,0 +1,33 @@
+%%{init: {'theme':'base','htmlLabels':false,'themeCSS':'.edgeLabel rect{opacity:1!important;fill:#f9eeff!important;stroke:none!important}.edgeLabel,.edgeLabel p,.labelBkg{background-color:#f9eeff!important}','themeVariables':{'fontSize':'24px','fontFamily':'Segoe UI, Arial, Helvetica, sans-serif'},'flowchart':{'useMaxWidth':false,'curve':'basis','nodeSpacing':45,'rankSpacing':65,'padding':12,'wrappingWidth':400}}}%%
+flowchart LR
+    Host["EC2 t3.medium<br/>publica solo :80 y :443"]
+
+    subgraph proxy["red proxy"]
+        TR["Traefik v3.7"] --> GW["gateway :22000"]
+        GW --> A["auth :22001"]
+        GW --> P["profile :22004"]
+        GW --> S["server :22002"]
+        GW --> T["text-channel :22005"]
+        GW --> V["voice-calls :22007"]
+    end
+
+    subgraph tci["red text-channel-internal"]
+        Redis["redis :6379<br/>sin persistencia"]
+    end
+
+    subgraph rmqnet["red rabbitmq-network (external)"]
+        RMQ["rabbitmq-broker :5672"]
+    end
+
+    Host --> TR
+    T -.-> Redis
+    A -.-> RMQ
+    P -.-> RMQ
+    T -.-> RMQ
+
+    classDef borde fill:#1f6feb,stroke:#0b3d91,color:#ffffff,stroke-width:2px
+    classDef svc fill:#dbeafe,stroke:#1f6feb,color:#0b2a5b
+    classDef externo fill:#ffedd5,stroke:#c2410c,color:#7c2d12
+    class Host,TR borde
+    class GW,A,P,S,T,V svc
+    class Redis,RMQ externo

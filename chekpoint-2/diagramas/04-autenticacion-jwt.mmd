@@ -1,0 +1,21 @@
+%%{init: {'theme':'base','htmlLabels':false,'themeCSS':'.edgeLabel rect{opacity:1!important;fill:#f9eeff!important;stroke:none!important}.edgeLabel,.edgeLabel p,.labelBkg{background-color:#f9eeff!important}','themeVariables':{'fontSize':'24px','fontFamily':'Segoe UI, Arial, Helvetica, sans-serif'},'flowchart':{'useMaxWidth':false,'curve':'basis','nodeSpacing':45,'rankSpacing':65,'padding':12,'wrappingWidth':400}}}%%
+flowchart LR
+    subgraph post["Cada request protegido"]
+        direction LR
+        C2["Cliente"] -->|"Authorization: Bearer"| T2["Traefik"]
+        T2 --> G2["Gateway"]
+        G2 -->|"firma HS256 validada en local<br/>sin llamar a auth-service"| M2["profile · server<br/>text-channel · voice-calls"]
+    end
+    subgraph login["Login (una sola vez)"]
+        direction LR
+        C1["Cliente"] -->|"POST /api/login"| T1["Traefik"]
+        T1 --> G1["Gateway"]
+        G1 -->|"relay"| A1["auth-service"]
+        A1 -.->|"access JWT 15 min<br/>+ refresh opaco"| C1
+    end
+    classDef apagado fill:#f1f5f9,stroke:#94a3b8,color:#475569
+    classDef borde fill:#1f6feb,stroke:#0b3d91,color:#ffffff,stroke-width:2px
+    classDef svc fill:#dbeafe,stroke:#1f6feb,color:#0b2a5b
+    class C1,C2 apagado
+    class T1,T2 borde
+    class G1,G2,A1,M2 svc

@@ -1,0 +1,502 @@
+{
+  "last_updated": "2026-10-28T22:26:19.008Z",
+  "description": "Archivo del backlog de los checkpoints 1 y 2 del TP-Discordia. Es un snapshot historico: los pendientes descubiertos no se copian aca, se promovieron a tareas del checkpoint 3 en Backlog.json. TSK-041 y TSK-042 siguen activas en ese archivo.",
+  "checkpoints": {
+    "1": {
+      "name": "Checkpoint 1",
+      "period": "hasta 2026-09-24",
+      "status": "completed"
+    },
+    "2": {
+      "name": "Checkpoint 2",
+      "period": "2026-09-25 a 2026-10-27",
+      "status": "completed"
+    },
+    "3": {
+      "name": "Checkpoint 3",
+      "period": "por definir",
+      "status": "pending"
+    },
+    "4": {
+      "name": "Checkpoint 4",
+      "period": "por definir",
+      "status": "pending"
+    }
+  },
+  "tasks": [
+    {
+      "id": "TSK-001",
+      "checkpoint": 1,
+      "title": "Integración JWT: infra — correcciones bloqueantes del stack local",
+      "status": "completed",
+      "start_date": "2026-09-21",
+      "context": "Reemplazo del token de sesión único por JWT (access_token) + refresh_token opaco. PRs gateway, auth-service y web-client mergeados en develop; gateway y auth-service mergeados a main y desplegados en producción el 2026-09-21.",
+      "pull_request": "infra PR #2 (agregar-envs-de-puerto → main), infra PR #3 (compose.prod.yaml JWT_SECRET + puertos), infra PR #4 (opción P en scripts + tolerancia a repos ausentes)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-002",
+      "checkpoint": 1,
+      "title": "Integración JWT: CI — agregar JWT_SECRET y job Lint & Tests a gateway y auth-service",
+      "status": "completed",
+      "start_date": "2026-09-21",
+      "context": "Ninguno de los dos CI corría pytest. Se agregó el job Lint & Tests (ruff + pytest ≥70%; auth con Postgres efímero + lint-imports).",
+      "pull_request": "gateway PR #14, gateway PR #18, auth-service PR #16",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-003",
+      "checkpoint": 1,
+      "title": "Integración JWT: gateway — tests de refresh, conftest y suite completa",
+      "status": "completed",
+      "start_date": "2026-09-21",
+      "context": "Tests para POST /token/refresh, reset del rate limiter por test, y PR #17 (GET /me alias). Suite 61/61 con PR #17.",
+      "pull_request": "gateway PR #14, gateway PR #17 (feature/get-me-endpoint — pendiente merge)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-004",
+      "checkpoint": 1,
+      "title": "Integración JWT: profile — AUTH_REQUIRE_IDENTITY, docs y comentarios",
+      "status": "completed",
+      "start_date": "2026-09-20",
+      "context": "Flip de AUTH_REQUIRE_IDENTITY movido de infra/local a profile/.env. Comentarios y docs actualizados.",
+      "pull_request": "profile PR #7, profile PR #8",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-005",
+      "checkpoint": 1,
+      "title": "Integración JWT: auth-service — eliminar POST /me y limpiar README",
+      "status": "completed",
+      "start_date": "2026-09-20",
+      "context": "POST /me eliminado (sin consumidores). Suite 103/103.",
+      "pull_request": null,
+      "exception_note": "Push directo a develop de auth-service (commit 1ea65ce). Sin consumidores, no había PR que cerrar."
+    },
+    {
+      "id": "TSK-006",
+      "checkpoint": 1,
+      "title": "Pipeline CI/CD unificado (tres servicios) y documentación en infra",
+      "status": "completed",
+      "start_date": "2026-09-21",
+      "context": "Pipeline: push a rama → tests; PR a main/develop → tests + validación imagen; push a develop → solo tests; push a main → build + ECR + deploy.",
+      "pull_request": "gateway PR #18, auth-service PR #16, profile PR #11, infra PR #6",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-007",
+      "checkpoint": 1,
+      "title": "Análisis y cobertura de tests faltantes — gateway y auth-service",
+      "status": "completed",
+      "start_date": "2026-09-21",
+      "context": "Detección y resolución de huecos: CORS, 502 en /register y /login/google (gateway); expiración refresh, audiencia Google, 422 parametrizado, seed_admin.sh (auth-service).",
+      "pull_request": "gateway PR #18, auth-service PR #16",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-008",
+      "checkpoint": 1,
+      "title": "Migración de bases a Amazon RDS y deploy inicial a producción",
+      "status": "completed",
+      "start_date": "2026-09-21",
+      "context": "Bases discordia_auth y discordia_profile migradas de contenedores locales a RDS. Datos migrados con pg_dump/restore. Deploys de gateway, auth-service y profile a producción (2026-09-21).",
+      "pull_request": "infra PR #5",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-009",
+      "checkpoint": 2,
+      "title": "Sondas /livez y /readyz en auth-service, gateway e infra",
+      "status": "completed",
+      "start_date": "2026-09-25",
+      "context": "auth-service PR #19 y gateway PR #21 con sondas semánticas. infra PR #7 con healthcheck en compose. Desplegado a producción el 2026-09-25.",
+      "pull_request": "auth-service PR #19, gateway PR #21, infra PR #7",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-010",
+      "checkpoint": 2,
+      "title": "Documentación de servicios: revisión y limpieza + ADR-007 migrado a infra",
+      "status": "completed",
+      "start_date": "2026-09-25",
+      "context": "Revisión docs de profile/gateway/auth-service. ADR-007 mudado a infra. PRs solo de docs, mergeados con el release del 2026-09-25.",
+      "pull_request": "infra PR #8, profile PR #14, gateway PR #22, auth-service PR #20",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-011",
+      "checkpoint": 2,
+      "title": "Release 2026-09-25: develop → main de los tres servicios + compose en EC2",
+      "status": "completed",
+      "start_date": "2026-09-25",
+      "context": "PRs Release/2026-09-25 mergeados. Compose nuevo aplicado en EC2 (healthchecks + unificación de puertos internos 2200X). Verificación post-deploy OK.",
+      "pull_request": "auth-service PR #21, gateway PR #23, profile PR #16",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-012",
+      "checkpoint": 2,
+      "title": "Login con Google en web-client (web + mobile Expo)",
+      "status": "completed",
+      "start_date": "2026-09-25",
+      "context": "PR #110 (feature/google-login): login Google en login y registro. Web con Google Identity Services, mobile con @react-native-google-signin. POST /login/google → tokens propios. username null → /set-username. Apilado: PR #110 base, PR #111 (perfil editable), PR #113 (UX errores).",
+      "pull_request": "web-client PR #110",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-013",
+      "checkpoint": 2,
+      "title": "Sincronización del nombre de perfil con el username (evento UsernameSet)",
+      "status": "completed",
+      "start_date": "2026-09-25",
+      "context": "Bug: perfil mostraba user_5 pese a haber elegido MichaelGG. auth-service PR #22 publica UsernameSet. profile PR #18 consume update_username (ADR-005). PR #17 de profile quedó abierto con base main por error → cerrado.",
+      "pull_request": "auth-service PR #22 (feature/publicar-username-actualizado), profile PR #18 (feature/sincronizar-username-nombre)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-014",
+      "checkpoint": 2,
+      "title": "Perfil editable: descripción + nombre en web-client",
+      "status": "completed",
+      "start_date": "2026-09-25",
+      "context": "Rama feature/descripcion-perfil (PR #111, apilada sobre #110). Paso completar perfil post-registro, edición inline con lápiz. PATCH /profiles/{user_id} sin cambios de backend. ApiError + getMeWithRetry para ventana de creación asíncrona.",
+      "pull_request": "web-client PR #111",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-015",
+      "checkpoint": 2,
+      "title": "Modelo de dominio de auth-service + contraste con requerimientos de la cátedra",
+      "status": "completed",
+      "start_date": "2026-09-26",
+      "context": "Documentación creada en docs/modelo-dominio/ (md, puml, svg). Contraste con la cátedra: HU1 (email) y HU2 CA5 (reutilización de token) quedan como pendientes. Menores: specs/... no existentes y rol visitor en attach — ambos resueltos.",
+      "pull_request": null,
+      "exception_note": "Push directo a develop de auth-service (commit d727c92). Solo documentación, sin cambios funcionales."
+    },
+    {
+      "id": "TSK-016",
+      "checkpoint": 2,
+      "title": "UX de errores: validación inline + Snackbar en web-client",
+      "status": "completed",
+      "start_date": "2026-09-26",
+      "context": "Rama feature/ux-errores-snackbar (PR #113, base develop, apilada sobre #110/#111). Reemplaza modal bloqueante por validación inline (Paper HelperText) + Snackbar único. authFieldError mapea 409/400/422/401 a campo. NotificationsProvider con Portal key para stackeo correcto.",
+      "pull_request": "web-client PR #113",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-017",
+      "checkpoint": 2,
+      "title": "Fix rol de plataforma (attach emitía visitor hardcodeado) + Alembic ADR-008 en auth-service",
+      "status": "completed",
+      "start_date": "2026-09-30",
+      "context": "auth-service PR #23 (fix/role-attach-refresh): attach lee role de accounts, refresh relee rol actual. Revisión 0001 baseline + 0002 expand (role DROP NOT NULL). db/migrate.sh como punto de entrada único. Se retiraron init_database.sql y script manual. gateway PR #25 (docs/flujo-jwt-roles): solo docs. ADR-008 creado en infra. Ampliado el 2026-10-01 con la revocacion inmediata del access token en logout (HU 2 CA 5): el access suma el claim `sid` y logout devuelve `session_id` (auth); el gateway agrega la lista de revocacion en memoria (PR #26) y rechaza el reuso con 401 `Session revoked`, sin round-trip por request. E2E local verificado (login -> logout -> reuso => 401). Cerrado 2026-10-03 con el release 2026.10.03: auth-service #23 desplegado a main (el paso SSM de migración corrió db/migrate.sh; alembic_version=0002 verificado) y gateway #26/#27 desplegados. Verificación en prod: logout → reuso del access token ⇒ 401 \"Session revoked\"; sesión nueva operativa.",
+      "pull_request": "auth-service PR #23, gateway PR #25, gateway PR #26",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-018",
+      "checkpoint": 2,
+      "title": "ADR-008 fase 2: revisión 0003 de auth (DROP COLUMN) + alineación de profile a Alembic",
+      "status": "completed",
+      "start_date": "2026-10-03",
+      "context": "auth-service PR #24 (feature/0003-sessions-role-contract, DRAFT): DROP COLUMN sessions.role. Apilado sobre PR #23 — NO mergear antes del piloto desplegado y verificado. profile PR #19 (feature/migraciones-en-pipeline): alineación completa a ADR-008 (db/migrate.sh, Dockerfile, compose local, CI, SSM). CI del PR verificar run al cierre. Cerrado 2026-10-03: la revisión 0003 quedó desplegada (release #28, alembic_version=0003 en producción, columna sessions.role eliminada; backup previo local-20261004-011934) y profile ya quedó alineado a Alembic con el release 2026.10.03.",
+      "pull_request": "auth-service PR #24 (mergeado; release #28), profile PR #19",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-019",
+      "checkpoint": 2,
+      "title": "Migración de la sesión de Context API a Redux Toolkit en web-client",
+      "status": "completed",
+      "start_date": "2026-09-30",
+      "context": "web-client PR #117 (feature/redux-auth-store → develop): store de Redux Toolkit (authSlice, thunks, hooks tipados), access_token solo en memoria (eliminado de AsyncStorage), apiFetch lee y renueva desde el store con single-flight, restoreSession proactivo al abrir la app, ClientProvider eliminado, 45 tests nuevos (jest-expo + RNTL) y workflow de CI (lint + tsc + jest). Pendiente: revisión/merge. Incluye además las mejoras de estructura acordadas en la revisión: tests de core colocados junto al módulo (los de pantallas quedan en `__tests__/` por limitación de expo-router/Metro), guía renombrada a `docs/identidad-perfil-y-sesion.md`, sección \"Estructura y flujo de trabajo\" en el README y fix del typo `siedebar.ts` → `sidebar.ts`. Cerrado 2026-10-03: el contenido entró a develop vía #118 y se liberó a main con el release 2026.10.03 (web-client PR #120, tag v2026.10.03, deploy Expo).",
+      "pull_request": "web-client PR #117",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-020",
+      "checkpoint": 2,
+      "title": "Almacenamiento dual de tokens (SecureStore/cookie) + eliminación de context.ts/AsyncStorage",
+      "status": "completed",
+      "start_date": "2026-10-01",
+      "context": "Cierra el pendiente de TSK-019: el refresh_token migra a expo-secure-store (móvil) / cookie HttpOnly del gateway (web) y se eliminan context.ts + AsyncStorage. PRs apilados: auth-service #25 (refresh devuelve username), gateway #27 (cookie HttpOnly, CORS con credenciales, refresh/logout por cookie) y web-client #118 (storage dual, Session revoked sin refresh, restore por plataforma). E2E local completo (curl + navegador). Detalle de entorno: el volumen local auth-db-data estaba en la revisión 0003 (PR #24) y se alineó a 0002 para correr con la rama de #23. Cerrado 2026-10-03: GATEWAY_* aplicadas en la EC2, compose sincronizado (regla de oro 3/3), auth/gateway/profile desplegados y E2E verificado en prod: cookie web HttpOnly/Secure/SameSite=None, refresh deslizante por cookie, logout+reuso ⇒ 401, login mobile con refresh en el body.",
+      "pull_request": "auth-service PR #25, gateway PR #27, web-client PR #118",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-021",
+      "checkpoint": 2,
+      "title": "Completar cobertura de healthchecks en compose.prod.yaml",
+      "status": "completed",
+      "start_date": "2026-10-03",
+      "context": "Gateway y auth-service ya tenían healthcheck de Docker. Se agregan: healthcheck /livez a discordia-profile (start_period 30s por Alembic); healthcheck por archivo de heartbeat /tmp/worker.heartbeat a discordia-profile-worker (sin puerto HTTP); depends_on service_healthy en discordia-gateway sobre auth-service y profile; labels de healthcheck de Traefik en el gateway; start_period de auth-service subido de 10s a 20s. Requiere también heartbeat en el worker (repo profile). Merge order: profile PR primero (imagen en ECR), luego infra PR. Estado 2026-10-03: ramas pusheadas y PRs abiertos (sin mergear): infra feat/healthchecks-completos (4a07b49) y profile feat/worker-heartbeat (e525f85); suite profile 112 passed/1 skipped, cov 85.94%, ruff OK; docker compose config OK. Mergeado y desplegado 2026-10-03 (release 2026.10.03): profile y worker healthy con los healthchecks nuevos; el worker reporta /tmp/worker.heartbeat fresco (<60 s).",
+      "pull_request": "infra PR #11, profile PR #20",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-022",
+      "checkpoint": 2,
+      "title": "Modo de contingencia: bases en Docker en la EC2 (fallback de RDS)",
+      "status": "completed",
+      "start_date": "2026-10-03",
+      "context": "RDS discordia-auth/discordia-profile apagadas por costos y sin computo disponible para reencenderlas. infra PR #12 (feat/contingencia-bases-docker): compose.prod.yaml con DATABASE_URL override por AUTH_DATABASE_URL/PROFILE_DATABASE_URL y redes internas permanentes (inertes en modo RDS); compose.db-contingency.yaml con postgres-auth/postgres-profile (credenciales de .env, volumenes propios, sin puertos, healthchecks + depends_on); script/db-mode.sh + db-mode-remote.sh (status | local [--init|--restore] | rds [--no-backup|--force] | backup; init vacio con migraciones por defecto); README y ci-cd.md. El modo sobrevive deploys de pipelines (comandos bare). Al volver RDS: db-mode.sh rds (backup automatico del delta). Aplicacion en la VM pendiente de merge. Aplicado en la EC2 (2026-10-04 UTC / 2026-10-03 local): db-mode.sh local --init --restore con los dumps de auth y profile; modo local activo y verificado (servicios healthy, readyz 200). 2026-10-09: vuelta a RDS ejecutada con db-mode.sh rds. Backup automático del delta (/opt/discordia/backups/local-20261009-213934-{auth,profile}.sql.gz) y respaldo de .env (.env.bak-dbmode-20261009-213934); claves AUTH_DATABASE_URL/PROFILE_DATABASE_URL vaciadas; auth-service, profile y worker recreados healthy con readyz 200 contra RDS (interno y por HTTPS público, readyz del gateway con auth/profile reachable); postgres locales detenidos con volúmenes conservados. Delta real de la contingencia: 2 cuentas / 1 perfil en local, única cuenta nueva mgmena@fi.uba.ar (4/10); no se fusionó a RDS por decisión acordada (RDS es fuente de verdad).",
+      "pull_request": "infra PR #12",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-023",
+      "checkpoint": 2,
+      "title": "Release 2026.10.03: servicios a main (auth/gateway/profile) + web-client + dominio/TLS en infra",
+      "status": "completed",
+      "start_date": "2026-10-03",
+      "context": "Releases CalVer 2026.10.03. Sincronización de los 5 repos y gate de contenido. EC2 actualizada: compose sincronizado, GATEWAY_* (CORS, cookie, cierre de rutas internas) aplicadas, modo de contingencia activo, y el dominio api.discordia.com.ar + TLS (Traefik/Let's Encrypt) portado al repo desde la configuración manual previa y documentado. Merges a main con formato GitHub: auth 015a9b6 (deploy OK, alembic 0002), gateway f399d57 (routers de dominio y de IP verificados), profile 04d1a9c (migración en deploy, worker healthy con heartbeat), web-client e6f3b51 (deploy Expo de web + APK asíncrono). Tags anotados v2026.10.03 en los 4 repos. Pruebas en prod: sondas /livez y /readyz 200, rutas internas /auth-service y /profile 404, CORS preflight con credenciales OK, cookie web HttpOnly/Secure/SameSite=None, refresh deslizante por cookie, logout + reuso ⇒ 401 Session revoked, login mobile con refresh en el body, sync de username ADR-005 E2E (perfil renombrado por evento), /me 200. Regla de oro 3/3. Cuentas de prueba eliminadas.",
+      "pull_request": "auth-service PR #27, gateway PR #30, profile PR #21, web-client PR #120",
+      "exception_note": "infra sin PR: push directo a main acordado (361d7ea docs ADR-008/pipeline, 4b77000 dominio + TLS)."
+    },
+    {
+      "id": "TSK-024",
+      "checkpoint": 2,
+      "title": "Subida de imagen de perfil (avatar) E2E: profile + gateway + web-client",
+      "status": "completed",
+      "start_date": "2026-10-09",
+      "context": "Lápiz sobre la foto en el popup de perfil (web-client) con flujo de 3 fases: POST /profiles/{id}/avatar (política de POST prefirmada declarando content_type + content_length), POST multipart directo al bucket con la política firmada (upload_fields) y PATCH del avatar_url. profile: content_length obligatorio (1-5 MB, JPEG/PNG/WebP) firmado como content-length-range en la política — se comprobó contra el bucket real que una URL prefirmada de PUT NO acota el cuerpo (6 MB aceptados con una firma de 68 bytes) — más el fix acoplado de S3_ENDPOINT_URL y credenciales vacías que rompían el cliente boto3. gateway: sin cambios de código (el relay ya soportaba POST/PATCH); tests explícitos del relay del prefirmado con upload_fields y de la confirmación. web-client: expo-image-picker (input web / galería nativa con permiso), subida multipart (FormData en web / expo-file-system en nativo), validación previa en el cliente, avatar_url en el store (sidebar sincronizada), tests y docs. Bucket S3 discordia-bucket (us-east-1) creado y apuntado en la EC2; rol DiscordiaEC2Role con PutObject/DeleteObject sobre avatars/* y bucket policy de lectura pública acotada a avatars/*; verificado en vivo: POST 68 B -> 204, >5 MB -> 400 EntityTooLarge, GET anónimo -> 200. Validado: profile 121 tests / 87.01% + behave 21 escenarios + ruff; gateway 103 tests / 100% + ruff; web-client 73 tests + tsc --noEmit + expo lint. Ramas pusheadas: profile 16f7651, gateway a140754, web-client d0f9f82 (feature/avatar-profile) e infra a5b4b7f + f02fafa (feature/s3-avatares-config). PRs abiertos contra develop (merge pendiente): profile #22, gateway #33, web-client #124; infra #15 contra main.",
+      "pull_request": "profile PR #22, gateway PR #33, web-client PR #124, infra PR #15",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-025",
+      "checkpoint": 2,
+      "title": "Recupero de contraseña: auth-service (tokens de un solo uso, endpoints y email worker)",
+      "status": "completed",
+      "start_date": "2026-10-14",
+      "context": "HU de recupero (CA1-CA5) del lado servidor: migración 0004 password_reset_tokens (hash SHA-256, un único token activo por cuenta), POST /password/forgot (200 genérico exista o no el email, cooldown por cuenta) y POST /password/reset (consumo atómico, fortaleza de clave y revocación de TODAS las sesiones), evento PasswordResetRequested a la cola send_email (quorum, event_id como Idempotency-Key) y email worker como proceso aparte de la misma imagen (python -m app.workers.email_worker: pika, HTML, Resend, DLQ y graceful shutdown), más purga diaria de tokens vencidos. Rama feature/password-reset (e4209b8); 222 tests / 97% cov; ruff + import-linter OK; ADR-002 + README. Smoke E2E local con broker real y Resend simulado: publish -> cola send_email -> worker -> POST /emails con Idempotency-Key. PR a develop pendiente de confirmación. PR abierto contra develop (merge pendiente).",
+      "pull_request": "auth-service PR #31",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-026",
+      "checkpoint": 2,
+      "title": "Recupero de contraseña: gateway (relay público + rate limit por ruta y doc del flujo)",
+      "status": "completed",
+      "start_date": "2026-10-14",
+      "context": "Rutas públicas POST /password/forgot y /password/reset como relay puro a auth-service (4xx relayados sin cambios) + rate limit POR RUTA con la IP real del cliente detrás de Traefik (X-Real-Ip / último X-Forwarded-For): PASSWORD_FORGOT_RATE_LIMIT 3/hour y PASSWORD_RESET_RATE_LIMIT 10/hour. Doc nueva docs/flujo-recupero-de-contrasena.md con diagramas (solicitud -> send_email -> worker -> Resend; reset -> revocación total). Rama feature/password-reset-routes (7d4dd20); 137 tests / 97% cov. PR a develop pendiente de confirmación. PR abierto contra develop (merge pendiente).",
+      "pull_request": "gateway PR #36",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-027",
+      "checkpoint": 2,
+      "title": "Recupero de contraseña: web-client (pantallas con deep link)",
+      "status": "completed",
+      "start_date": "2026-10-14",
+      "context": "Pantallas (auth)/forgot-password (mensaje genérico, CA4) y (auth)/reset-password (captura del token por URL web o scheme expoclient://reset-password?token=..., paridad de validación con register.tsx, estado CA2 para link vencido/usado, limpieza de la sesión local tras el reset porque el servidor revoca todo), link en el login, módulos core/api forgotPassword/resetPassword y docs/recupero-de-contrasena.md. Rama feature/password-reset-ui (0557d2c); jest 129 ✓, tsc --noEmit ✓, expo lint ✓; export web incluye /forgot-password y /reset-password. PR a develop pendiente de confirmación. PR abierto contra develop (merge pendiente).",
+      "pull_request": "web-client PR #126",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-028",
+      "checkpoint": 2,
+      "title": "Recupero de contraseña: infra (servicio discordia-email-worker + variables de Resend + EC2)",
+      "status": "completed",
+      "start_date": "2026-10-14",
+      "context": "compose.prod.yaml suma discordia-email-worker (misma imagen y AUTH_TAG que discordia-auth-service, consume send_email, healthcheck por heartbeat) y PASSWORD_RESET_URL_BASE para auth-service; prod.env.example + apply-prod-env.sh con RESEND_API_KEY/EMAIL_FROM/PASSWORD_RESET_URL_BASE (opcionales); README y ficha de auth-service actualizadas; workflow de deploy de auth-service recrea también el worker. En la EC2: RESEND_API_KEY aplicada a /opt/discordia/.env (con backup, sin exponer el valor) y compose sincronizado (sha256 idéntico al repo, regla de oro verificada); el worker arrancará recién con el release de auth-service (comparte AUTH_TAG). Rama feature/resend-email-worker (72d97d3). PR a main pendiente de confirmación. PR abierto contra main (merge pendiente).",
+      "pull_request": "infra PR #18",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-029",
+      "checkpoint": 2,
+      "title": "HU-15: autorizacion de envio de mensajes en canales (membership + join + limites)",
+      "status": "completed",
+      "start_date": "2026-10-17",
+      "context": "text-channel consulta el permiso a server por mensaje con cache TTL/LRU (5 s) y fail-closed; server agrega el alta idempotente por link compartido (UPSERT) y el endpoint interno protegido; gateway relaya el join y documenta el flujo WebSocket; web-client agrega solo-lectura, join y contador/limite. Specs/ADRs/docs en los cuatro repos. CI de los 4 PRs en pass y suites locales en verde.",
+      "pull_request": "text-channel PR #2; server PR #11; gateway PR #39; web-client PR #130 (todos mergeados el 2026-10-19); web-client PR #134 + server PR #16 + gateway PR #42 (014 member list, mergeados el 2026-10-19); infra PR #24 + gateway PR #48 + server PR #18 (server detrás del gateway)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-031",
+      "checkpoint": 2,
+      "title": "Desplegar text-channel en produccion y broadcast multi-replica",
+      "status": "completed",
+      "start_date": "2026-10-18",
+      "context": "text-channel difunde cada mensaje por un topic de Redis para que llegue a las conexiones de todas las replicas (REDIS_URL opcional, degradacion local si el broker falla), gana pipeline propio (ECR discordia/text-channel + deploy SSM con TEXT_CHANNEL_TAG) y badges; infra suma los contenedores discordia-text-channel, -db (mongo:7) y -redis con su red interna, arregla SERVER_SERVICE_URL del gateway y maneja INTERNAL_SERVICE_TOKEN (prod.env + apply-prod-env.sh, generado en la VM si falta). Specs/ADR docs en ambos repos. PRs abiertos con CI en verde. La guia completa de badges quedo documentada en infra/docs/ci-cd.md y la instancia se migro de t3.small a t3.medium por RAM (infra PR #22). Badges de text-channel resueltos: el workflow apuntaba al gist de gateway (de otro usuario) y fallaba con 404, se repunto al gist propio 90bdf9bf38bc2c319d5662b992875740 (commit 0f321e6 en PR #3) y se cargo GIST_SECRET; CI ya publica 29 passed y 88% de cobertura. Conflictos de merge con develop (PR #2, autorizacion de envio) resueltos en el commit 1339f1a: se conservaron los dos bloques de configuracion (REDIS_URL/BROADCAST_TOPIC y SERVER_SERVICE_URL/INTERNAL_SERVICE_TOKEN/cache), el arranque y cierre de ambos gateways en el lifespan, y httpx como dependencia de produccion (la promovio develop para el cliente de server) con fakeredis en dev; uv.lock regenerado sin cambios. PR #3 quedo MERGEABLE/CLEAN con Lint & Tests y Build & Deploy en pass.",
+      "pull_request": "text-channel PR #3 (develop, abierto); infra PR #20 (main, mergeado 2026-10-18); infra PR #22 (t3.medium + runbook de badges, abierto)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-032",
+      "checkpoint": 2,
+      "title": "Badges de tests y cobertura en web-client y server",
+      "status": "completed",
+      "start_date": "2026-10-18",
+      "context": "web-client agrega jest-junit + cobertura Istanbul en CI, script generate_badges.py adaptado y publicacion al gist 90bdf9bf38bc2c319d5662b992875740; server agrega JaCoCo + JUnit XML de Gradle, script adaptado y la misma publicacion. READMEs con badges y runbook actualizado en infra/docs/ci-cd.md.",
+      "pull_request": "web-client PR #133 (develop, mergeado 2026-10-18); server PR #15 (develop, mergeado 2026-10-18); infra PR #22 (main, abierto)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-033",
+      "checkpoint": 2,
+      "title": "Badges de tests y cobertura en voice-calls",
+      "status": "completed",
+      "start_date": "2026-10-18",
+      "context": "voice-calls suma report.xml (JUnit) y coverage.xml (Cobertura) al paso de pytest, la misma variante de .github/scripts/generate_badges.py que profile/text-channel y los dos pasos de publicacion al gist 90bdf9bf38bc2c319d5662b992875740; README con badges y .gitignore con los reportes. Se mergeo antes la implementacion de 001 (33 tests, 93.22% de cobertura sobre 354 sentencias) para que el badge no publique nunca el 100% del scaffold vacio: hoy el README muestra 33 passed / 93%.",
+      "pull_request": "voice-calls PR #2 (develop, mergeado 2026-10-18); voice-calls PR #1 (implementacion de 001, mergeado 2026-10-18)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-034",
+      "checkpoint": 2,
+      "title": "HU-16: historial paginado y reconexión sin pérdida de mensajes",
+      "status": "completed",
+      "start_date": "2026-10-18",
+      "context": "text-channel agrega cursores opacos (created_at|id en Base64, sin find_one del ancla), paginación before/after con has_more y next/prev_cursor, y resume del WebSocket con resume_after + frame ready. El catch-up se bufferiza en PausableConnection para no perder ni duplicar mensajes en la carrera con el stream en vivo; si se supera RESUME_MAX_MESSAGES (200) o el cursor es inválido, se responde truncated=true y el cliente hace catch-up REST. gateway relaya resume_after URL-encoded y los cursores REST; web-client agrega backoff con jitter, resume desde el último cursor, catch-up truncado y botón de mensajes anteriores. Validado con pytest (89, 90.48%), ruff, behave (9 escenarios), jest (165 tests), eslint, tsc y un smoke test local real (Mongo + text-channel + gateway). Integrado con web-client #135 (nombres de autor + cierre del socket) y revalidado tras el merge: 46 suites / 282 tests, lint y tsc OK.",
+      "pull_request": "text-channel PR #4, gateway PR #43, web-client PR #136 (mergeados el 2026-10-19)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-035",
+      "checkpoint": 2,
+      "title": "Épica Canales (HU 11/12/13): ciclo de vida de canales de punta a punta",
+      "status": "completed",
+      "start_date": "2026-10-19",
+      "context": "Se revisaron y corrigieron los PRs de lautiland y se mergearon a develop. server #10 (ciclo de vida de canales) quedo rebasado sobre el develop actual y con las correcciones de la review: autorizacion owner-only (ServerOwnerChannelAuthorizer reemplaza al allow-all, con 403 de no-dueno testeados), orden 404 -> 403 -> 428 en DELETE (la confirmacion ya no sirve de oraculo), PATCH que rechaza valores no textuales, save() que persiste todos los campos, mensaje de 409 alineado a la unicidad por categoria, trim de la identidad, y type opcional segun el contrato ya mergeado de 003. El esquema pasa a un unico V1__init.sql de Flyway (se retira db/init_database.sql) y la base de produccion se cablea a RDS. web-client #129 (gestion de canales) quedo rebasado y corregido: abandonar la llamada de voz al borrar su canal (antes quedaba el microfono abierto sin boton de salir), 403 mapeado en espanol, boton '...' visible y accion de accesibilidad para abrir el menu, header con servidor + topico y trim en la confirmacion. Se reviso ademas gateway #37 (ya mergeado): el relay era correcto, y se abrio y mergeo gateway #46 para validar server_id/channel_id como UUID (un segmento '..' permitia alcanzar otra ruta upstream). infra #23 cablea QUARKUS_DATASOURCE_* de discordia-server a RDS (discordia_server / server_db), con SERVER_DB_PASSWORD como unica clave nueva de prod.env. Validado con gradlew build (213 tests), jest (51 suites / 311 tests), eslint, tsc, pytest (184, 97.31%) y ruff.",
+      "pull_request": "server PR #10, web-client PR #129, gateway PR #46, infra PR #23 (mergeados el 2026-10-19)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-036",
+      "checkpoint": 2,
+      "title": "HU 7/8/9: invitaciones, unirse y abandonar servidor — revisión y corrección de PRs de hmaldonado12",
+      "status": "completed",
+      "start_date": "2026-10-19",
+      "context": "Se revisaron y corrigieron los PRs abiertos de hmaldonado12 en server (#14 generar invitación, #17 unirse), gateway (#41 invitaciones, #44 bans) y web-client (#132 UI de invitación, #137 UI de unirse). server #14: se retiró db/init_database.sql y server_invitations pasó a Flyway V2; maxUses<=0 ahora responde 400; la reserva de usos es atómica (insertIfAbsent + update condicional) y los códigos duplicados mapean a 409. server #17: se conservó ListServers/ServerAccess de 014 (el PR lo revertía); server_bans pasó a V3; bans quedó owner-only (v1 sin roles) e idempotente; la unión devuelve 200 con alreadyMember sin duplicar ni consumir uso. gateway #41/#44: se conservó el README de develop, ids tipados como UUID y code validado contra Base58 (422 sin llamar al upstream). web-client #132/#137: merge con canales/voz/chat/relationship, tipos de invitación en su módulo, redirect tras login para no perder la invitación, estado por invitación y eliminación de banUser sin uso. gateway #45 y web-client #139 se cerraron como superados: \"Abandonar servidor\" ya estaba implementado en develop (gateway #42 / web-client #134). Verificado con gradlew test (Docker), pytest+ruff y tsc+eslint+jest; los 6 PRs abiertos quedaron MERGEABLE/CLEAN y con CI verde.",
+      "pull_request": "server PR #14/#17, gateway PR #41/#44, web-client PR #132/#137 (revisados y corregidos; CI verde); gateway PR #45 y web-client PR #139 cerrados por duplicados ya mergeados en develop",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-037",
+      "checkpoint": 2,
+      "title": "Release prep: text-channel con MongoDB Atlas y voice-calls en producción",
+      "status": "completed",
+      "start_date": "2026-10-19",
+      "context": "Hallazgos de la revisión previa al release: (1) text-channel leía SERVER_INTERNAL_TOKEN mientras compose/.env/server usan INTERNAL_SERVICE_TOKEN, así que enviaba dev-internal-token, server respondía 404 y todo envío se denegaba; (2) el compose apuntaba al Mongo local y las MONGODB_* de prod.env eran inertes; (3) voice-calls no tenía entrada productiva ni /readyz. Se corrigió el token y el entrypoint (MONGO_URL desde os.environ, sin exponerla en ps) en text-channel; prod.env.example/apply-prod-env.sh aceptan TEXT_CHANNEL_MONGO_URL_ATLAS (o MONGODB_URI), verifican el ping a Atlas y suman claves opcionales; el contenedor mongo:7 queda con el perfil mongo-contingencia y script/mongo-mode.sh (local|atlas|backup). voice-calls suma /readyz (LiveKit list_rooms, 200/503), CI con ECR+SSM (VOICE_CALLS_TAG) y Dockerfile con PORT. infra agrega discordia-voice-calls en la red proxy (sin Traefik), VOICE_CALLS_SERVICE_URL en el gateway, LIVEKIT_* obligatorias y fichas/runbooks. Validado: text-channel 92 tests/90.42% + behave 9; voice-calls 49 tests/94.75% + behave 5 + smoke real (/livez 200, /readyz 503); compose config sin Mongo por defecto y con --profile mongo-contingencia; DRY_RUN de apply-prod-env con alias MONGODB_URI. voice-calls NO usa base de datos (estado en memoria).",
+      "pull_request": "text-channel PR #5; voice-calls PR #5; infra PR #25 (todos abiertos, pendientes de merge)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-038",
+      "checkpoint": 2,
+      "title": "HU 29/30: suspender y reactivar cuentas de plataforma (revisión y corrección de PRs)",
+      "status": "completed",
+      "start_date": "2026-10-21",
+      "context": "Revisión y corrección de la cadena que implementa suspender/reactivar cuentas. Contra los CA reales (infra/docs/discordia-tp.md, HU 29 y HU 30, obligatorias) faltaba el más caro: el perfil público del suspendido seguía disponible. Hallazgos corregidos: gateway revocaba los sid con el TTL pelado y sin el margen de 60 s del logout, y devolvía revoked_session_ids al navegador; auth-service chequeaba el estado antes de verificar la contraseña (se podía enumerar suspendidos midiendo tiempos), no publicaba nada al reactivar, no tenía tests HTTP de las rutas staff ni CHECK de estados en la base; backoffice no confirmaba la suspensión, dejaba la tabla vacía al suspender el último ítem y no tenía ningún check de CI. Se agregó el PR de profile (consume account_events con cola exclusiva, ChangeProfileStatus y 404 para el perfil suspendido, sin migración porque profiles.status ya existía) y el ADR-010 + doc de flujo en infra. Verificado: gateway 215 tests; auth-service 246 passed y 97,48 % de cobertura; profile 151 passed, 88,37 % y 29 escenarios BDD; backoffice tsc + expo lint; migración 0005 con el CHECK aplicada sobre base nueva.",
+      "pull_request": "gateway #49; auth-service #32; backoffice #1; profile #25; infra #27 (todos abiertos, pendientes de merge)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-039",
+      "checkpoint": 2,
+      "title": "HU 44: editar mensaje (optativa) — text-channel, gateway y web-client",
+      "status": "completed",
+      "start_date": "2026-10-21",
+      "context": "Implementación de la HU #44 en tres repos. text-channel: PATCH /channels/{channel_id}/messages/{message_id} con actualización condicional atómica (filtro {_id, channel_id, author_id, deleted_at: null}) y discriminación 404/403 por lectura solo en el camino de fallo; autorización por autoría + permiso de envío vigente (caché fail-closed); frame message_edited con el mensaje completo difundido por el fan-out de Redis; serialización de frames centralizada en core (antes edited_at viajaba como datetime y habría roto el json.dumps) y el buffer de reanudación ya no deduplica frames que no son message. gateway: relay del PATCH con sesión validada, body verbatim y un solo intento (sólo GET se reintenta). web-client: edición inline del mensaje propio, marca \"editado\", reemplazo por id con el frame en vivo y manejo de 403/404 (cierra el editor) vs 422 (lo mantiene abierto). ADR-005 en text-channel documenta la decisión (REST para mutar, WS para propagar) y el límite de la reanudación. Verificado: text-channel 143 tests / 91,71 % cobertura y 14 escenarios BDD; gateway 221 tests; web-client 411 tests.",
+      "pull_request": "text-channel #8; gateway #50; web-client #140 (mergeados en develop)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-040",
+      "checkpoint": 2,
+      "title": "HU Crear rol (Roles y Permisos) en server, gateway y web-client",
+      "status": "completed",
+      "start_date": "2026-10-21",
+      "context": "Primera HU de la epica Roles y Permisos. server: tabla server_roles (Flyway V4) con permisos como bitmask BIGINT append-only (Permission/RolePermissions, default VIEW_CHANNELS|SEND_MESSAGES), posicion al final de la jerarquia (max+1) serializada con lock pesimista de la fila del server y UNIQUE (server_id, position) DEFERRABLE INITIALLY DEFERRED, unicidad case-insensitive del nombre con 409, y seam de capacidad ManageRolesPolicy (hoy owner-only, pensado para ADMINISTRATOR). Endpoints POST y GET /servers/{id}/roles, con orden 400 -> 404 -> 403 -> 409. gateway: relay puro de ambos endpoints sin reintentar el POST. web-client: cliente API, RolesManager con la jerarquia y CreateRoleForm, boton owner-only en el header del sidebar. ADR-002 documenta las decisiones y sus alternativas. Verificado: server 305 tests y 74,34% de lineas; gateway 227 tests y 97,60% de cobertura con ruff limpio; web-client 430 tests, tsc y expo lint limpios. Mergeada en develop (server #19, gateway #51, web-client #141); infra #28 en main.",
+      "pull_request": "server #19; gateway #51; web-client #141; infra #28 (abiertos, pendientes de merge)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-041",
+      "checkpoint": 2,
+      "title": "HU Asignar rol a un miembro (Roles y Permisos) en server, gateway y web-client",
+      "status": "in_progress",
+      "start_date": "2026-10-21",
+      "context": "Segunda HU de la epica Roles y Permisos. server: tabla server_member_roles (Flyway V5) atada a server_members(id) con ON DELETE CASCADE (abandonar el servidor o borrar un rol limpia las asignaciones), PK (member_id, role_id) e indice por role_id. Permisos efectivos centralizados en ResolveMemberPermissions: dueno = todos, no miembro = 0, miembro = RolePermissions.DEFAULT | roles (baseline @everyone implicito, modelo aditivo). DefaultManageRolesPolicy pasa a evaluar ADMINISTRATOR (el dueno lo tiene implicito); MANAGE_ROLES sigue sin evaluarse por falta de comparacion de jerarquias. SendMessagePolicy exige SEND_MESSAGES sobre el conjunto efectivo, con lo que canSendMessages y el chequeo interno de text-channel quedan permission-driven sin cambiar el comportamiento actual. Endpoints: GET /servers/{id}/members paginado obligatorio (limit 1-100 default 50, offset, count, hasMore, orden total joinedAt+userId, solo owner/miembros, el dueno no se lista), PUT y DELETE /servers/{id}/members/{userId}/roles/{roleId} idempotentes, y canManageRoles en GET /servers/{id}. gateway: relay puro de las tres rutas, con userId validado contra ^[A-Za-z0-9_-]{1,64}$ para que un .. no alcance otra ruta. web-client: getMembers/assignRole/unassignRole, panel RoleMembers con Cargar mas y toggles optimistas con rollback, accion Miembros en RolesManager y boton de roles que depende de canManageRoles en vez de relationship. ADR-003 documenta las nueve decisiones y sus alternativas. Verificado: server suite completa verde con 74%+ de lineas; gateway 234 tests y 97,63% con ruff limpio; web-client 452 tests, tsc y expo lint limpios.",
+      "pull_request": "server #20; gateway #52; web-client #142 (mergeados en develop); infra #29 (mergeado); infra #30 e infra #31 (abiertos: docs del stack local y COMPOSE_BAKE)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-042",
+      "checkpoint": 2,
+      "title": "HU 45: eliminar mensaje (optativa) — server, text-channel, gateway y web-client",
+      "status": "in_progress",
+      "start_date": "2026-10-21",
+      "context": "Implementación de la HU #45 en cuatro repos. server: Permission.MANAGE_MESSAGES(1L << 6) append-only y ManageMessagesPolicy que resuelve los permisos efectivos una vez y aplica (MANAGE_MESSAGES | ADMINISTRATOR); canManageMessages aditivo en GET /internal/channels/{id}/send-permission y en GET/POST /servers/{id}; ADR-004 y specs/017. text-channel: DELETE /channels/{id}/messages/{message_id} con soft delete atómico (autor: filtro por author_id; moderador: cualquier autor), 204/401/403/404/503; el autor no consulta server; frame message_deleted sin contenido; historial REST excluye borrados; cursores autocontenidos (created_at, _id) para que borrar el ancla no rompa before/after; la reanudación lee el ancla sin filtro deleted_at para emitir su tombstone y re-emite los borrados posteriores con include_deleted; port ChannelPermissionGateway.get_permissions con can_send/can_manage_messages; ADR-006 y specs/006. gateway: relay DELETE con require_session, X-User-Id inyectado, un solo intento y 5xx→502; specs/016. web-client: deleteChannelMessage, onMessageDeleted, confirmación de borrado, gating por canManageMessages (owner o rol con MANAGE_MESSAGES/ADMINISTRATOR), tombstones en el estado y mergeMessages que no resucita borrados; MANAGE_MESSAGES en rolesTypes/RolesManager; specs/018 y docs 6.2. Verificado: server 396 tests (JAVA_TOOL_OPTIONS=-Duser.timezone=UTC); text-channel 187 tests/92.46% + 19 escenarios BDD; gateway 241 tests/97.64%; web-client 72 suites/488 tests + tsc + lint. Limitación: la HU 22 (editar permisos de rol) todavía no existe, así que MANAGE_MESSAGES sólo se otorga por SQL; el owner lo tiene por ALL.",
+      "pull_request": "server #21; text-channel #9; gateway #53; web-client #143 (abiertos, pendientes de merge)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-043",
+      "checkpoint": 2,
+      "title": "Release 2026.10.21: merge develop -> main de los 7 servicios (CalVer) + tags",
+      "status": "completed",
+      "start_date": "2026-10-21",
+      "context": "Release CalVer 2026.10.21 de todos los servicios menos infra y backoffice (excluidos por pedido explicito). Se abrieron y mergearon 7 PRs develop -> main con merge commit: auth-service #33 (3 PRs), gateway #54 (21), profile #26 (4), web-client #144 (20), server #22 (19), text-channel #10 (9), voice-calls #6 (4). Despues de cada merge se creo el tag anotado v2026.10.21 sobre el commit de merge y se pusheo; al final main == develop en contenido en los 7 repos. server necesito una sincronizacion main -> develop (02868fc) porque main tenia un docker-compose.yml del 2026-09-26 que chocaba add/add con el de develop; se resolvio quedando la version de develop (server-db + env_file + volume + healthcheck), que es superadora. No habia PRs abiertos en ningun repo antes del release y los checks de los 7 PRs pasaron en verde. Verificado antes de mergear que infra/compose.prod.yaml ya contiene los 7 servicios con sus env vars nuevas (RESEND_API_KEY, EMAIL_FROM, INTERNAL_SERVICE_TOKEN, RABBITMQ_*, REDIS_URL, LIVEKIT_*, CHANNEL_ACCESS_MODE=server), asi que el release no requeria cambios en infra. Estado del deploy: web-client deployo OK (Expo web + APK); los 6 backend construyeron la imagen pero el paso SSM fallo porque la EC2 no esta en estado valido, y ademas server no pudo pushear a ECR (nombre de repositorio) y text-channel/voice-calls no pudieron asumir su rol OIDC. Ver discovered_pending_tasks. Estado final de la ejecucion: (1) la EC2 estaba apagada; el usuario la encendio y auth-service, profile y gateway desplegaron OK por SSM (web-client ya habia deployado el mismo dia). (2) server necesitaba mas que el nombre del repo ECR: el workflow de develop habia perdido el paso Deploy to EC2 al reescribirse en el PR #9. Se mergeo server #23 (restaura el deploy y apunta a discordia/server) en develop y server #24 (hotfix develop -> main) desplego en verde, con tag de revision v2026.10.21.1. (3) text-channel y voice-calls siguen sin desplegar: nunca se crearon los roles IAM github-push-text-channel / github-push-voice-calls (Not authorized to perform sts:AssumeRoleWithWebIdentity); ninguno de los dos repos habia ejecutado pasos de AWS en un push a main antes, asi que el pipeline nuevo nunca se habia probado de verdad. Los comandos exactos estan en text-channel/docs/operacion/despliegue.md y voice-calls/docs/operacion/despliegue.md. Segunda iteracion (misma fecha): las trust policies de text-channel y voice-calls estaban creadas, pero con el patron viejo repo:owner/repo:*. GitHub emite el claim sub con IDs inmutables (repo:fiuba-IS2-Discordia@322588971/text-channel@1404835740:ref:refs/heads/main), verificado en el log del run de server del 2026-09-27. Se actualizaron ambas trust policies en AWS y los roles ya se asumen. A partir de ahi aparecieron dos causas distintas: voice-calls necesita ecr:BatchGetImage + ecr:GetDownloadUrlForLayer porque usa docker/build-push-action (buildx consulta el manifiesto; text-channel usa docker push plano y por eso no las necesitaba), y text-channel falla en SSM con 'no such service: discordia-text-channel' porque el compose de la VM esta desactualizado. Al revisar la VM se encontro que discordia-server esta en crash loop (UnknownHostException: server-db) por la misma causa: /opt/discordia/docker-compose.yml es del 2026-10-14 y no pasa las variables QUARKUS_DATASOURCE_* del RDS, no tiene text-channel/voice-calls/redis/mongo y todavia expone /server por Traefik. El rollout del compose quedo a cargo del usuario (manual). Se corrigieron las recetas de trust policy en text-channel #11, voice-calls #7 e infra #32. Tercera iteracion (misma fecha): se dejo la VM funcionando. apply-prod-env.sh aplico el .env (37 claves, backup .env.bak-20261021-234612; INTERNAL_SERVICE_TOKEN generado) y valido las 3 Postgres; Atlas rechazaba la IP de la VM hasta que el usuario habilito 44.221.105.52 en la Network Access List. Se sincronizo compose.prod.yaml (backups docker-compose.yml.bak-20261021-234904 y -235341) con validacion previa y se levanto por etapas: discordia-server salio del crash loop y Flyway aplico las 5 migraciones sobre una base que estaba vacia; discordia-voice-calls se desplego por su propio CI (healthy, /readyz 200 livekit reachable); discordia-text-channel arranco con Mongo Atlas y quedo healthy; el gateway se recreo y ahora relaya TEXT_CHANNEL_SERVICE_URL y VOICE_CALLS_SERVICE_URL (/api/voice responde 401 y no 502). Se detecto y corrigio ademas que el compose solo le pasaba INTERNAL_SERVICE_TOKEN a text-channel y no a discordia-server: en prod el server quedaba con el default del codigo y el endpoint interno respondia Not found (infra #33, mergeado y sincronizado; verificado que con el token responde Channel not found y sin token Not found). /server ya no se expone (404) y la regla de oro (compose repo == compose VM) se cumple. CI de text-channel y voice-calls en verde.",
+      "pull_request": "auth-service #33; gateway #54; profile #26; web-client #144; server #22; text-channel #10; voice-calls #6; server #23 (fix CI); server #24 (hotfix 2026.10.21.1); text-channel #11, voice-calls #7, infra #32 (docs trust policy OIDC); infra #33 (INTERNAL_SERVICE_TOKEN en discordia-server)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-044",
+      "checkpoint": 2,
+      "title": "Experiencia mobile del web-client: teclado, safe area, pull to refresh, header con nombres y borrado en vivo",
+      "status": "completed",
+      "start_date": "2026-10-22",
+      "context": "Cinco correcciones reportadas probando el APK y el responsive del cliente. (1) Teclado: app.json fija android.softwareKeyboardLayoutMode resize; se saco el height 100% del Sidebar (que recomprimia todo), se agrego KeyboardAvoidingView en la vista de canal y en el split (padding solo en iOS, porque Android ya redimensiona la ventana) y los Popup ahora scrollean su contenido con keyboardShouldPersistTaps (formularios de roles, invitaciones y canales). (2) Safe area: edge-to-edge dejaba la barra de usuario, el composer y los botones al fondo debajo de la barra de gestos; se sumo insets.bottom en Sidebar, MessageComposer/MessageEditor, VoicePanel, pages/servers/[serverId], invitations/[code], AuthScreen (el Snackbar de react-native-paper ya lo aplica). (3) Pull to refresh nativo en el panel de canales del Sidebar (que ahora siempre es un ScrollView, tambien en error y vacio), en el historial del chat (recarga la ultima pagina y reconecta el socket) y en el listado del servidor compartido; en web no se monta. (4) Header angosto: pages/index pasa channelName y serverName como params de ruta, la pantalla de canal los usa desde el primer render, reconcilia con GET /servers/{id}, agrega Reintentar y deja de caer al UUID como titulo (ChannelContent y VoicePanel ya no muestran ids). (5) Borrado en vivo: server no publica eventos de borrado y text-channel solo consulta permisos al enviar, asi que se agrego reconciliacion en el cliente: core/useLiveSync (cada 20 s solo con la app en primer plano via AppState, sincroniza al volver del background), core/servers/sync con las decisiones puras, pages/index quita servidores y canales borrados (avisa cuando el activo desaparece), pages/channel vuelve al listado con aviso si el canal o el servidor ya no existen, y ChatPanel avisa al padre ante un frame rechazado con forbidden/not_found para adelantar el chequeo al intento de enviar. Sin cambios en server, gateway ni text-channel. Verificado: 74 suites y 511 tests de jest verdes, tsc y expo lint limpios. El teclado y los insets requieren un build EAS nuevo para verificarse en el APK.",
+      "pull_request": "web-client #145 (mergeado en develop)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-045",
+      "checkpoint": 2,
+      "title": "Perfil publico de otros usuarios para resolver los nombres en el chat (HU-36)",
+      "status": "completed",
+      "start_date": "2026-10-23",
+      "context": "Bug reportado en el chat: los mensajes de otros usuarios mostraban \"Usuario desconocido\". Causa: el cliente resolvia el nombre con GET /profiles/{id}, pero ese endpoint es owner-only y con AUTH_REQUIRE_IDENTITY=true (produccion y APK) devuelve 403 para un id ajeno; el 403 se cacheaba como null para siempre y ademas disparaba una request por cada autor en paralelo (el gateway limita 20 req/s por IP). HU-36 nunca se habia implementado. Solucion en profile: nuevo GET /profiles/{user_id}/public protegido con require_authenticated_user y un PublicProfileResponse propio (user_id, name, description, avatar_url), reutilizando RetrieveProfile para conservar el 404 de perfil inexistente o suspendido y sin tocar el contrato owner-only de GET /profiles/{id}; 6 tests de integracion, 7 escenarios BDD y ADR-007 con el riesgo de enumeracion. Solucion en web-client: getPublicProfile y un resolver compartido (core/profile/resolveProfileName) con cache en memoria y en AsyncStorage rehidratado al arrancar (TTL 5 min, maximo 200 entradas), deduplicacion de requests, concurrencia 4, reintentos a 300/900 ms y revalidacion stale-while-revalidate; useAuthorNames y useMemberNames migrados al resolver. Verificado: profile 157 tests y 36 escenarios de behave, cobertura 88.57 por ciento y ruff limpio; web-client 75 suites y 525 tests de jest, tsc y expo lint limpios.",
+      "pull_request": "profile #27 y web-client #147 (abiertos, contra develop; mergear primero el de profile)",
+      "exception_note": null
+    },
+    {
+      "id": "TSK-046",
+      "checkpoint": 2,
+      "title": "Deploy web: inyectar EXPO_PUBLIC_LIVEKIT_URL (release 2026.10.23-2)",
+      "status": "completed",
+      "start_date": "2026-10-23",
+      "context": "El join de un canal de voz en la app web publicada fallaba con \"falta la direccion de LiveKit\". Causa: EXPO_PUBLIC_LIVEKIT_URL existia como secret del repo pero el paso Export Web de .github/workflows/deploy.yml solo exportaba EXPO_PUBLIC_API_URL y EXPO_PUBLIC_GOOGLE_CLIENT_ID, y el .env local esta en .gitignore, asi que el valor nunca llegaba al bundle (verificado: el JS publicado no contenia ninguna URL wss://). Se agrego la variable al export web con fallback a wss://discordia-aazbfqal.livekit.cloud (misma URL que voice-calls usa como LIVEKIT_URL en infra/prod.env) y se documento en el README que los EXPO_PUBLIC_* del deploy salen de los secrets. Se actualizo el secret con el valor del proyecto productivo, se mergeo a develop y se publico por release develop -> main. Verificado post-deploy: el bundle de https://discordia-tp-expo-client.expo.app contiene wss://discordia-aazbfqal.livekit.cloud y https://api.discordia.com.ar/api.",
+      "pull_request": "web-client #149 (fix, mergeado en develop) y web-client #150 (release 2026.10.23-2 develop -> main, deploy verde)",
+      "exception_note": null
+    },
+        {
+      "id": "TSK-041",
+      "checkpoint": 3,
+      "title": "HU Asignar rol a un miembro (Roles y Permisos) en server, gateway y web-client",
+      "status": "in_progress",
+      "start_date": "2026-10-21",
+      "context": "Segunda HU de la epica Roles y Permisos. server: tabla server_member_roles (Flyway V5) atada a server_members(id) con ON DELETE CASCADE (abandonar el servidor o borrar un rol limpia las asignaciones), PK (member_id, role_id) e indice por role_id. Permisos efectivos centralizados en ResolveMemberPermissions: dueno = todos, no miembro = 0, miembro = RolePermissions.DEFAULT | roles (baseline @everyone implicito, modelo aditivo). DefaultManageRolesPolicy pasa a evaluar ADMINISTRATOR (el dueno lo tiene implicito); MANAGE_ROLES sigue sin evaluarse por falta de comparacion de jerarquias. SendMessagePolicy exige SEND_MESSAGES sobre el conjunto efectivo, con lo que canSendMessages y el chequeo interno de text-channel quedan permission-driven sin cambiar el comportamiento actual. Endpoints: GET /servers/{id}/members paginado obligatorio (limit 1-100 default 50, offset, count, hasMore, orden total joinedAt+userId, solo owner/miembros, el dueno no se lista), PUT y DELETE /servers/{id}/members/{userId}/roles/{roleId} idempotentes, y canManageRoles en GET /servers/{id}. gateway: relay puro de las tres rutas, con userId validado contra ^[A-Za-z0-9_-]{1,64}$ para que un .. no alcance otra ruta. web-client: getMembers/assignRole/unassignRole, panel RoleMembers con Cargar mas y toggles optimistas con rollback, accion Miembros en RolesManager y boton de roles que depende de canManageRoles en vez de relationship. ADR-003 documenta las nueve decisiones y sus alternativas. Verificado: server suite completa verde con 74%+ de lineas; gateway 234 tests y 97,63% con ruff limpio; web-client 452 tests, tsc y expo lint limpios.",
+      "pull_request": "server #20; gateway #52; web-client #142 (mergeados en develop); infra #29 (mergeado); infra #30 e infra #31 (abiertos: docs del stack local y COMPOSE_BAKE)",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+      ]
+    },
+    {
+      "id": "TSK-042",
+      "checkpoint": 3,
+      "title": "HU 45: eliminar mensaje (optativa) — server, text-channel, gateway y web-client",
+      "status": "in_progress",
+      "start_date": "2026-10-21",
+      "context": "Implementación de la HU #45 en cuatro repos. server: Permission.MANAGE_MESSAGES(1L << 6) append-only y ManageMessagesPolicy que resuelve los permisos efectivos una vez y aplica (MANAGE_MESSAGES | ADMINISTRATOR); canManageMessages aditivo en GET /internal/channels/{id}/send-permission y en GET/POST /servers/{id}; ADR-004 y specs/017. text-channel: DELETE /channels/{id}/messages/{message_id} con soft delete atómico (autor: filtro por author_id; moderador: cualquier autor), 204/401/403/404/503; el autor no consulta server; frame message_deleted sin contenido; historial REST excluye borrados; cursores autocontenidos (created_at, _id) para que borrar el ancla no rompa before/after; la reanudación lee el ancla sin filtro deleted_at para emitir su tombstone y re-emite los borrados posteriores con include_deleted; port ChannelPermissionGateway.get_permissions con can_send/can_manage_messages; ADR-006 y specs/006. gateway: relay DELETE con require_session, X-User-Id inyectado, un solo intento y 5xx→502; specs/016. web-client: deleteChannelMessage, onMessageDeleted, confirmación de borrado, gating por canManageMessages (owner o rol con MANAGE_MESSAGES/ADMINISTRATOR), tombstones en el estado y mergeMessages que no resucita borrados; MANAGE_MESSAGES en rolesTypes/RolesManager; specs/018 y docs 6.2. Verificado: server 396 tests (JAVA_TOOL_OPTIONS=-Duser.timezone=UTC); text-channel 187 tests/92.46% + 19 escenarios BDD; gateway 241 tests/97.64%; web-client 72 suites/488 tests + tsc + lint. Limitación: la HU 22 (editar permisos de rol) todavía no existe, así que MANAGE_MESSAGES sólo se otorga por SQL; el owner lo tiene por ALL.",
+      "pull_request": "server #21; text-channel #9; gateway #53; web-client #143 (abiertos, pendientes de merge)",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+      ]
+    }
+  ]
+}

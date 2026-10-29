@@ -1,0 +1,927 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "shell",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-ChildItem -Recurse -File -Path 'web-client\\src' | Select-Object -ExpandProperty FullName"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "read-agents",
+			"type": "shell",
+			"command": "powershell -NoProfile -Command \"Get-Content -Raw 'server\\AGENTS.md'\"",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "list-src",
+			"type": "shell",
+			"command": "powershell -NoProfile -Command \"cd server; git status --short; git branch --show-current; Get-ChildItem -Recurse -File src | ForEach-Object { $_.FullName.Replace((Get-Location).Path + '\\', '') }\"",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh01",
+			"type": "shell",
+			"command": "cd web-client && git status --short && git branch --show-current && find src specs -type f | sort",
+			"isBackground": false
+		},
+		{
+			"label": "sh02",
+			"type": "shell",
+			"command": "cd web-client && find src -type d | sort",
+			"isBackground": false
+		},
+		{
+			"label": "list-src2",
+			"type": "shell",
+			"command": "cd server && git status --short && git branch --show-current && find src -type f | sort",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "list2",
+			"type": "shell",
+			"command": "cd server && find src -type f -name '*.java' | sort && echo '---DOCS---' && find docs specs -type f | sort",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh03",
+			"type": "shell",
+			"command": "cd web-client && ls src/core/api && echo '=====README' && cat README.md",
+			"isBackground": false
+		},
+		{
+			"label": "sh04",
+			"type": "shell",
+			"command": "cd web-client && head -c 7000 README.md",
+			"isBackground": false
+		},
+		{
+			"label": "batch1",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && for f in core/usecase/dto/OwnershipTransferStatus.java core/usecase/dto/OwnershipTransfer.java core/gateway/OwnershipTransferRepository.java infra/repository/OwnershipTransferRepositoryImpl.java; do echo \"===== $f =====\"; cat \"$f\"; done",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "batch2",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && for f in core/usecase/InitiateOwnershipTransfer.java core/usecase/AcceptOwnershipTransfer.java core/usecase/RejectOwnershipTransfer.java core/gateway/ServerRepository.java core/gateway/ServerMemberRepository.java; do echo \"===== $f =====\"; cat \"$f\"; done",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh05",
+			"type": "shell",
+			"command": "cd web-client && tail -c +7000 README.md | head -c 8000",
+			"isBackground": false
+		},
+		{
+			"label": "sh06",
+			"type": "shell",
+			"command": "cd web-client && echo '===leaveServer.ts' && cat src/core/api/leaveServer.ts && echo '===serversTypes.ts' && cat src/core/api/serversTypes.ts && echo '===apifetch.ts' && cat src/core/api/apifetch.ts",
+			"isBackground": false
+		},
+		{
+			"label": "f1",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia/core/usecase && cat InitiateOwnershipTransfer.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh07",
+			"type": "shell",
+			"command": "cd web-client && cat src/core/api/leaveServer.ts && echo '===apifetch' && cat src/core/api/apifetch.ts",
+			"isBackground": false
+		},
+		{
+			"label": "f2",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia/core/usecase && cat AcceptOwnershipTransfer.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh08",
+			"type": "shell",
+			"command": "cd web-client && cat src/core/api/serversTypes.ts",
+			"isBackground": false
+		},
+		{
+			"label": "f3",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && cat core/usecase/RejectOwnershipTransfer.java core/gateway/ServerRepository.java core/gateway/ServerMemberRepository.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh09",
+			"type": "shell",
+			"command": "cd web-client && cat src/core/api/serversErrors.ts",
+			"isBackground": false
+		},
+		{
+			"label": "sh10",
+			"type": "shell",
+			"command": "cd web-client && wc -c src/components/popups/*.tsx src/components/Sidebar.tsx src/app/pages/index.tsx src/styles/*.ts src/core/servers/*.ts src/core/members/*.ts | sort -n",
+			"isBackground": false
+		},
+		{
+			"label": "f4",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && cat core/usecase/ListServers.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh11",
+			"type": "shell",
+			"command": "cd web-client && cat src/components/popups/RoleMembers.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "f5",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && cat controller/contract/ServerListResponse.java controller/ServerController.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh12",
+			"type": "shell",
+			"command": "cd web-client && echo '===roles.ts' && cat src/styles/roles.ts && echo '===app.ts' && cat src/styles/app.ts && echo '===useMemberNames' && cat src/core/members/useMemberNames.ts",
+			"isBackground": false
+		},
+		{
+			"label": "f6",
+			"type": "shell",
+			"command": "cd server && ls src/test/java/discordia && echo '--- fakes ---' && find src/test -type d",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh13",
+			"type": "shell",
+			"command": "cd web-client && echo '===LeaveServerConfirmation' && cat src/components/popups/LeaveServerConfirmation.tsx && echo '===Popup' && cat src/components/popups/Popup.tsx && echo '===membership' && cat src/core/servers/membership.ts && echo '===sync' && cat src/core/servers/sync.ts",
+			"isBackground": false
+		},
+		{
+			"label": "t1",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && cat TransferOwnershipTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh14",
+			"type": "shell",
+			"command": "cd web-client && sed -n '1,140p' src/app/pages/index.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "t1a",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && wc -l TransferOwnershipTest.java && sed -n '1,130p' TransferOwnershipTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh15",
+			"type": "shell",
+			"command": "cd web-client && sed -n '140,330p' src/app/pages/index.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "t1b",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && sed -n '130,266p' TransferOwnershipTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh16",
+			"type": "shell",
+			"command": "cd web-client && sed -n '330,520p' src/app/pages/index.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "f7",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && cat controller/ServerTransferController.java && ls controller/contract | grep -i transfer",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "t2",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && wc -l ServerTransferControllerTest.java ListServersTest.java ServerControllerUnitTest.java && sed -n '1,110p' ServerTransferControllerTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh17",
+			"type": "shell",
+			"command": "cd web-client && sed -n '520,760p' src/app/pages/index.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "sh18",
+			"type": "shell",
+			"command": "cd web-client && sed -n '1,120p' src/components/Sidebar.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "t3",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && sed -n '1,80p' ServerTransferControllerTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "t4",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && sed -n '80,157p' ServerTransferControllerTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh19",
+			"type": "shell",
+			"command": "cd web-client && sed -n '120,300p' src/components/Sidebar.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "sh20",
+			"type": "shell",
+			"command": "cd web-client && grep -n 'IconButton\\|share-variant\\|trash-can\\|account-switch' src/components/Sidebar.tsx && echo '---' && sed -n '300,430p' src/components/Sidebar.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "t5",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && cat ListServersTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh21",
+			"type": "shell",
+			"command": "cd web-client && wc -c src/app/pages/__tests__/*.tsx src/components/__tests__/*.tsx | sort -n | tail -20 && echo '--- git log' && git log --oneline -5 && ls specs",
+			"isBackground": false
+		},
+		{
+			"label": "t6",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && cat ServerControllerUnitTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh22",
+			"type": "shell",
+			"command": "cd web-client && git log --oneline -5 && ls specs && wc -c src/app/pages/__tests__/index.test.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "t7",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && grep -n 'listServers\\|ListServers\\|ServerController(' ServerControllerUnitTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh23",
+			"type": "shell",
+			"command": "cd web-client && wc -l src/app/pages/__tests__/index.test.tsx && sed -n '1,110p' src/app/pages/__tests__/index.test.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "t8",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && sed -n '1,90p' ServerControllerUnitTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "f8",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && cat core/usecase/ResolveMemberPermissions.java core/gateway/MemberRoleRepository.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh24",
+			"type": "shell",
+			"command": "cd web-client && sed -n '110,260p' src/app/pages/__tests__/index.test.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "f9",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && cat controller/contract/ServerResponse.java core/usecase/RetrieveServerWithChannels.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh25",
+			"type": "shell",
+			"command": "cd web-client && git branch -a | head -40 && grep -rn 'onDeleteActiveServer' src --include=*.tsx | head",
+			"isBackground": false
+		},
+		{
+			"label": "sh26",
+			"type": "shell",
+			"command": "cd web-client && grep -n \"  it(\\|describe(\" src/app/pages/__tests__/index.test.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "m1",
+			"type": "shell",
+			"command": "cd server && grep -n -A 15 'ownership_transfers' src/main/resources/db/migration/V1__init.sql | head -40 && ls src/main/resources/db/migration",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh27",
+			"type": "shell",
+			"command": "cd web-client && sed -n '654,800p' src/app/pages/__tests__/index.test.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "m2",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia/infra/repository && cat OwnershipTransferPanacheRepository.java repository/dto/OwnershipTransferEntity.java 2>/dev/null || cat OwnershipTransferPanacheRepository.java ../repository/dto/OwnershipTransferEntity.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "d1",
+			"type": "shell",
+			"command": "cd server && ls docs docs/arquitectura specs specs/004-transfer-ownership && head -60 docs/arquitectura/adr-004-*.md",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh28",
+			"type": "shell",
+			"command": "cd web-client && ls src/components/popups/__tests__ src/core/servers src/core/api | tr '\\n' ' ' && echo && wc -l src/components/popups/__tests__/*.tsx | sort -n",
+			"isBackground": false
+		},
+		{
+			"label": "d2",
+			"type": "shell",
+			"command": "cd server/specs/004-transfer-ownership && ls -R && wc -l spec.md tasks.md contracts/*.md",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh29",
+			"type": "shell",
+			"command": "cd web-client && cat src/components/popups/__tests__/LeaveServerConfirmation.test.tsx && echo '===RoleMembers.test' && sed -n '1,90p' src/components/popups/__tests__/RoleMembers.test.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "sh30",
+			"type": "shell",
+			"command": "cd web-client && echo '===getMembers' && cat src/core/api/getMembers.ts && echo '===membersTypes' && cat src/core/api/membersTypes.ts && echo '===resolveProfileName' && cat src/core/profile/resolveProfileName.ts && echo '===ActionButton' && cat src/components/ActionButton.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "d3",
+			"type": "shell",
+			"command": "cd server/specs/004-transfer-ownership && cat spec.md",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "d4",
+			"type": "shell",
+			"command": "cd server/specs/004-transfer-ownership && cat tasks.md && echo '########' && cat contracts/transfer-ownership-api.md",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh31",
+			"type": "shell",
+			"command": "cd web-client && cat src/core/api/getMembers.ts src/core/api/membersTypes.ts src/components/ActionButton.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "m3",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia/infra/repository && sed -n '1,120p' ServerRepositoryImpl.java && echo '#####' && grep -n 'insertIfAbsent' -A 20 ServerMemberRepositoryImpl.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh32",
+			"type": "shell",
+			"command": "cd web-client && cat src/core/profile/resolveProfileName.ts && echo '===specs018' && ls -R specs/018-delete-message-ui && wc -c specs/018-delete-message-ui/*.md specs/018-delete-message-ui/contracts/*.md",
+			"isBackground": false
+		},
+		{
+			"label": "m4",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia/infra/repository && grep -n 'lockById' -A 12 ServerRepositoryImpl.java && grep -n 'updateOwner' -A 8 ServerRepositoryImpl.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh33",
+			"type": "shell",
+			"command": "cd web-client && cat src/core/profile/resolveProfileName.ts",
+			"isBackground": false
+		},
+		{
+			"label": "m5",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia/infra/repository && grep -n 'insertIfAbsent' -A 14 ServerMemberRepositoryImpl.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh34",
+			"type": "shell",
+			"command": "cd web-client && sed -n '1,80p' src/core/profile/resolveProfileName.ts",
+			"isBackground": false
+		},
+		{
+			"label": "m6",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && ls core/usecase | head -60 && echo '--- contracts ---' && ls controller/contract | grep -i member",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "m7",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && cat controller/contract/ServerMemberResponse.java && grep -n 'Path\\|GET\\|POST\\|PUT' controller/ServerMemberController.java | head -40",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh35",
+			"type": "shell",
+			"command": "cd web-client && find specs/018-delete-message-ui -type f && wc -c specs/018-delete-message-ui/spec.md specs/018-delete-message-ui/plan.md specs/018-delete-message-ui/tasks.md specs/018-delete-message-ui/contracts/*",
+			"isBackground": false
+		},
+		{
+			"label": "m8",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && cat controller/ServerMemberController.java && cat controller/contract/ServerMemberPageResponse.java controller/contract/ServerMemberRolesResponse.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "b1",
+			"type": "shell",
+			"command": "cd server && cat build.gradle | head -80 && echo '##### props #####' && cat src/main/resources/application.properties",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh36",
+			"type": "shell",
+			"command": "cd web-client && cat specs/018-delete-message-ui/spec.md specs/018-delete-message-ui/plan.md",
+			"isBackground": false
+		},
+		{
+			"label": "m9",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia/controller && grep -n '@Path\\|@POST\\|@PUT\\|@GET\\|public Response' RoleController.java ServerBanController.java MemberRoleController.java 2>/dev/null | head -60",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh37",
+			"type": "shell",
+			"command": "cd web-client && cat specs/018-delete-message-ui/tasks.md specs/018-delete-message-ui/contracts/client-api.md",
+			"isBackground": false
+		},
+		{
+			"label": "sh38",
+			"type": "shell",
+			"command": "cd web-client && cat package.json && cat jest.config.js 2>/dev/null; ls jest* 2>/dev/null",
+			"isBackground": false
+		},
+		{
+			"label": "m10",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && sed -n '1,80p' controller/RoleController.java && cat controller/contract/CreateRoleRequest.java 2>/dev/null || ls controller/contract | grep -i role",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "m11",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && cat controller/contract/UpdateRolePermissionsRequest.java && sed -n '1,60p' core/usecase/UpdateRolePermissions.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh39",
+			"type": "shell",
+			"command": "cd web-client && cat src/core/api/revokeBan.ts src/core/api/banMember.ts src/core/api/deleteServer.ts src/core/api/getServers.ts src/core/api/deleteChannelMessage.ts && sed -n '1,40p' src/core/api/errors.ts",
+			"isBackground": false
+		},
+		{
+			"label": "m12",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && sed -n '1,60p' controller/MemberRoleController.java && echo '=== policy ===' && cat core/usecase/ManageMessagesPolicy.java | head -40 && ls infra/policy 2>/dev/null; grep -rn 'implements ManageRolesPolicy' --include=*.java . | head",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh40",
+			"type": "shell",
+			"command": "cd web-client && grep -n 'export function isNetworkError' -A 12 src/core/api/errors.ts && sed -n '1,60p' src/components/NotificationsProvider.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "m13",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && cat infra/DefaultManageRolesPolicy.java && sed -n '1,70p' core/usecase/ListServerMembers.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "m14",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia && sed -n '30,60p' controller/ServerBanController.java && cat controller/contract/BanMemberRequest.java 2>/dev/null; ls controller/contract | grep -i ban",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh41",
+			"type": "shell",
+			"command": "cd web-client && cat > src/core/api/transfersTypes.ts <<'TS_EOF'\n// Shapes mirroring `server`'s ownership-transfer endpoints (HU #10, see\n// specs/023-transfer-ownership-ui/contracts/ownership-transfer-api.md),\n// relayed by the gateway. camelCase like every other `server` payload.\n\nexport type OwnershipTransferStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELLED';\n\n// What POST /servers/{id}/transfers answers (201) and what accept/reject\n// answer once they resolve it (200): the transfer as the backend stores it.\nexport type OwnershipTransfer = {\n  id: string;\n  serverId: string;\n  currentOwnerId: string;\n  targetUserId: string;\n  status: OwnershipTransferStatus;\n  createdAt: string;\n};\n\n// The pending transfer as GET /servers embeds it in each server. It is the\n// only way to discover one — there is no listing endpoint — and `server` only\n// fills it in for its two parties: the owner who started it and its target.\nexport type PendingOwnershipTransfer = {\n  id: string;\n  initiatedBy: string;\n  targetUserId: string;\n  createdAt: string;\n};\nTS_EOF\ntest -f src/core/api/transfersTypes.ts && wc -c src/core/api/transfersTypes.ts",
+			"isBackground": false
+		},
+		{
+			"label": "m15",
+			"type": "shell",
+			"command": "cd server/src/main/java/discordia/infra && grep -rn '@Transactional' --include=*.java . | head -20 && echo '=== ban test ===' && sed -n '1,60p' ../../../test/java/discordia/ServerBanControllerTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh42",
+			"type": "shell",
+			"command": "cd web-client && head -8 src/core/api/transfersTypes.ts && echo '--- lines:' && wc -l src/core/api/transfersTypes.ts",
+			"isBackground": false
+		},
+		{
+			"label": "m16",
+			"type": "shell",
+			"command": "cd server && grep -rn '@Transactional' src/main/java/discordia/infra --include=*.java | head -20; echo '=== ban test ==='; sed -n '1,70p' src/test/java/discordia/ServerBanControllerTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh43",
+			"type": "shell",
+			"command": "cd web-client && cat > src/core/api/initiateTransfer.ts <<'TS_EOF'\nimport { apiFetch } from './apifetch';\nimport type { OwnershipTransfer } from './transfersTypes';\n\n// Offers a server's ownership to one of its members (HU #10). Only the current\n// owner may start it (403 otherwise), the target has to be a member and not the\n// owner (400), and starting a new one cancels the previous pending transfer.\n// Failures are thrown as ApiError; see initiateTransferError in\n// serversErrors.ts for the user-facing text.\nexport async function initiateTransfer(\n  serverId: string,\n  targetUserId: string,\n): Promise<OwnershipTransfer> {\n  const response = await apiFetch(`/servers/${serverId}/transfers`, {\n    method: 'POST',\n    body: JSON.stringify({ targetUserId }),\n  });\n  return response.json();\n}\nTS_EOF\ncat > src/core/api/acceptTransfer.ts <<'TS_EOF'\nimport { apiFetch } from './apifetch';\nimport type { OwnershipTransfer } from './transfersTypes';\n\n// Accepts an ownership transfer (HU #10), which makes the caller the server's\n// new owner. Only the target may answer (403); a transfer that is no longer\n// pending is a 400 — the caller reloads its list. See transferResponseError in\n// serversErrors.ts for the user-facing text.\nexport async function acceptTransfer(\n  serverId: string,\n  transferId: string,\n): Promise<OwnershipTransfer> {\n  const response = await apiFetch(`/servers/${serverId}/transfers/${transferId}/accept`, {\n    method: 'POST',\n  });\n  return response.json();\n}\nTS_EOF\ncat > src/core/api/rejectTransfer.ts <<'TS_EOF'\nimport { apiFetch } from './apifetch';\nimport type { OwnershipTransfer } from './transfersTypes';\n\n// Declines an ownership transfer (HU #10): the server stays with its owner and\n// nothing else changes. Only the target may answer (403); a transfer that is no\n// longer pending is a 400 — the caller reloads its list. See\n// transferResponseError in serversErrors.ts for the user-facing text.\nexport async function rejectTransfer(\n  serverId: string,\n  transferId: string,\n): Promise<OwnershipTransfer> {\n  const response = await apiFetch(`/servers/${serverId}/transfers/${transferId}/reject`, {\n    method: 'POST',\n  });\n  return response.json();\n}\nTS_EOF\nwc -l src/core/api/initiateTransfer.ts src/core/api/acceptTransfer.ts src/core/api/rejectTransfer.ts",
+			"isBackground": false
+		},
+		{
+			"label": "m17",
+			"type": "shell",
+			"command": "cd server && sed -n '1,60p' src/test/java/discordia/MemberRoleControllerTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh44",
+			"type": "shell",
+			"command": "cd web-client && cat > .tmp-add-type.js <<'JS_EOF'\nconst fs = require('fs');\n\nconst path = 'src/core/api/serversTypes.ts';\nlet source = fs.readFileSync(path, 'utf8');\n\nconst importLine = \"import type { PendingOwnershipTransfer } from './transfersTypes';\\n\\n\";\nif (!source.includes(\"from './transfersTypes'\")) {\n  source = importLine + source;\n}\n\nconst anchor = '  createdAt: string;\\n  relationship: ServerRelationship;\\n';\nif (!source.includes(anchor)) {\n  throw new Error('ancla no encontrada');\n}\n\nconst replacement = [\n  '  createdAt: string;',\n  '  // The pending ownership transfer of this server (HU #10), if any. `server`',\n  '  // only fills it in for the owner who started it and for its target, and it',\n  '  // is the single way to discover a pending one (there is no listing route).',\n  '  // Optional: a payload without it (an older `server`) reads as \"no pending',\n  '  // transfer\" — fail closed.',\n  '  ownershipTransfer?: PendingOwnershipTransfer | null;',\n  '  relationship: ServerRelationship;',\n  '',\n].join('\\n');\n\nfs.writeFileSync(path, source.replace(anchor, replacement));\nconsole.log('ok');\nJS_EOF\nnode .tmp-add-type.js && rm .tmp-add-type.js && sed -n '1,5p' src/core/api/serversTypes.ts && sed -n '38,56p' src/core/api/serversTypes.ts",
+			"isBackground": false
+		},
+		{
+			"label": "m18",
+			"type": "shell",
+			"command": "cd server && sed -n '60,140p' src/test/java/discordia/MemberRoleControllerTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh45",
+			"type": "shell",
+			"command": "cd web-client && file src/core/api/serversTypes.ts src/core/api/transfersTypes.ts src/core/api/leaveServer.ts 2>/dev/null; git config core.autocrlf; grep -c $'\\r' src/core/api/serversTypes.ts",
+			"isBackground": false
+		},
+		{
+			"label": "baseline-test",
+			"type": "shell",
+			"command": "cd server && ./gradlew test --tests \"discordia.ServerTransferControllerTest\" --tests \"discordia.TransferOwnershipTest\" --tests \"discordia.ListServersTest\" -q 2>&1 | tail -40",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh46",
+			"type": "shell",
+			"command": "cd web-client && cat > .tmp-add-type.js <<'JS_EOF'\nconst fs = require('fs');\n\nconst path = 'src/core/api/serversTypes.ts';\nconst raw = fs.readFileSync(path, 'utf8');\nconst crlf = raw.includes('\\r\\n');\nlet source = raw.replace(/\\r\\n/g, '\\n');\n\nif (!source.includes(\"from './transfersTypes'\")) {\n  source = \"import type { PendingOwnershipTransfer } from './transfersTypes';\\n\\n\" + source;\n}\n\nconst anchor = '  createdAt: string;\\n  relationship: ServerRelationship;\\n';\nif (!source.includes(anchor)) {\n  throw new Error('ancla no encontrada');\n}\n\nconst replacement = [\n  '  createdAt: string;',\n  '  // The pending ownership transfer of this server (HU #10), if any. `server`',\n  '  // only fills it in for the owner who started it and for its target, and it',\n  '  // is the single way to discover a pending one (there is no listing route).',\n  '  // Optional: a payload without it (an older `server`) reads as \"no pending',\n  '  // transfer\" — fail closed.',\n  '  ownershipTransfer?: PendingOwnershipTransfer | null;',\n  '  relationship: ServerRelationship;',\n  '',\n].join('\\n');\n\nsource = source.replace(anchor, replacement);\nfs.writeFileSync(path, crlf ? source.replace(/\\n/g, '\\r\\n') : source);\nconsole.log('ok', { crlf });\nJS_EOF\nnode .tmp-add-type.js && rm .tmp-add-type.js && git diff --stat src/core/api/serversTypes.ts && git diff src/core/api/serversTypes.ts | head -30",
+			"isBackground": false
+		},
+		{
+			"label": "java-check",
+			"type": "shell",
+			"command": "ls \"/c/Program Files/Java\" 2>/dev/null; ls \"/c/Program Files/Eclipse Adoptium\" 2>/dev/null; echo \"JAVA_HOME=$JAVA_HOME\"; which java; java -version 2>&1 | head -3",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh47",
+			"type": "shell",
+			"command": "cd web-client && cat > .tmp-edit.js <<'JS_EOF'\nconst fs = require('fs');\n\nconst path = 'src/core/api/serversErrors.ts';\nconst raw = fs.readFileSync(path, 'utf8');\nconst crlf = raw.includes('\\r\\n');\nlet source = raw.replace(/\\r\\n/g, '\\n');\n\nconst block = [\n  '',\n  '// Ownership transfers (HU #10). `server` answers its refusals with a fixed',\n  '// English message per rule (see contracts/ownership-transfer-api.md); the',\n  '// client owns the copy, so the known ones are recognized by their key word',\n  '// instead of being shown in English.',\n  \"const TRANSFER_NOT_PENDING = 'La transferencia ya no está pendiente.';\",\n  \"const TRANSFER_OWNER_ONLY = 'Solo el dueño puede transferir la propiedad.';\",\n  \"const TRANSFER_TARGET_ONLY = 'Solo el destinatario puede responder esta transferencia.';\",\n  \"const TRANSFER_NOT_MEMBER = 'Esa persona ya no es miembro del servidor.';\",\n  \"const TRANSFER_TO_OWNER = 'No podés transferirle la propiedad al dueño actual.';\",\n  '',\n  '// The 400 of a new transfer is about the target (someone who isn\\'t a member,',\n  '// or the owner itself): its message decides which of the two copies applies.',\n  'function transferTargetRefusal(cause: ApiError): string | null {',\n  \"  const message = messageFromBody(cause)?.toLowerCase() ?? '';\",\n  '  if (message.includes(\\'member\\')) {',\n  '    return TRANSFER_NOT_MEMBER;',\n  '  }',\n  \"  if (message.includes('yourself') || message.includes('owner')) {\",\n  '    return TRANSFER_TO_OWNER;',\n  '  }',\n  '  return null;',\n  '}',\n  '',\n  '// Starting a transfer: 403 is the owner check, 400 the target\\'s. A 404 (the',\n  '// server is gone) and the network/upstream failures come from serversFormError.',\n  'export function initiateTransferError(cause: unknown): string {',\n  '  if (cause instanceof ApiError && cause.status === 403) {',\n  '    return TRANSFER_OWNER_ONLY;',\n  '  }',\n  '  if (cause instanceof ApiError && cause.status === 400) {',\n  '    return transferTargetRefusal(cause) ?? TRANSFER_NOT_PENDING;',\n  '  }',\n  '  return serversFormError(cause);',\n  '}',\n  '',\n  '// Answering a transfer: 400 means it is no longer PENDING (it was accepted,',\n  '// rejected or cancelled elsewhere — the caller reloads its list), 403 that the',\n  '// caller is not its target.',\n  'export function transferResponseError(cause: unknown): string {',\n  '  if (cause instanceof ApiError && cause.status === 400) {',\n  '    return TRANSFER_NOT_PENDING;',\n  '  }',\n  '  if (cause instanceof ApiError && cause.status === 403) {',\n  '    return TRANSFER_TARGET_ONLY;',\n  '  }',\n  '  return serversFormError(cause);',\n  '}',\n  '',\n].join('\\n');\n\nsource = source.trimEnd() + '\\n' + block;\nfs.writeFileSync(path, crlf ? source.replace(/\\n/g, '\\r\\n') : source);\nconsole.log('ok');\nJS_EOF\nnode .tmp-edit.js && rm .tmp-edit.js && git diff src/core/api/serversErrors.ts | tail -55",
+			"isBackground": false
+		},
+		{
+			"label": "gradle-version",
+			"type": "shell",
+			"command": "ls /cygdrive/c 2>&1 | head -3; cd server && cmd //c \"gradlew.bat --version\" 2>&1 | tail -12",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh48",
+			"type": "shell",
+			"command": "cd web-client && tail -45 src/core/api/serversErrors.ts",
+			"isBackground": false
+		},
+		{
+			"label": "baseline2",
+			"type": "shell",
+			"command": "cd server && cmd //c \"gradlew.bat test --tests discordia.ServerTransferControllerTest --tests discordia.TransferOwnershipTest --tests discordia.ListServersTest --console=plain\" 2>&1 | tail -30",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh49",
+			"type": "shell",
+			"command": "cd web-client && cat > src/core/servers/transfers.ts <<'TS_EOF'\nimport type { PendingOwnershipTransfer, ServerSummary } from '@/core/api/serversTypes';\n\n// Pure decisions for the ownership transfers of HU #10, kept out of the views\n// (same rule as membership.ts/sync.ts): the screens only render what these\n// helpers select.\n\nexport type TransferDirection = 'incoming' | 'outgoing';\n\n// A pending transfer is mine to answer when I am its target; otherwise the only\n// party that can see it is the owner who started it.\nexport function directionOf(\n  transfer: PendingOwnershipTransfer,\n  userId: string,\n): TransferDirection {\n  return transfer.targetUserId === userId ? 'incoming' : 'outgoing';\n}\n\n// `userId` unknown (session still restoring) means no transfer is claimed: the\n// client never shows an affordance it can't attribute — fail closed.\nexport function incomingTransferOf(\n  server: ServerSummary,\n  userId: string | null,\n): PendingOwnershipTransfer | null {\n  if (!userId) {\n    return null;\n  }\n  const transfer = server.ownershipTransfer ?? null;\n  if (!transfer) {\n    return null;\n  }\n  return directionOf(transfer, userId) === 'incoming' ? transfer : null;\n}\n\nexport function outgoingTransferOf(\n  server: ServerSummary,\n  userId: string | null,\n): PendingOwnershipTransfer | null {\n  if (!userId) {\n    return null;\n  }\n  const transfer = server.ownershipTransfer ?? null;\n  if (!transfer) {\n    return null;\n  }\n  return directionOf(transfer, userId) === 'outgoing' ? transfer : null;\n}\n\n// Every server offering its ownership to the caller, in list order: one banner\n// each, rendered above the home layout.\nexport function incomingTransfers(\n  list: ServerSummary[] | null,\n  userId: string | null,\n): { server: ServerSummary; transfer: PendingOwnershipTransfer }[] {\n  if (!userId) {\n    return [];\n  }\n  const found: { server: ServerSummary; transfer: PendingOwnershipTransfer }[] = [];\n  for (const server of list ?? []) {\n    const transfer = incomingTransferOf(server, userId);\n    if (transfer) {\n      found.push({ server, transfer });\n    }\n  }\n  return found;\n}\nTS_EOF\nwc -l src/core/servers/transfers.ts",
+			"isBackground": false
+		},
+		{
+			"label": "sh50",
+			"type": "shell",
+			"command": "cd web-client && cat > src/styles/transfers.ts <<'TS_EOF'\nimport { StyleSheet } from 'react-native';\nimport { colors } from '@/styles/app';\n\n// Ownership transfer UI (HU #10): the persistent banner offered to the target\n// and the owner's popup. Same palette and shapes as roles.ts, which the member\n// lists already use.\nexport const styles = StyleSheet.create({\n  banner: {\n    flexDirection: 'row',\n    alignItems: 'center',\n    flexWrap: 'wrap',\n    gap: 12,\n    paddingVertical: 12,\n    paddingHorizontal: 16,\n    marginHorizontal: 12,\n    marginTop: 12,\n    borderRadius: 8,\n    backgroundColor: colors.channelList,\n    borderLeftWidth: 3,\n    borderLeftColor: colors.primary,\n  },\n  bannerBody: {\n    flex: 1,\n    minWidth: 220,\n    gap: 2,\n  },\n  bannerTitle: {\n    color: colors.channelTextActive,\n    fontWeight: '700',\n    fontSize: 14,\n  },\n  bannerText: {\n    color: colors.channelText,\n    fontSize: 13,\n  },\n  bannerActions: {\n    flexDirection: 'row',\n    alignItems: 'center',\n    gap: 8,\n  },\n  // ActionButton is full width by default (the auth forms); inside the banner\n  // row each button only takes what its label needs.\n  bannerButton: {\n    width: 'auto',\n    minWidth: 110,\n    maxWidth: 170,\n  },\n  bannerError: {\n    width: '100%',\n  },\n\n  container: {\n    gap: 12,\n  },\n  loading: {\n    paddingVertical: 24,\n  },\n  mutedText: {\n    color: colors.muted,\n    marginBottom: 8,\n  },\n  errorBox: {\n    gap: 8,\n  },\n  list: {\n    maxHeight: 280,\n  },\n  hint: {\n    color: colors.channelText,\n    fontSize: 12,\n    marginBottom: 4,\n  },\n  notice: {\n    padding: 10,\n    borderRadius: 8,\n    backgroundColor: colors.rail,\n  },\n  noticeText: {\n    color: colors.primarySoft,\n    fontSize: 12,\n  },\n  memberRow: {\n    flexDirection: 'row',\n    alignItems: 'center',\n    gap: 10,\n    paddingVertical: 10,\n    paddingHorizontal: 10,\n    marginVertical: 3,\n    borderRadius: 8,\n    backgroundColor: colors.channelList,\n    borderWidth: 1,\n    borderColor: 'transparent',\n  },\n  memberRowSelected: {\n    borderColor: colors.primary,\n  },\n  memberBody: {\n    flex: 1,\n    gap: 2,\n  },\n  memberName: {\n    color: colors.channelTextActive,\n    fontWeight: '700',\n    fontSize: 14,\n  },\n  memberMeta: {\n    color: colors.channelText,\n    fontSize: 12,\n  },\n  confirmText: {\n    color: colors.muted,\n  },\n});\nTS_EOF\nwc -l src/styles/transfers.ts",
+			"isBackground": false
+		},
+		{
+			"label": "sh51",
+			"type": "shell",
+			"command": "cd web-client && wc -l src/styles/transfers.ts && tail -5 src/styles/transfers.ts",
+			"isBackground": false
+		},
+		{
+			"label": "baseline3",
+			"type": "shell",
+			"command": "cd server && cmd //c \"gradlew.bat test --tests discordia.ServerTransferControllerTest --console=plain\" 2>&1 | tail -20",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh52",
+			"type": "shell",
+			"command": "cd web-client && mkdir -p src/components/transfers && cat > src/components/transfers/OwnershipTransferBanner.tsx <<'TSX_EOF'\nimport { useEffect, useState } from 'react';\nimport { View } from 'react-native';\nimport { HelperText, Text } from 'react-native-paper';\n\nimport { acceptTransfer } from '@/core/api/acceptTransfer';\nimport { rejectTransfer } from '@/core/api/rejectTransfer';\nimport { transferResponseError } from '@/core/api/serversErrors';\nimport type { PendingOwnershipTransfer, ServerSummary } from '@/core/api/serversTypes';\nimport { resolveProfileName } from '@/core/profile/resolveProfileName';\nimport ActionButton from '@/components/ActionButton';\nimport { colors } from '@/styles/app';\nimport { styles } from '@/styles/transfers';\n\nexport type TransferOutcome = 'accepted' | 'rejected';\n\ntype Props = {\n  server: Pick<ServerSummary, 'id' | 'name'>;\n  transfer: PendingOwnershipTransfer;\n  onResolved: (outcome: TransferOutcome) => void;\n};\n\n// Persistent offer (HU #10): a Snackbar would disappear before the target could\n// act on it, so the request stays on screen until it is answered. Accepting or\n// rejecting goes through the REST endpoints; the page re-reads the servers\n// afterwards, which is what finally removes the banner for good.\nexport default function OwnershipTransferBanner({ server, transfer, onResolved }: Props) {\n  const [busy, setBusy] = useState<TransferOutcome | null>(null);\n  const [error, setError] = useState<string | null>(null);\n  const [senderName, setSenderName] = useState<string | null>(null);\n\n  // The owner's name is cosmetic: the banner renders right away with a generic\n  // subject and updates when the shared resolver answers — it never blocks the\n  // render, and a failed lookup simply keeps the generic copy.\n  useEffect(() => {\n    let cancelled = false;\n    void resolveProfileName(transfer.initiatedBy).then((result) => {\n      if (!cancelled && result.status === 'found') {\n        setSenderName(result.name);\n      }\n    });\n    return () => {\n      cancelled = true;\n    };\n  }, [transfer.initiatedBy]);\n\n  async function respond(outcome: TransferOutcome) {\n    setError(null);\n    setBusy(outcome);\n    try {\n      if (outcome === 'accepted') {\n        await acceptTransfer(server.id, transfer.id);\n      } else {\n        await rejectTransfer(server.id, transfer.id);\n      }\n      onResolved(outcome);\n    } catch (cause) {\n      // Inline, next to the buttons: the offer is still pending, so the target\n      // has to be able to try again or reload without the banner vanishing.\n      setError(transferResponseError(cause));\n    } finally {\n      setBusy(null);\n    }\n  }\n\n  return (\n    <View style={styles.banner} testID={`ownership-transfer-${transfer.id}`}>\n      <View style={styles.bannerBody}>\n        <Text style={styles.bannerTitle}>Transferencia de propiedad</Text>\n        <Text style={styles.bannerText}>\n          {senderName ?? 'Alguien'} te ofreció la propiedad de «{server.name}».\n        </Text>\n      </View>\n\n      <View style={styles.bannerActions}>\n        <ActionButton\n          label={busy === 'accepted' ? 'Aceptando...' : 'Aceptar'}\n          accessibilityLabel=\"Aceptar transferencia\"\n          testID=\"accept-transfer-button\"\n          style={styles.bannerButton}\n          disabled={busy !== null}\n          onPress={() => void respond('accepted')}\n        />\n        <ActionButton\n          label={busy === 'rejected' ? 'Rechazando...' : 'Rechazar'}\n          accessibilityLabel=\"Rechazar transferencia\"\n          testID=\"reject-transfer-button\"\n          style={styles.bannerButton}\n          buttonColor={colors.secondary}\n          disabled={busy !== null}\n          onPress={() => void respond('rejected')}\n        />\n      </View>\n\n      {error ? (\n        <View style={styles.bannerError}>\n          <HelperText type=\"error\" visible>\n            {error}\n          </HelperText>\n        </View>\n      ) : null}\n    </View>\n  );\n}\nTSX_EOF\nwc -l src/components/transfers/OwnershipTransferBanner.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "sh53",
+			"type": "shell",
+			"command": "cd web-client && wc -l src/components/transfers/OwnershipTransferBanner.tsx && npx tsc --noEmit 2>&1 | head -20",
+			"isBackground": false
+		},
+		{
+			"label": "docker-check",
+			"type": "shell",
+			"command": "docker ps -a --format '{{.Names}}\\t{{.Image}}\\t{{.Status}}' | head -20; echo '---'; docker info --format '{{.ServerVersion}} {{.OperatingSystem}}' 2>&1 | head -3",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "report1",
+			"type": "shell",
+			"command": "cd server && ls build/reports/tests/test/classes/ | head; sed -n '1,80p' \"build/test-results/test/TEST-discordia.ServerTransferControllerTest.xml\" | head -60",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh54",
+			"type": "shell",
+			"command": "cd web-client && node -e \"const fs=require('fs');const a='src/core/servers/transfers.ts';let s=fs.readFileSync(a,'utf8');s=s.replace(\\\"import type { PendingOwnershipTransfer, ServerSummary } from '@/core/api/serversTypes';\\\",\\\"import type { ServerSummary } from '@/core/api/serversTypes';\\nimport type { PendingOwnershipTransfer } from '@/core/api/transfersTypes';\\\");fs.writeFileSync(a,s);const b='src/components/transfers/OwnershipTransferBanner.tsx';let t=fs.readFileSync(b,'utf8');t=t.replace(\\\"import type { PendingOwnershipTransfer, ServerSummary } from '@/core/api/serversTypes';\\\",\\\"import type { ServerSummary } from '@/core/api/serversTypes';\\nimport type { PendingOwnershipTransfer } from '@/core/api/transfersTypes';\\\");fs.writeFileSync(b,t);console.log('ok')\" && head -3 src/core/servers/transfers.ts && sed -n '6,10p' src/components/transfers/OwnershipTransferBanner.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "baseline4",
+			"type": "shell",
+			"command": "cd server && JAVA_TOOL_OPTIONS=\"-Duser.timezone=UTC\" cmd //c \"gradlew.bat test --tests discordia.ServerTransferControllerTest --console=plain\" 2>&1 | tail -20",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "w-enum",
+			"type": "shell",
+			"command": "cd server && cat > src/main/java/discordia/core/usecase/dto/OwnershipTransferStatus.java << 'EOF'\npackage discordia.core.usecase.dto;\n\n/**\n * Estado de una transferencia de propiedad.\n *\n * <p>{@code PENDING} es el único estado abierto: una nueva iniciación cancela\n * la anterior ({@code CANCELLED}) para que cada servidor tenga como máximo una\n * transferencia pendiente. {@code ACCEPTED}, {@code REJECTED} y {@code CANCELLED}\n * son finales y nunca vuelven a {@code PENDING}.\n */\npublic enum OwnershipTransferStatus {\n    PENDING,\n    ACCEPTED,\n    REJECTED,\n    CANCELLED\n}\nEOF\ncat src/main/java/discordia/core/usecase/dto/OwnershipTransferStatus.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "w-gateway-impl",
+			"type": "shell",
+			"command": "cd server && cat > src/main/java/discordia/core/gateway/OwnershipTransferRepository.java << 'EOF'\npackage discordia.core.gateway;\n\nimport discordia.core.usecase.dto.OwnershipTransfer;\nimport discordia.core.usecase.dto.OwnershipTransferStatus;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.UUID;\n\n/**\n * Persistencia de las transferencias de propiedad (HU #10).\n *\n * <p>El único estado abierto es {@code PENDING}: las transiciones se hacen con\n * {@link #resolve} y no con un {@code updateStatus} a ciegas, para que aceptar y\n * rechazar en simultáneo no puedan ganar los dos.\n */\npublic interface OwnershipTransferRepository {\n\n    OwnershipTransfer save(OwnershipTransfer transfer);\n\n    Optional<OwnershipTransfer> findById(UUID id);\n\n    void updateStatus(UUID id, OwnershipTransferStatus status);\n\n    List<OwnershipTransfer> findByServerId(UUID serverId);\n\n    /**\n     * Transferencias {@code PENDING} en las que participa el usuario, ya sea como\n     * dueño que la inició ({@code currentOwnerId}) o como destinatario\n     * ({@code targetUserId}). Es la consulta que proyecta la pendiente en\n     * {@code GET /servers}.\n     */\n    List<OwnershipTransfer> findPendingInvolving(String userId);\n\n    /**\n     * Cancela todas las transferencias {@code PENDING} del servidor y devuelve la\n     * cantidad de filas afectadas. Se llama antes de crear una nueva para que un\n     * servidor tenga como máximo una pendiente (supracesión acordada: no hay\n     * endpoint de cancelar).\n     */\n    int cancelPendingByServerId(UUID serverId);\n\n    /**\n     * Transición condicional de estado: mueve la fila de {@code from} a {@code to}\n     * y devuelve {@code true} sólo si afectó una fila.\n     *\n     * <p>Es condicional a propósito: el caso de uso lee la transferencia, valida\n     * que esté {@code PENDING} y recién después la resuelve; sin el {@code WHERE\n     * status = :from} dos requests concurrentes (accept contra reject, o dos\n     * accept) pasarían las dos validaciones y ambas escribirían la propiedad del\n     * servidor. La que pierde recibe {@code false} y responde 400.\n     */\n    boolean resolve(UUID id, OwnershipTransferStatus from, OwnershipTransferStatus to);\n}\nEOF\ncat > src/main/java/discordia/infra/repository/OwnershipTransferRepositoryImpl.java << 'EOF'\npackage discordia.infra.repository;\n\nimport discordia.core.gateway.OwnershipTransferRepository;\nimport discordia.core.usecase.dto.OwnershipTransfer;\nimport discordia.core.usecase.dto.OwnershipTransferStatus;\nimport discordia.infra.repository.dto.OwnershipTransferEntity;\nimport jakarta.enterprise.context.ApplicationScoped;\nimport jakarta.inject.Inject;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.UUID;\n\n@ApplicationScoped\npublic class OwnershipTransferRepositoryImpl implements OwnershipTransferRepository {\n\n    @Inject\n    OwnershipTransferPanacheRepository panache;\n\n    @Override\n    public OwnershipTransfer save(OwnershipTransfer transfer) {\n        OwnershipTransferEntity entity = new OwnershipTransferEntity();\n        entity.id = transfer.id();\n        entity.serverId = transfer.serverId();\n        entity.currentOwnerId = transfer.currentOwnerId();\n        entity.targetUserId = transfer.targetUserId();\n        entity.status = transfer.status();\n        entity.createdAt = transfer.createdAt();\n        panache.persist(entity);\n        panache.flush();\n        return transfer;\n    }\n\n    @Override\n    public Optional<OwnershipTransfer> findById(UUID id) {\n        return panache.findByIdOptional(id).map(this::wrapIntoUseCaseDto);\n    }\n\n    @Override\n    public void updateStatus(UUID id, OwnershipTransferStatus status) {\n        panache.update(\"status = ?1 where id = ?2\", status, id);\n    }\n\n    @Override\n    public List<OwnershipTransfer> findByServerId(UUID serverId) {\n        return panache.list(\"serverId\", serverId).stream().map(this::wrapIntoUseCaseDto).toList();\n    }\n\n    @Override\n    public List<OwnershipTransfer> findPendingInvolving(String userId) {\n        return panache.list(\n                        \"status = ?1 and (targetUserId = ?2 or currentOwnerId = ?2)\",\n                        OwnershipTransferStatus.PENDING,\n                        userId)\n                .stream()\n                .map(this::wrapIntoUseCaseDto)\n                .toList();\n    }\n\n    @Override\n    public int cancelPendingByServerId(UUID serverId) {\n        return panache.update(\n                \"status = ?1 where serverId = ?2 and status = ?3\",\n                OwnershipTransferStatus.CANCELLED,\n                serverId,\n                OwnershipTransferStatus.PENDING);\n    }\n\n    @Override\n    public boolean resolve(UUID id, OwnershipTransferStatus from, OwnershipTransferStatus to) {\n        // Un solo UPDATE condicional: las filas afectadas son la prueba de que\n        // esta request fue la que resolvió la transferencia.\n        return panache.update(\"status = ?1 where id = ?2 and status = ?3\", to, id, from) == 1;\n    }\n\n    private OwnershipTransfer wrapIntoUseCaseDto(OwnershipTransferEntity entity) {\n        return new OwnershipTransfer(\n                entity.id,\n                entity.serverId,\n                entity.currentOwnerId,\n                entity.targetUserId,\n                entity.status,\n                entity.createdAt\n        );\n    }\n}\nEOF\ngit diff --stat",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh55",
+			"type": "shell",
+			"command": "cd web-client && grep -n 'export function' src/core/api/rolesErrors.ts",
+			"isBackground": false
+		},
+		{
+			"label": "verify1",
+			"type": "shell",
+			"command": "cd server && git status --short && head -5 src/main/java/discordia/infra/repository/OwnershipTransferRepositoryImpl.java && grep -n 'resolve' src/main/java/discordia/infra/repository/OwnershipTransferRepositoryImpl.java",
+			"args": [],
+			"isBackground": false
+		},
+		{},
+		{
+			"label": "w-initiate",
+			"type": "shell",
+			"command": "cd server && cat > src/main/java/discordia/core/usecase/InitiateOwnershipTransfer.java << 'EOF'\npackage discordia.core.usecase;\n\nimport discordia.core.gateway.OwnershipTransferRepository;\nimport discordia.core.gateway.ServerMemberRepository;\nimport discordia.core.gateway.ServerRepository;\nimport discordia.core.usecase.dto.OwnershipTransfer;\nimport discordia.core.usecase.dto.OwnershipTransferStatus;\nimport discordia.core.usecase.dto.Server;\nimport discordia.core.usecase.exception.ForbiddenServerActionException;\nimport discordia.core.usecase.exception.NonMemberTransferException;\nimport discordia.core.usecase.exception.ServerNotFoundException;\nimport jakarta.enterprise.context.ApplicationScoped;\nimport jakarta.inject.Inject;\nimport jakarta.transaction.Transactional;\nimport java.time.OffsetDateTime;\nimport java.util.UUID;\n\n/**\n * HU #10, CA 1 y CA 2: el dueño inicia la transferencia hacia otro miembro.\n *\n * <p>Orden de chequeos del contrato: {@code 404} servidor inexistente → {@code 403}\n * caller que no es el dueño → {@code 400} destinatario vacío, el propio dueño o\n * alguien que no es miembro.\n *\n * <p>El servidor se carga con {@link ServerRepository#lockById}: el lock pesimista\n * serializa esta escritura con {@code DeleteServer} y con otra iniciación del\n * mismo servidor, así que la cancelación de la pendiente anterior y el alta de la\n * nueva ocurren sobre el mismo estado.\n *\n * <p><strong>Una sola pendiente por servidor (supracesión).</strong> No hay endpoint\n * de cancelar: iniciar una transferencia nueva cancela las pendientes anteriores\n * ({@code CANCELLED}), de modo que el cliente nunca tiene que elegir entre dos\n * solicitudes vivas del mismo servidor.\n */\n@ApplicationScoped\npublic class InitiateOwnershipTransfer {\n\n    private final ServerRepository serverRepository;\n    private final ServerMemberRepository serverMemberRepository;\n    private final OwnershipTransferRepository ownershipTransferRepository;\n\n    @Inject\n    public InitiateOwnershipTransfer(\n            ServerRepository serverRepository,\n            ServerMemberRepository serverMemberRepository,\n            OwnershipTransferRepository ownershipTransferRepository\n    ) {\n        this.serverRepository = serverRepository;\n        this.serverMemberRepository = serverMemberRepository;\n        this.ownershipTransferRepository = ownershipTransferRepository;\n    }\n\n    @Transactional\n    public OwnershipTransfer execute(UUID serverId, String requesterId, String targetUserId) {\n        if (requesterId == null || requesterId.trim().isEmpty()) {\n            throw new ForbiddenServerActionException(\"User identity is required\");\n        }\n\n        String trimmedRequester = requesterId.trim();\n\n        Server server = serverRepository.lockById(serverId)\n                .orElseThrow(() -> new ServerNotFoundException(serverId));\n\n        if (!trimmedRequester.equals(server.ownerId())) {\n            throw new ForbiddenServerActionException(\"Only the server owner can initiate ownership transfer\");\n        }\n\n        if (targetUserId == null || targetUserId.trim().isEmpty()) {\n            throw new NonMemberTransferException(\"Target user must be specified\");\n        }\n\n        String trimmedTarget = targetUserId.trim();\n\n        if (trimmedTarget.equals(server.ownerId())) {\n            throw new NonMemberTransferException(\"Cannot transfer ownership to yourself\");\n        }\n\n        if (!serverMemberRepository.existsByServerIdAndUserId(serverId, trimmedTarget)) {\n            throw new NonMemberTransferException(\"Target user is not a member of the server\");\n        }\n\n        // Supracesión: como máximo una PENDING por servidor.\n        ownershipTransferRepository.cancelPendingByServerId(serverId);\n\n        OwnershipTransfer transfer = new OwnershipTransfer(\n                UUID.randomUUID(),\n                serverId,\n                trimmedRequester,\n                trimmedTarget,\n                OwnershipTransferStatus.PENDING,\n                OffsetDateTime.now()\n        );\n\n        return ownershipTransferRepository.save(transfer);\n    }\n}\nEOF\ngit diff --stat src/main/java/discordia/core/usecase/InitiateOwnershipTransfer.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "w-accept",
+			"type": "shell",
+			"command": "cd server && cat > src/main/java/discordia/core/usecase/AcceptOwnershipTransfer.java << 'EOF'\npackage discordia.core.usecase;\n\nimport discordia.core.gateway.OwnershipTransferRepository;\nimport discordia.core.gateway.ServerMemberRepository;\nimport discordia.core.gateway.ServerRepository;\nimport discordia.core.usecase.dto.OwnershipTransfer;\nimport discordia.core.usecase.dto.OwnershipTransferStatus;\nimport discordia.core.usecase.dto.Server;\nimport discordia.core.usecase.dto.ServerMember;\nimport discordia.core.usecase.exception.ForbiddenServerActionException;\nimport discordia.core.usecase.exception.InvalidTransferStateException;\nimport discordia.core.usecase.exception.NonMemberTransferException;\nimport discordia.core.usecase.exception.ServerNotFoundException;\nimport discordia.core.usecase.exception.TransferNotFoundException;\nimport jakarta.enterprise.context.ApplicationScoped;\nimport jakarta.inject.Inject;\nimport jakarta.transaction.Transactional;\nimport java.time.OffsetDateTime;\nimport java.util.UUID;\n\n/**\n * HU #10, CA 1: el destinatario acepta y pasa a ser el dueño; el dueño anterior\n * queda como miembro regular.\n *\n * <p>La transacción corre con el servidor bloqueado\n * ({@link ServerRepository#lockById}): el lock serializa con {@code DeleteServer} y\n * con otra aceptación o rechazo del mismo servidor, así que todas las validaciones\n * y las escrituras ven el mismo estado.\n *\n * <p>Orden de chequeos del contrato: {@code 404} servidor inexistente → {@code 404}\n * transferencia inexistente (o de otro servidor) → {@code 403} caller que no es el\n * destinatario → {@code 400} transferencia ya resuelta, transferencia vieja o\n * destinatario que dejó de ser miembro.\n *\n * <p><strong>Resolución condicional.</strong> La transferencia se pasa a\n * {@code ACCEPTED} con {@link OwnershipTransferRepository#resolve} antes de tocar\n * la propiedad: si otra request concurrente ya la resolvió, este caso de uso\n * aborta con {@code 400} en lugar de sobrescribir al dueño. Recién después se\n * actualiza {@code servers.owner_id}.\n *\n * <p><strong>Conversión del dueño anterior a miembro.</strong> El dueño no tiene\n * fila en {@code server_members} (la propiedad es implícita: la resuelve\n * {@link ResolveMemberPermissions} comparando {@code servers.owner_id}), así que al\n * transferir hay que materializarlo como miembro regular. Se usa\n * {@link ServerMemberRepository#insertIfAbsent} y no {@code exists} + {@code save}:\n * la unicidad {@code (server_id, user_id)} la garantiza la base y un alta\n * concurrente es un resultado normal (vacío), nunca una violación de PK.\n *\n * <p>No se copian roles del dueño ni se inserta nada en {@code server_member_roles}:\n * el baseline de todo miembro es {@link RolePermissions#DEFAULT}\n * ({@code VIEW_CHANNELS | SEND_MESSAGES}), que es exactamente lo que resuelve\n * {@link ResolveMemberPermissions} para un miembro sin roles. Copiar los roles —o\n * heredar el {@code ALL} implícito del dueño— le dejaría capacidades de\n * administración que ya no le corresponden; para recuperarlas, el nuevo dueño debe\n * asignarle un rol explícito (por ejemplo con {@code ADMINISTRATOR}).\n */\n@ApplicationScoped\npublic class AcceptOwnershipTransfer {\n\n    private final ServerRepository serverRepository;\n    private final ServerMemberRepository serverMemberRepository;\n    private final OwnershipTransferRepository ownershipTransferRepository;\n\n    @Inject\n    public AcceptOwnershipTransfer(\n            ServerRepository serverRepository,\n            ServerMemberRepository serverMemberRepository,\n            OwnershipTransferRepository ownershipTransferRepository\n    ) {\n        this.serverRepository = serverRepository;\n        this.serverMemberRepository = serverMemberRepository;\n        this.ownershipTransferRepository = ownershipTransferRepository;\n    }\n\n    @Transactional\n    public OwnershipTransfer execute(UUID serverId, UUID transferId, String requesterId) {\n        if (requesterId == null || requesterId.trim().isEmpty()) {\n            throw new ForbiddenServerActionException(\"User identity is required\");\n        }\n\n        String trimmedRequester = requesterId.trim();\n\n        Server server = serverRepository.lockById(serverId)\n                .orElseThrow(() -> new ServerNotFoundException(serverId));\n\n        OwnershipTransfer transfer = ownershipTransferRepository.findById(transferId)\n                .filter(t -> t.serverId().equals(serverId))\n                .orElseThrow(() -> new TransferNotFoundException(transferId));\n\n        if (!trimmedRequester.equals(transfer.targetUserId())) {\n            throw new ForbiddenServerActionException(\"Only the designated target user can accept the transfer\");\n        }\n\n        if (transfer.status() != OwnershipTransferStatus.PENDING) {\n            throw new InvalidTransferStateException(\"Transfer is no longer pending\");\n        }\n\n        // Consistencia: si la propiedad cambió después de iniciada la transferencia,\n        // la solicitud quedó vieja y no puede aplicarse.\n        if (!server.ownerId().equals(transfer.currentOwnerId())) {\n            throw new InvalidTransferStateException(\"Transfer is stale: the server owner changed\");\n        }\n\n        if (!serverMemberRepository.existsByServerIdAndUserId(serverId, transfer.targetUserId())) {\n            throw new NonMemberTransferException(\"The target user is no longer a member of the server\");\n        }\n\n        if (!ownershipTransferRepository.resolve(\n                transferId, OwnershipTransferStatus.PENDING, OwnershipTransferStatus.ACCEPTED)) {\n            throw new InvalidTransferStateException(\"Transfer is no longer pending\");\n        }\n\n        serverRepository.updateOwner(serverId, transfer.targetUserId());\n\n        serverMemberRepository.insertIfAbsent(new ServerMember(\n                UUID.randomUUID(),\n                serverId,\n                transfer.currentOwnerId(),\n                OffsetDateTime.now()\n        ));\n\n        return transfer.withStatus(OwnershipTransferStatus.ACCEPTED);\n    }\n}\nEOF\ngit status --short",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh56",
+			"type": "shell",
+			"command": "cd web-client && cat > src/components/popups/TransferOwnershipForm.tsx <<'TSX_EOF'\nimport { useEffect, useState } from 'react';\nimport { Pressable, ScrollView, View } from 'react-native';\nimport { ActivityIndicator, HelperText, Icon, Text } from 'react-native-paper';\n\nimport { getMembers, MEMBERS_PAGE_SIZE } from '@/core/api/getMembers';\nimport { initiateTransfer } from '@/core/api/initiateTransfer';\nimport type { ServerMember } from '@/core/api/membersTypes';\nimport { rolesFormError } from '@/core/api/rolesErrors';\nimport { initiateTransferError } from '@/core/api/serversErrors';\nimport type { ServerSummary } from '@/core/api/serversTypes';\nimport { useMemberNames } from '@/core/members/useMemberNames';\nimport { outgoingTransferOf } from '@/core/servers/transfers';\nimport ActionButton from '@/components/ActionButton';\nimport { colors, styles as appStyles } from '@/styles/app';\nimport { styles } from '@/styles/transfers';\n\ntype Props = {\n  // The list entry, not GET /servers/{id}: `ownershipTransfer` only travels in\n  // GET /servers (it is the single source of the pending transfer).\n  server: ServerSummary;\n  userId: string | null;\n  onInitiated: (serverName: string) => void;\n  onCancel: () => void;\n};\n\n// Owner's side of HU #10: pick one member and hand the server over. The listing\n// is paginated by the backend, so the form loads a single page (same criterion\n// as RoleMembers) and never asks for an unbounded collection; the owner and the\n// caller are left out because the backend refuses both.\nexport default function TransferOwnershipForm({ server, userId, onInitiated, onCancel }: Props) {\n  const [members, setMembers] = useState<ServerMember[] | null>(null);\n  const [loadError, setLoadError] = useState<string | null>(null);\n  const [selected, setSelected] = useState<string | null>(null);\n  const [sending, setSending] = useState(false);\n  const [submitError, setSubmitError] = useState<string | null>(null);\n  // Bumped by Reintentar to re-run the load effect (same convention as\n  // RoleMembers and pages/index.tsx).\n  const [reloadToken, setReloadToken] = useState(0);\n  const names = useMemberNames(members);\n\n  useEffect(() => {\n    let cancelled = false;\n\n    async function load() {\n      setLoadError(null);\n      try {\n        const page = await getMembers(server.id, { limit: MEMBERS_PAGE_SIZE, offset: 0 });\n        if (cancelled) return;\n        // Filtered before storing the page: `useMemberNames` takes the array\n        // itself, so the state has to keep one stable identity (and it never\n        // resolves a name it is not going to show).\n        setMembers(\n          page.members.filter(\n            (member) => member.userId !== userId && member.userId !== server.ownerId,\n          ),\n        );\n      } catch (cause) {\n        if (!cancelled) {\n          setMembers(null);\n          setLoadError(rolesFormError(cause));\n        }\n      }\n    }\n\n    void load();\n    return () => {\n      cancelled = true;\n    };\n  }, [server.id, server.ownerId, userId, reloadToken]);\n\n  const pendingOutgoing = outgoingTransferOf(server, userId);\n\n  async function submit() {\n    if (!selected || sending) return;\n    setSubmitError(null);\n    setSending(true);\n    try {\n      await initiateTransfer(server.id, selected);\n      onInitiated(server.name);\n    } catch (cause) {\n      setSubmitError(initiateTransferError(cause));\n    } finally {\n      setSending(false);\n    }\n  }\n\n  return (\n    <View style={styles.container}>\n      <Text variant=\"titleMedium\" style={appStyles.formTitle}>\n        Transferir «{server.name}»\n      </Text>\n      <Text style={styles.hint}>\n        Elegí quién va a ser el nuevo dueño. Al aceptar, el servidor pasa a ser suyo y vos quedás\n        como un miembro más: no se puede deshacer.\n      </Text>\n\n      {pendingOutgoing ? (\n        <View style={styles.notice} testID=\"pending-transfer-notice\">\n          <Text style={styles.noticeText}>\n            Ya hay una transferencia pendiente sin responder. Si iniciás otra, la anterior se\n            cancela.\n          </Text>\n        </View>\n      ) : null}\n\n      {loadError ? (\n        <View style={styles.errorBox}>\n          <Text variant=\"bodyMedium\" style={styles.mutedText}>\n            {loadError}\n          </Text>\n          <ActionButton\n            label=\"Reintentar\"\n            accessibilityLabel=\"Reintentar la carga de miembros\"\n            testID=\"retry-transfer-members\"\n            buttonColor={colors.secondary}\n            onPress={() => setReloadToken((token) => token + 1)}\n          />\n        </View>\n      ) : members === null ? (\n        <ActivityIndicator style={styles.loading} />\n      ) : members.length === 0 ? (\n        <Text variant=\"bodyMedium\" style={styles.mutedText}>\n          Este servidor todavía no tiene otros miembros.\n        </Text>\n      ) : (\n        <ScrollView style={styles.list}>\n          {members.map((member) => {\n            const name = names[member.userId] ?? member.userId;\n            const isSelected = selected === member.userId;\n            return (\n              <Pressable\n                key={member.userId}\n                accessibilityRole=\"radio\"\n                accessibilityState={{ checked: isSelected }}\n                accessibilityLabel={`Elegir a ${name}`}\n                testID={`transfer-target-${member.userId}`}\n                onPress={() => setSelected(member.userId)}\n                style={[styles.memberRow, isSelected && styles.memberRowSelected]}\n              >\n                <View style={styles.memberBody}>\n                  <Text style={styles.memberName}>{name}</Text>\n                  <Text style={styles.memberMeta}>\n                    {isSelected ? 'Nuevo dueño' : 'Miembro del servidor'}\n                  </Text>\n                </View>\n                {isSelected ? <Icon source=\"check\" size={18} color={colors.primarySoft} /> : null}\n              </Pressable>\n            );\n          })}\n        </ScrollView>\n      )}\n\n      {submitError ? (\n        <HelperText type=\"error\" visible>\n          {submitError}\n        </HelperText>\n      ) : null}\n\n      <ActionButton\n        label={sending ? 'Transfiriendo...' : 'Transferir propiedad'}\n        accessibilityLabel=\"Confirmar transferencia de propiedad\"\n        testID=\"confirm-transfer-button\"\n        disabled={!selected || sending || members === null}\n        onPress={() => void submit()}\n      />\n      <ActionButton\n        label=\"Cancelar\"\n        accessibilityLabel=\"Cancelar\"\n        testID=\"cancel-transfer-button\"\n        buttonColor={colors.secondary}\n        disabled={sending}\n        onPress={onCancel}\n      />\n    </View>\n  );\n}\nTSX_EOF\nwc -l src/components/popups/TransferOwnershipForm.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "w-reject",
+			"type": "shell",
+			"command": "cd server && cat > src/main/java/discordia/core/usecase/RejectOwnershipTransfer.java << 'EOF'\npackage discordia.core.usecase;\n\nimport discordia.core.gateway.OwnershipTransferRepository;\nimport discordia.core.usecase.dto.OwnershipTransfer;\nimport discordia.core.usecase.dto.OwnershipTransferStatus;\nimport discordia.core.usecase.exception.ForbiddenServerActionException;\nimport discordia.core.usecase.exception.InvalidTransferStateException;\nimport discordia.core.usecase.exception.TransferNotFoundException;\nimport jakarta.enterprise.context.ApplicationScoped;\nimport jakarta.inject.Inject;\nimport jakarta.transaction.Transactional;\nimport java.util.UUID;\n\n/**\n * HU #10, CA 3: el destinatario rechaza y la propiedad no cambia.\n *\n * <p>Orden de chequeos del contrato: {@code 404} transferencia inexistente (o de\n * otro servidor) → {@code 403} caller que no es el destinatario → {@code 400}\n * transferencia ya resuelta.\n *\n * <p>La resolución es condicional ({@link OwnershipTransferRepository#resolve}):\n * si una aceptación concurrente ganó el {@code UPDATE}, esta request recibe\n * {@code false} y responde {@code 400} en lugar de marcar como rechazada una\n * transferencia ya aceptada. El servidor no se toca en ningún caso (CA 3).\n */\n@ApplicationScoped\npublic class RejectOwnershipTransfer {\n\n    private final OwnershipTransferRepository ownershipTransferRepository;\n\n    @Inject\n    public RejectOwnershipTransfer(OwnershipTransferRepository ownershipTransferRepository) {\n        this.ownershipTransferRepository = ownershipTransferRepository;\n    }\n\n    @Transactional\n    public OwnershipTransfer execute(UUID serverId, UUID transferId, String requesterId) {\n        if (requesterId == null || requesterId.trim().isEmpty()) {\n            throw new ForbiddenServerActionException(\"User identity is required\");\n        }\n\n        String trimmedRequester = requesterId.trim();\n\n        OwnershipTransfer transfer = ownershipTransferRepository.findById(transferId)\n                .filter(t -> t.serverId().equals(serverId))\n                .orElseThrow(() -> new TransferNotFoundException(transferId));\n\n        if (!trimmedRequester.equals(transfer.targetUserId())) {\n            throw new ForbiddenServerActionException(\"Only the designated target user can reject the transfer\");\n        }\n\n        if (transfer.status() != OwnershipTransferStatus.PENDING) {\n            throw new InvalidTransferStateException(\"Transfer is no longer pending\");\n        }\n\n        if (!ownershipTransferRepository.resolve(\n                transferId, OwnershipTransferStatus.PENDING, OwnershipTransferStatus.REJECTED)) {\n            throw new InvalidTransferStateException(\"Transfer is no longer pending\");\n        }\n\n        return transfer.withStatus(OwnershipTransferStatus.REJECTED);\n    }\n}\nEOF\necho ok",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh57",
+			"type": "shell",
+			"command": "cd web-client && wc -l src/components/popups/TransferOwnershipForm.tsx && npx tsc --noEmit 2>&1 | head -20",
+			"isBackground": false
+		},
+		{
+			"label": "w-list",
+			"type": "shell",
+			"command": "cd server && cat > src/main/java/discordia/core/usecase/ListServers.java << 'EOF'\npackage discordia.core.usecase;\n\nimport discordia.core.gateway.OwnershipTransferRepository;\nimport discordia.core.gateway.ServerRepository;\nimport discordia.core.usecase.dto.OwnershipTransfer;\nimport discordia.core.usecase.dto.OwnershipTransferStatus;\nimport discordia.core.usecase.dto.ServerAccess;\nimport jakarta.enterprise.context.ApplicationScoped;\nimport jakarta.inject.Inject;\nimport java.util.HashMap;\nimport java.util.List;\nimport java.util.Map;\nimport java.util.UUID;\n\n@ApplicationScoped\npublic class ListServers {\n\n    private final ServerRepository serverRepository;\n    private final OwnershipTransferRepository ownershipTransferRepository;\n\n    @Inject\n    public ListServers(ServerRepository serverRepository, OwnershipTransferRepository ownershipTransferRepository) {\n        this.serverRepository = serverRepository;\n        this.ownershipTransferRepository = ownershipTransferRepository;\n    }\n\n    /**\n     * Every server the user owns or joined, with the relationship (014) and, per\n     * server, the pending ownership transfer the caller takes part in (HU #10).\n     */\n    public Result execute(String userId) {\n        List<ServerAccess> servers = serverRepository.findAccessibleBy(userId);\n        return new Result(servers, servers.size(), pendingTransfersByServer(userId));\n    }\n\n    /**\n     * Transferencia pendiente por servidor: sólo aparece en los servidores donde el\n     * caller es el iniciador o el destinatario, que son las dos únicas partes a las\n     * que la transferencia les cambia algo. Una por servidor: iniciar una nueva\n     * cancela la anterior, y si los datos igual tuvieran dos gana la más reciente.\n     */\n    private Map<UUID, OwnershipTransfer> pendingTransfersByServer(String userId) {\n        if (userId == null || userId.isBlank()) {\n            return Map.of();\n        }\n        Map<UUID, OwnershipTransfer> byServer = new HashMap<>();\n        for (OwnershipTransfer transfer : ownershipTransferRepository.findPendingInvolving(userId.trim())) {\n            if (transfer.status() != OwnershipTransferStatus.PENDING) {\n                continue;\n            }\n            byServer.merge(transfer.serverId(), transfer, ListServers::newest);\n        }\n        return Map.copyOf(byServer);\n    }\n\n    private static OwnershipTransfer newest(OwnershipTransfer current, OwnershipTransfer candidate) {\n        return candidate.createdAt().isAfter(current.createdAt()) ? candidate : current;\n    }\n\n    public record Result(\n            List<ServerAccess> servers, long count, Map<UUID, OwnershipTransfer> pendingTransfersByServer) {\n    }\n}\nEOF\ncat > src/main/java/discordia/controller/contract/ServerListResponse.java << 'EOF'\npackage discordia.controller.contract;\n\nimport discordia.core.usecase.dto.OwnershipTransfer;\nimport discordia.core.usecase.dto.ServerAccess;\nimport java.time.OffsetDateTime;\nimport java.util.List;\nimport java.util.Locale;\nimport java.util.Map;\nimport java.util.UUID;\n\npublic record ServerListResponse(long count, List<Summary> servers) {\n\n    public static ServerListResponse from(\n            List<ServerAccess> servers, long count, Map<UUID, OwnershipTransfer> pendingTransfersByServer) {\n        return new ServerListResponse(\n                count,\n                servers.stream()\n                        .map(access -> Summary.from(access, pendingTransfersByServer.get(access.server().id())))\n                        .toList());\n    }\n\n    /**\n     * {@code relationship} es {@code \"owner\"} o {@code \"member\"} (014) y\n     * {@code ownershipTransfer} es la transferencia pendiente que involucra al caller,\n     * o {@code null} cuando no participa (HU #10: el cliente no consulta un endpoint\n     * aparte para saber si hay una solicitud viva).\n     */\n    public record Summary(\n            UUID id,\n            String ownerId,\n            String name,\n            OffsetDateTime createdAt,\n            String relationship,\n            PendingTransfer ownershipTransfer) {\n\n        public static Summary from(ServerAccess access, OwnershipTransfer pendingTransfer) {\n            var server = access.server();\n            return new Summary(\n                    server.id(),\n                    server.ownerId(),\n                    server.name(),\n                    server.createdAt(),\n                    access.relationship().name().toLowerCase(Locale.ROOT),\n                    pendingTransfer == null ? null : PendingTransfer.from(pendingTransfer));\n        }\n    }\n\n    /**\n     * Vista mínima de la transferencia pendiente: {@code initiatedBy} es el dueño que\n     * la inició ({@code currentOwnerId}) y el destinatario sólo necesita el id para\n     * aceptar o rechazar.\n     */\n    public record PendingTransfer(UUID id, String initiatedBy, String targetUserId, OffsetDateTime createdAt) {\n\n        public static PendingTransfer from(OwnershipTransfer transfer) {\n            return new PendingTransfer(\n                    transfer.id(),\n                    transfer.currentOwnerId(),\n                    transfer.targetUserId(),\n                    transfer.createdAt());\n        }\n    }\n}\nEOF\ngit status --short",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh58",
+			"type": "shell",
+			"command": "cd web-client && cat > .tmp-sidebar.js <<'JS_EOF'\nconst fs = require('fs');\n\nconst path = 'src/components/Sidebar.tsx';\nconst raw = fs.readFileSync(path, 'utf8');\nconst crlf = raw.includes('\\r\\n');\nlet source = raw.replace(/\\r\\n/g, '\\n');\n\nconst propsAnchor = '  onShareActiveServer?: () => void;\\n';\nif (!source.includes(propsAnchor)) throw new Error('props anchor');\nsource = source.replace(\n  propsAnchor,\n  propsAnchor +\n    \"  // Hands the active server over to another member (HU #10). Owner-only:\\n\" +\n    \"  // the caller omits it for anyone else, so no transfer affordance appears.\\n\" +\n    '  onTransferActiveServer?: () => void;\\n',\n);\n\nconst destructureAnchor = '  onShareActiveServer,\\n  onManageChannel,';\nif (!source.includes(destructureAnchor)) throw new Error('destructure anchor');\nsource = source.replace(destructureAnchor, '  onShareActiveServer,\\n  onTransferActiveServer,\\n  onManageChannel,');\n\nconst headerAnchor = [\n  '            {activeServer?.name ?? \\'Discordia\\'}',\n  '          </Text>',\n  '          <ServerMenu',\n].join('\\n');\nif (!source.includes(headerAnchor)) throw new Error('header anchor');\nsource = source.replace(\n  headerAnchor,\n  [\n    '            {activeServer?.name ?? \\'Discordia\\'}',\n    '          </Text>',\n    '          {activeServer && isOwnerOfActiveServer && onTransferActiveServer ? (',\n    '            <IconButton',\n    '              icon=\"account-switch\"',\n    '              size={18}',\n    '              accessibilityLabel=\"Transferir propiedad\"',\n    '              onPress={onTransferActiveServer}',\n    '            />',\n    '          ) : null}',\n    '          <ServerMenu',\n  ].join('\\n'),\n);\n\nfs.writeFileSync(path, crlf ? source.replace(/\\n/g, '\\r\\n') : source);\nconsole.log('ok');\nJS_EOF\nnode .tmp-sidebar.js && rm .tmp-sidebar.js && git diff src/components/Sidebar.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "w-controller",
+			"type": "shell",
+			"command": "cd server && sed -i 's#        return Response.ok(ServerListResponse.from(result.servers(), result.count())).build();#        return Response.ok(\\n                        ServerListResponse.from(result.servers(), result.count(), result.pendingTransfersByServer()))\\n                .build();#' src/main/java/discordia/controller/ServerController.java && sed -n '58,66p' src/main/java/discordia/controller/ServerController.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "compile1",
+			"type": "shell",
+			"command": "cd server && JAVA_TOOL_OPTIONS=\"-Duser.timezone=UTC\" cmd //c \"gradlew.bat compileJava --console=plain\" 2>&1 | tail -20",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "w-test1",
+			"type": "shell",
+			"command": "cd server && cat > src/test/java/discordia/TransferOwnershipTest.java << 'EOF'\npackage discordia;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertFalse;\nimport static org.junit.jupiter.api.Assertions.assertNotNull;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.junit.jupiter.api.Assertions.assertTrue;\n\nimport discordia.core.gateway.OwnershipTransferRepository;\nimport discordia.core.gateway.ServerMemberRepository;\nimport discordia.core.gateway.ServerRepository;\nimport discordia.core.usecase.AcceptOwnershipTransfer;\nimport discordia.core.usecase.InitiateOwnershipTransfer;\nimport discordia.core.usecase.RejectOwnershipTransfer;\nimport discordia.core.usecase.dto.OwnershipTransfer;\nimport discordia.core.usecase.dto.OwnershipTransferStatus;\nimport discordia.core.usecase.dto.Server;\nimport discordia.core.usecase.dto.ServerAccess;\nimport discordia.core.usecase.dto.ServerMember;\nimport discordia.core.usecase.dto.ServerRelationship;\nimport discordia.core.usecase.exception.ForbiddenServerActionException;\nimport discordia.core.usecase.exception.InvalidTransferStateException;\nimport discordia.core.usecase.exception.NonMemberTransferException;\nimport discordia.core.usecase.exception.ServerNotFoundException;\nimport discordia.core.usecase.exception.TransferNotFoundException;\nimport java.time.OffsetDateTime;\nimport java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.UUID;\nimport org.junit.jupiter.api.BeforeEach;\nimport org.junit.jupiter.api.Test;\n\nclass TransferOwnershipTest {\n\n    private FakeServerRepository serverRepository;\n    private FakeServerMemberRepository memberRepository;\n    private FakeOwnershipTransferRepository transferRepository;\n\n    private InitiateOwnershipTransfer initiateTransfer;\n    private AcceptOwnershipTransfer acceptTransfer;\n    private RejectOwnershipTransfer rejectTransfer;\n\n    private Server sampleServer;\n    private final String ownerId = \"owner-100\";\n    private final String memberId = \"member-200\";\n    private final String strangerId = \"stranger-300\";\n\n    @BeforeEach\n    void setUp() {\n        serverRepository = new FakeServerRepository();\n        memberRepository = new FakeServerMemberRepository();\n        transferRepository = new FakeOwnershipTransferRepository();\n\n        initiateTransfer = new InitiateOwnershipTransfer(serverRepository, memberRepository, transferRepository);\n        acceptTransfer = new AcceptOwnershipTransfer(serverRepository, memberRepository, transferRepository);\n        rejectTransfer = new RejectOwnershipTransfer(transferRepository);\n\n        sampleServer = new Server(UUID.randomUUID(), ownerId, \"Awesome Server\", OffsetDateTime.now());\n        serverRepository.save(sampleServer);\n\n        // owner y member están en server_members\n        memberRepository.save(new ServerMember(UUID.randomUUID(), sampleServer.id(), ownerId, OffsetDateTime.now()));\n        memberRepository.save(new ServerMember(UUID.randomUUID(), sampleServer.id(), memberId, OffsetDateTime.now()));\n    }\n\n    // --- CA 1: iniciación y aceptación --------------------------------------\n\n    @Test\n    void initiateTransfer_withValidMember_createsPendingTransfer() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n\n        assertNotNull(transfer.id());\n        assertEquals(sampleServer.id(), transfer.serverId());\n        assertEquals(ownerId, transfer.currentOwnerId());\n        assertEquals(memberId, transfer.targetUserId());\n        assertEquals(OwnershipTransferStatus.PENDING, transfer.status());\n    }\n\n    @Test\n    void initiateTransfer_whenServerDoesNotExist_throwsServerNotFoundException() {\n        UUID unknownServerId = UUID.randomUUID();\n\n        assertThrows(\n                ServerNotFoundException.class,\n                () -> initiateTransfer.execute(unknownServerId, ownerId, memberId));\n        assertTrue(transferRepository.saved.isEmpty());\n    }\n\n    @Test\n    void acceptTransfer_byTargetMember_updatesServerOwnerAndKeepsOldOwnerAsMember() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n\n        OwnershipTransfer accepted = acceptTransfer.execute(sampleServer.id(), transfer.id(), memberId);\n\n        assertEquals(OwnershipTransferStatus.ACCEPTED, accepted.status());\n        assertEquals(OwnershipTransferStatus.ACCEPTED, transferRepository.stored(transfer.id()).orElseThrow().status());\n        Server updatedServer = serverRepository.findById(sampleServer.id()).orElseThrow();\n        assertEquals(memberId, updatedServer.ownerId());\n        assertTrue(memberRepository.existsByServerIdAndUserId(sampleServer.id(), ownerId));\n    }\n\n    @Test\n    void acceptTransfer_byUnauthorizedUser_throwsForbiddenServerActionException() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n\n        assertThrows(\n                ForbiddenServerActionException.class,\n                () -> acceptTransfer.execute(sampleServer.id(), transfer.id(), strangerId));\n        assertEquals(ownerId, serverRepository.findById(sampleServer.id()).orElseThrow().ownerId());\n        assertEquals(OwnershipTransferStatus.PENDING, transferRepository.stored(transfer.id()).orElseThrow().status());\n    }\n\n    @Test\n    void acceptTransfer_alreadyResolved_throwsInvalidTransferStateException() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n        acceptTransfer.execute(sampleServer.id(), transfer.id(), memberId);\n\n        assertThrows(\n                InvalidTransferStateException.class,\n                () -> acceptTransfer.execute(sampleServer.id(), transfer.id(), memberId));\n    }\n\n    @Test\n    void acceptTransfer_whenServerDoesNotExist_throwsServerNotFoundException() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n        UUID unknownServerId = UUID.randomUUID();\n\n        assertThrows(\n                ServerNotFoundException.class,\n                () -> acceptTransfer.execute(unknownServerId, transfer.id(), memberId));\n    }\n\n    @Test\n    void acceptTransfer_withUnknownTransfer_throwsTransferNotFoundException() {\n        assertThrows(\n                TransferNotFoundException.class,\n                () -> acceptTransfer.execute(sampleServer.id(), UUID.randomUUID(), memberId));\n    }\n\n    @Test\n    void acceptTransfer_whenTargetIsNoLongerMember_throwsNonMemberTransferException() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n        memberRepository.deleteByServerIdAndUserId(sampleServer.id(), memberId);\n\n        NonMemberTransferException ex = assertThrows(\n                NonMemberTransferException.class,\n                () -> acceptTransfer.execute(sampleServer.id(), transfer.id(), memberId));\n\n        assertEquals(\"The target user is no longer a member of the server\", ex.getMessage());\n        assertEquals(ownerId, serverRepository.findById(sampleServer.id()).orElseThrow().ownerId());\n        assertEquals(OwnershipTransferStatus.PENDING, transferRepository.stored(transfer.id()).orElseThrow().status());\n    }\n\n    @Test\n    void acceptTransfer_whenResolveLosesTheRace_throwsInvalidTransferStateException() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n        transferRepository.resolveSucceeds = false;\n\n        InvalidTransferStateException ex = assertThrows(\n                InvalidTransferStateException.class,\n                () -> acceptTransfer.execute(sampleServer.id(), transfer.id(), memberId));\n\n        assertEquals(\"Transfer is no longer pending\", ex.getMessage());\n        // La propiedad no se toca si el UPDATE condicional no afectó la fila.\n        assertEquals(ownerId, serverRepository.findById(sampleServer.id()).orElseThrow().ownerId());\n        assertEquals(1, memberRepository.countByServerId(sampleServer.id()) - 1);\n    }\n\n    @Test\n    void acceptTransfer_whenTheServerOwnerChangedAfterInitiation_throwsInvalidTransferStateException() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n        serverRepository.updateOwner(sampleServer.id(), strangerId);\n\n        InvalidTransferStateException ex = assertThrows(\n                InvalidTransferStateException.class,\n                () -> acceptTransfer.execute(sampleServer.id(), transfer.id(), memberId));\n\n        assertEquals(\"Transfer is stale: the server owner changed\", ex.getMessage());\n        assertEquals(strangerId, serverRepository.findById(sampleServer.id()).orElseThrow().ownerId());\n    }\n\n    /**\n     * Conversión real: el dueño no tiene fila en `server_members`, así que aceptar\n     * tiene que materializarlo con `insertIfAbsent` y sin roles.\n     */\n    @Test\n    void acceptTransfer_whenOwnerHasNoMembershipRow_insertsTheBaselineMemberOnce() {\n        memberRepository.deleteByServerIdAndUserId(sampleServer.id(), ownerId);\n        assertFalse(memberRepository.existsByServerIdAndUserId(sampleServer.id(), ownerId));\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n\n        acceptTransfer.execute(sampleServer.id(), transfer.id(), memberId);\n\n        assertEquals(1, memberRepository.insertIfAbsentCalls);\n        assertEquals(1, memberRepository.countByServerIdAndUserId(sampleServer.id(), ownerId));\n        assertEquals(0, memberRepository.saveCalls);\n        ServerMember formerOwner = memberRepository.findByServerIdAndUserId(sampleServer.id(), ownerId).orElseThrow();\n        assertEquals(ownerId, formerOwner.userId());\n        assertEquals(sampleServer.id(), formerOwner.serverId());\n    }\n\n    @Test\n    void acceptTransfer_whenTheFormerOwnerWasAlreadyAMember_doesNotDuplicateTheMembership() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n\n        acceptTransfer.execute(sampleServer.id(), transfer.id(), memberId);\n\n        assertEquals(1, memberRepository.insertIfAbsentCalls);\n        assertEquals(1, memberRepository.countByServerIdAndUserId(sampleServer.id(), ownerId));\n        assertEquals(2, memberRepository.countByServerId(sampleServer.id()));\n    }\n\n    @Test\n    void acceptTransfer_twice_keepsASingleMembershipForTheFormerOwner() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n        acceptTransfer.execute(sampleServer.id(), transfer.id(), memberId);\n\n        assertThrows(\n                InvalidTransferStateException.class,\n                () -> acceptTransfer.execute(sampleServer.id(), transfer.id(), memberId));\n\n        assertEquals(1, memberRepository.countByServerIdAndUserId(sampleServer.id(), ownerId));\n        assertEquals(memberId, serverRepository.findById(sampleServer.id()).orElseThrow().ownerId());\n    }\n\n    // --- CA 2: transferencia a no miembro ------------------------------------\n\n    @Test\n    void initiateTransfer_toNonMember_throwsNonMemberTransferException() {\n        NonMemberTransferException ex = assertThrows(\n                NonMemberTransferException.class,\n                () -> initiateTransfer.execute(sampleServer.id(), ownerId, strangerId)\n        );\n\n        assertEquals(\"Target user is not a member of the server\", ex.getMessage());\n        assertTrue(transferRepository.saved.isEmpty());\n    }\n\n    @Test\n    void initiateTransfer_byNonOwner_throwsForbiddenServerActionException() {\n        assertThrows(\n                ForbiddenServerActionException.class,\n                () -> initiateTransfer.execute(sampleServer.id(), memberId, memberId)\n        );\n        assertTrue(transferRepository.saved.isEmpty());\n    }\n\n    @Test\n    void initiateTransfer_toSelf_throwsNonMemberTransferException() {\n        assertThrows(\n                NonMemberTransferException.class,\n                () -> initiateTransfer.execute(sampleServer.id(), ownerId, ownerId)\n        );\n        assertTrue(transferRepository.saved.isEmpty());\n    }\n\n    @Test\n    void initiateTransfer_withoutTarget_throwsNonMemberTransferException() {\n        NonMemberTransferException ex = assertThrows(\n                NonMemberTransferException.class,\n                () -> initiateTransfer.execute(sampleServer.id(), ownerId, \"  \")\n        );\n\n        assertEquals(\"Target user must be specified\", ex.getMessage());\n        assertTrue(transferRepository.saved.isEmpty());\n    }\n\n    // --- Supracesión ---------------------------------------------------------\n\n    @Test\n    void initiateTransfer_twice_cancelsThePreviousPendingTransfer() {\n        String otherMemberId = \"member-400\";\n        memberRepository.save(new ServerMember(UUID.randomUUID(), sampleServer.id(), otherMemberId, OffsetDateTime.now()));\n\n        OwnershipTransfer first = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n        OwnershipTransfer second = initiateTransfer.execute(sampleServer.id(), ownerId, otherMemberId);\n\n        assertEquals(OwnershipTransferStatus.CANCELLED, transferRepository.stored(first.id()).orElseThrow().status());\n        assertEquals(OwnershipTransferStatus.PENDING, transferRepository.stored(second.id()).orElseThrow().status());\n        assertEquals(1, transferRepository.pendingOfServer(sampleServer.id()).size());\n        assertEquals(second.id(), transferRepository.pendingOfServer(sampleServer.id()).get(0).id());\n    }\n\n    @Test\n    void acceptTransfer_ofASupersededTransfer_throwsInvalidTransferStateException() {\n        String otherMemberId = \"member-400\";\n        memberRepository.save(new ServerMember(UUID.randomUUID(), sampleServer.id(), otherMemberId, OffsetDateTime.now()));\n        OwnershipTransfer superseded = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n        initiateTransfer.execute(sampleServer.id(), ownerId, otherMemberId);\n\n        InvalidTransferStateException ex = assertThrows(\n                InvalidTransferStateException.class,\n                () -> acceptTransfer.execute(sampleServer.id(), superseded.id(), memberId));\n\n        assertEquals(\"Transfer is no longer pending\", ex.getMessage());\n        assertEquals(ownerId, serverRepository.findById(sampleServer.id()).orElseThrow().ownerId());\n    }\n\n    // --- CA 3: rechazo -------------------------------------------------------\n\n    @Test\n    void rejectTransfer_byTargetMember_preservesOriginalOwnerAndMarksRejected() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n\n        OwnershipTransfer rejected = rejectTransfer.execute(sampleServer.id(), transfer.id(), memberId);\n\n        assertEquals(OwnershipTransferStatus.REJECTED, rejected.status());\n        assertEquals(OwnershipTransferStatus.REJECTED, transferRepository.stored(transfer.id()).orElseThrow().status());\n        assertEquals(ownerId, serverRepository.findById(sampleServer.id()).orElseThrow().ownerId());\n    }\n\n    @Test\n    void rejectTransfer_byUnauthorizedUser_throwsForbiddenServerActionException() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n\n        assertThrows(\n                ForbiddenServerActionException.class,\n                () -> rejectTransfer.execute(sampleServer.id(), transfer.id(), strangerId));\n        assertEquals(OwnershipTransferStatus.PENDING, transferRepository.stored(transfer.id()).orElseThrow().status());\n    }\n\n    @Test\n    void rejectTransfer_alreadyAccepted_throwsInvalidTransferStateException() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n        acceptTransfer.execute(sampleServer.id(), transfer.id(), memberId);\n\n        assertThrows(\n                InvalidTransferStateException.class,\n                () -> rejectTransfer.execute(sampleServer.id(), transfer.id(), memberId));\n        assertEquals(OwnershipTransferStatus.ACCEPTED, transferRepository.stored(transfer.id()).orElseThrow().status());\n    }\n\n    @Test\n    void rejectTransfer_whenResolveLosesTheRace_throwsInvalidTransferStateException() {\n        OwnershipTransfer transfer = initiateTransfer.execute(sampleServer.id(), ownerId, memberId);\n        transferRepository.resolveSucceeds = false;\n\n        assertThrows(\n                InvalidTransferStateException.class,\n                () -> rejectTransfer.execute(sampleServer.id(), transfer.id(), memberId));\n        assertEquals(OwnershipTransferStatus.PENDING, transferRepository.stored(transfer.id()).orElseThrow().status());\n    }\n\n    @Test\n    void rejectTransfer_withUnknownTransfer_throwsTransferNotFoundException() {\n        assertThrows(\n                TransferNotFoundException.class,\n                () -> rejectTransfer.execute(sampleServer.id(), UUID.randomUUID(), memberId));\n    }\n\n    // --- Fakes ---------------------------------------------------------------\n\n    private static class FakeServerRepository implements ServerRepository {\n        private final List<Server> saved = new ArrayList<>();\n\n        @Override\n        public Server save(Server server) {\n            saved.add(server);\n            return server;\n        }\n\n        @Override\n        public Optional<Server> findById(UUID id) {\n            return saved.stream().filter(s -> s.id().equals(id)).findFirst();\n        }\n\n        @Override\n        public List<ServerAccess> findAccessibleBy(String userId) {\n            return saved.stream()\n                    .filter(s -> s.ownerId().equals(userId))\n                    .map(s -> new ServerAccess(s, ServerRelationship.OWNER, s.createdAt()))\n                    .toList();\n        }\n\n        @Override\n        public void deleteById(UUID id) {\n            saved.removeIf(s -> s.id().equals(id));\n        }\n\n        @Override\n        public void updateOwner(UUID id, String newOwnerId) {\n            for (int i = 0; i < saved.size(); i++) {\n                if (saved.get(i).id().equals(id)) {\n                    Server old = saved.get(i);\n                    saved.set(i, new Server(old.id(), newOwnerId, old.name(), old.createdAt()));\n                    return;\n                }\n            }\n        }\n    }\n\n    private static class FakeServerMemberRepository implements ServerMemberRepository {\n        private final List<ServerMember> saved = new ArrayList<>();\n        private int insertIfAbsentCalls;\n        private int saveCalls;\n\n        @Override\n        public ServerMember save(ServerMember member) {\n            saveCalls++;\n            saved.add(member);\n            return member;\n        }\n\n        @Override\n        public Optional<ServerMember> insertIfAbsent(ServerMember member) {\n            insertIfAbsentCalls++;\n            if (existsByServerIdAndUserId(member.serverId(), member.userId())) {\n                return Optional.empty();\n            }\n            saved.add(member);\n            return Optional.of(member);\n        }\n\n        @Override\n        public Optional<ServerMember> findByServerIdAndUserId(UUID serverId, String userId) {\n            return saved.stream()\n                    .filter(m -> m.serverId().equals(serverId) && m.userId().equals(userId))\n                    .findFirst();\n        }\n\n        @Override\n        public List<ServerMember> findByServerId(UUID serverId) {\n            return saved.stream().filter(m -> m.serverId().equals(serverId)).toList();\n        }\n\n        @Override\n        public boolean existsByServerIdAndUserId(UUID serverId, String userId) {\n            return saved.stream()\n                    .anyMatch(m -> m.serverId().equals(serverId) && m.userId().equals(userId));\n        }\n\n        @Override\n        public void deleteByServerIdAndUserId(UUID serverId, String userId) {\n            saved.removeIf(m -> m.serverId().equals(serverId) && m.userId().equals(userId));\n        }\n\n        @Override\n        public void deleteByServerId(UUID serverId) {\n            saved.removeIf(m -> m.serverId().equals(serverId));\n        }\n\n        long countByServerId(UUID serverId) {\n            return saved.stream().filter(m -> m.serverId().equals(serverId)).count();\n        }\n\n        long countByServerIdAndUserId(UUID serverId, String userId) {\n            return saved.stream()\n                    .filter(m -> m.serverId().equals(serverId) && m.userId().equals(userId))\n                    .count();\n        }\n    }\n\n    private static class FakeOwnershipTransferRepository implements OwnershipTransferRepository {\n        private final List<OwnershipTransfer> saved = new ArrayList<>();\n        private boolean resolveSucceeds = true;\n\n        @Override\n        public OwnershipTransfer save(OwnershipTransfer transfer) {\n            saved.add(transfer);\n            return transfer;\n        }\n\n        @Override\n        public Optional<OwnershipTransfer> findById(UUID id) {\n            return stored(id);\n        }\n\n        @Override\n        public void updateStatus(UUID id, OwnershipTransferStatus status) {\n            for (int i = 0; i < saved.size(); i++) {\n                if (saved.get(i).id().equals(id)) {\n                    saved.set(i, saved.get(i).withStatus(status));\n                    return;\n                }\n            }\n        }\n\n        @Override\n        public List<OwnershipTransfer> findByServerId(UUID serverId) {\n            return saved.stream().filter(t -> t.serverId().equals(serverId)).toList();\n        }\n\n        @Override\n        public List<OwnershipTransfer> findPendingInvolving(String userId) {\n            return saved.stream()\n                    .filter(t -> t.status() == OwnershipTransferStatus.PENDING)\n                    .filter(t -> t.targetUserId().equals(userId) || t.currentOwnerId().equals(userId))\n                    .toList();\n        }\n\n        @Override\n        public int cancelPendingByServerId(UUID serverId) {\n            int affected = 0;\n            for (int i = 0; i < saved.size(); i++) {\n                OwnershipTransfer current = saved.get(i);\n                if (current.serverId().equals(serverId) && current.status() == OwnershipTransferStatus.PENDING) {\n                    saved.set(i, current.withStatus(OwnershipTransferStatus.CANCELLED));\n                    affected++;\n                }\n            }\n            return affected;\n        }\n\n        @Override\n        public boolean resolve(UUID id, OwnershipTransferStatus from, OwnershipTransferStatus to) {\n            if (!resolveSucceeds) {\n                return false;\n            }\n            for (int i = 0; i < saved.size(); i++) {\n                OwnershipTransfer current = saved.get(i);\n                if (current.id().equals(id) && current.status() == from) {\n                    saved.set(i, current.withStatus(to));\n                    return true;\n                }\n            }\n            return false;\n        }\n\n        Optional<OwnershipTransfer> stored(UUID id) {\n            return saved.stream().filter(t -> t.id().equals(id)).findFirst();\n        }\n\n        List<OwnershipTransfer> pendingOfServer(UUID serverId) {\n            return saved.stream()\n                    .filter(t -> t.serverId().equals(serverId))\n                    .filter(t -> t.status() == OwnershipTransferStatus.PENDING)\n                    .toList();\n        }\n    }\n}\nEOF\ngrep -c '' src/test/java/discordia/TransferOwnershipTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh59",
+			"type": "shell",
+			"command": "cd web-client && git --no-pager diff src/components/Sidebar.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "fix-test1",
+			"type": "shell",
+			"command": "cd server && sed -i 's#        assertEquals(1, memberRepository.countByServerId(sampleServer.id()) - 1);#        assertEquals(0, memberRepository.insertIfAbsentCalls);\\n        assertEquals(2, memberRepository.countByServerId(sampleServer.id()));#' src/test/java/discordia/TransferOwnershipTest.java && grep -n -A 3 'insertIfAbsentCalls);' src/test/java/discordia/TransferOwnershipTest.java | head -20",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "w-test2",
+			"type": "shell",
+			"command": "cd server && cat > src/test/java/discordia/ListServersTest.java << 'EOF'\npackage discordia;\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertFalse;\nimport static org.junit.jupiter.api.Assertions.assertNull;\nimport static org.junit.jupiter.api.Assertions.assertTrue;\n\nimport discordia.core.gateway.OwnershipTransferRepository;\nimport discordia.core.gateway.ServerRepository;\nimport discordia.core.usecase.ListServers;\nimport discordia.core.usecase.dto.OwnershipTransfer;\nimport discordia.core.usecase.dto.OwnershipTransferStatus;\nimport discordia.core.usecase.dto.Server;\nimport discordia.core.usecase.dto.ServerAccess;\nimport discordia.core.usecase.dto.ServerRelationship;\nimport java.time.OffsetDateTime;\nimport java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.UUID;\nimport org.junit.jupiter.api.Test;\n\nclass ListServersTest {\n\n    private static final OffsetDateTime NOW = OffsetDateTime.parse(\"2026-10-18T12:00:00Z\");\n    private static final String USER = \"user-1\";\n    private static final String OTHER = \"user-2\";\n\n    private static ServerAccess access(String name, ServerRelationship relationship) {\n        return new ServerAccess(new Server(UUID.randomUUID(), \"owner\", name, NOW), relationship, NOW);\n    }\n\n    private static ServerRepository repositoryReturning(List<ServerAccess> accesses) {\n        return new ServerRepository() {\n            @Override\n            public Server save(Server server) {\n                return server;\n            }\n\n            @Override\n            public Optional<Server> findById(UUID id) {\n                return Optional.empty();\n            }\n\n            @Override\n            public List<ServerAccess> findAccessibleBy(String userId) {\n                return accesses;\n            }\n\n            @Override\n            public void deleteById(UUID id) {\n            }\n        };\n    }\n\n    private static OwnershipTransfer transfer(\n            UUID serverId, String currentOwnerId, String targetUserId, OwnershipTransferStatus status) {\n        return new OwnershipTransfer(UUID.randomUUID(), serverId, currentOwnerId, targetUserId, status, NOW);\n    }\n\n    @Test\n    void returnsTheAccessibleServersInRepositoryOrder_withTheirCount() {\n        List<ServerAccess> accesses = List.of(\n                access(\"owned\", ServerRelationship.OWNER),\n                access(\"joined\", ServerRelationship.MEMBER));\n\n        ListServers.Result result = new ListServers(repositoryReturning(accesses), new FakeTransferRepository())\n                .execute(USER);\n\n        assertEquals(accesses, result.servers());\n        assertEquals(2, result.count());\n        assertTrue(result.pendingTransfersByServer().isEmpty());\n    }\n\n    @Test\n    void returnsAnEmptyListWhenTheUserHasNoServers() {\n        ListServers.Result result = new ListServers(repositoryReturning(List.of()), new FakeTransferRepository())\n                .execute(USER);\n\n        assertTrue(result.servers().isEmpty());\n        assertEquals(0, result.count());\n    }\n\n    /**\n     * La pendiente sólo se proyecta en el servidor del que el caller es parte (como\n     * iniciador o como destinatario); los demás servidores quedan sin entrada, que es\n     * lo que el contrato serializa como {@code null}.\n     */\n    @Test\n    void projectsThePendingTransferOnlyForTheServersWhereTheCallerTakesPart() {\n        ServerAccess asInitiator = access(\"initiated\", ServerRelationship.OWNER);\n        ServerAccess asTarget = access(\"targeted\", ServerRelationship.MEMBER);\n        ServerAccess notInvolved = access(\"unrelated\", ServerRelationship.MEMBER);\n        ServerAccess someoneElse = access(\"other-people\", ServerRelationship.MEMBER);\n\n        OwnershipTransfer initiated = transfer(\n                asInitiator.server().id(), USER, OTHER, OwnershipTransferStatus.PENDING);\n        OwnershipTransfer received = transfer(\n                asTarget.server().id(), OTHER, USER, OwnershipTransferStatus.PENDING);\n        OwnershipTransfer foreign = transfer(\n                someoneElse.server().id(), OTHER, \"user-3\", OwnershipTransferStatus.PENDING);\n\n        FakeTransferRepository transfers = new FakeTransferRepository();\n        transfers.save(initiated);\n        transfers.save(received);\n        transfers.save(foreign);\n\n        ListServers.Result result = new ListServers(\n                        repositoryReturning(List.of(asInitiator, asTarget, notInvolved, someoneElse)), transfers)\n                .execute(USER);\n\n        assertEquals(2, result.pendingTransfersByServer().size());\n        assertEquals(initiated, result.pendingTransfersByServer().get(asInitiator.server().id()));\n        assertEquals(received, result.pendingTransfersByServer().get(asTarget.server().id()));\n        assertFalse(result.pendingTransfersByServer().containsKey(notInvolved.server().id()));\n        assertFalse(result.pendingTransfersByServer().containsKey(someoneElse.server().id()));\n    }\n\n    @Test\n    void ignoresTransfersThatAreNoLongerPending() {\n        ServerAccess owned = access(\"owned\", ServerRelationship.OWNER);\n        FakeTransferRepository transfers = new FakeTransferRepository();\n        transfers.save(transfer(owned.server().id(), USER, OTHER, OwnershipTransferStatus.ACCEPTED));\n        transfers.save(transfer(owned.server().id(), USER, OTHER, OwnershipTransferStatus.CANCELLED));\n\n        ListServers.Result result = new ListServers(repositoryReturning(List.of(owned)), transfers).execute(USER);\n\n        assertTrue(result.pendingTransfersByServer().isEmpty());\n        assertNull(result.pendingTransfersByServer().get(owned.server().id()));\n    }\n\n    @Test\n    void keepsASinglePendingTransferPerServer() {\n        ServerAccess owned = access(\"owned\", ServerRelationship.OWNER);\n        OwnershipTransfer older = new OwnershipTransfer(\n                UUID.randomUUID(), owned.server().id(), USER, OTHER, OwnershipTransferStatus.PENDING, NOW.minusMinutes(5));\n        OwnershipTransfer newer = new OwnershipTransfer(\n                UUID.randomUUID(), owned.server().id(), USER, \"user-3\", OwnershipTransferStatus.PENDING, NOW);\n\n        FakeTransferRepository transfers = new FakeTransferRepository();\n        transfers.save(older);\n        transfers.save(newer);\n\n        ListServers.Result result = new ListServers(repositoryReturning(List.of(owned)), transfers).execute(USER);\n\n        assertEquals(1, result.pendingTransfersByServer().size());\n        assertEquals(newer, result.pendingTransfersByServer().get(owned.server().id()));\n    }\n\n    @Test\n    void withoutIdentity_doesNotQueryTransfers() {\n        FakeTransferRepository transfers = new FakeTransferRepository();\n        transfers.save(transfer(UUID.randomUUID(), USER, OTHER, OwnershipTransferStatus.PENDING));\n\n        ListServers.Result result = new ListServers(repositoryReturning(List.of()), transfers).execute(null);\n\n        assertTrue(result.pendingTransfersByServer().isEmpty());\n        assertEquals(0, transfers.queriedUsers.size());\n    }\n\n    private static class FakeTransferRepository implements OwnershipTransferRepository {\n        private final List<OwnershipTransfer> saved = new ArrayList<>();\n        private final List<String> queriedUsers = new ArrayList<>();\n\n        @Override\n        public OwnershipTransfer save(OwnershipTransfer transfer) {\n            saved.add(transfer);\n            return transfer;\n        }\n\n        @Override\n        public Optional<OwnershipTransfer> findById(UUID id) {\n            return saved.stream().filter(t -> t.id().equals(id)).findFirst();\n        }\n\n        @Override\n        public void updateStatus(UUID id, OwnershipTransferStatus status) {\n        }\n\n        @Override\n        public List<OwnershipTransfer> findByServerId(UUID serverId) {\n            return saved.stream().filter(t -> t.serverId().equals(serverId)).toList();\n        }\n\n        @Override\n        public List<OwnershipTransfer> findPendingInvolving(String userId) {\n            queriedUsers.add(userId);\n            return saved.stream()\n                    .filter(t -> t.status() == OwnershipTransferStatus.PENDING)\n                    .filter(t -> userId.equals(t.targetUserId()) || userId.equals(t.currentOwnerId()))\n                    .toList();\n        }\n\n        @Override\n        public int cancelPendingByServerId(UUID serverId) {\n            return 0;\n        }\n\n        @Override\n        public boolean resolve(UUID id, OwnershipTransferStatus from, OwnershipTransferStatus to) {\n            return false;\n        }\n    }\n}\nEOF\ngrep -c '' src/test/java/discordia/ListServersTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh60",
+			"type": "shell",
+			"command": "cd web-client && cat > .tmp-index.js <<'JS_EOF'\nconst fs = require('fs');\n\nconst path = 'src/app/pages/index.tsx';\nconst raw = fs.readFileSync(path, 'utf8');\nconst crlf = raw.includes('\\r\\n');\nlet source = raw.replace(/\\r\\n/g, '\\n');\n\nfunction replaceOnce(anchor, replacement, label) {\n  if (!source.includes(anchor)) throw new Error('ancla: ' + label);\n  source = source.replace(anchor, replacement);\n}\n\n// 1) imports\nreplaceOnce(\n  \"import LeaveServerConfirmation from '@/components/popups/LeaveServerConfirmation';\\n\",\n  \"import LeaveServerConfirmation from '@/components/popups/LeaveServerConfirmation';\\n\" +\n    \"import OwnershipTransferBanner, {\\n  type TransferOutcome,\\n} from '@/components/transfers/OwnershipTransferBanner';\\n\" +\n    \"import TransferOwnershipForm from '@/components/popups/TransferOwnershipForm';\\n\",\n  'imports',\n);\nreplaceOnce(\n  \"import { firstChannelToOpen, isOwner, selectActiveServer, toOwnedSummary } from '@/core/servers/membership';\\n\",\n  \"import { firstChannelToOpen, isOwner, selectActiveServer, toOwnedSummary } from '@/core/servers/membership';\\n\" +\n    \"import { incomingTransfers } from '@/core/servers/transfers';\\n\",\n  'imports-transfer',\n);\n\n// 2) state\nreplaceOnce(\n  '  const [leavingServer, setLeavingServer] = useState(false);\\n',\n  '  const [leavingServer, setLeavingServer] = useState(false);\\n' +\n    '  // Owner popup that hands the active server to another member (HU #10).\\n' +\n    '  const [transferring, setTransferring] = useState(false);\\n' +\n    '  // Transfers this session already answered: the banner hides at once while\\n' +\n    '  // the re-read list (which drops them) is still in flight.\\n' +\n    '  const [resolvedTransfers, setResolvedTransfers] = useState<string[]>([]);\\n',\n  'state',\n);\n\n// 3) handlers, before the derived values\nreplaceOnce(\n  '  const activeEntry = servers?.find((server) => server.id === activeServerId) ?? null;\\n',\n  '  function onTransferInitiated(serverName: string) {\\n' +\n    '    setTransferring(false);\\n' +\n    '    showSuccess(`Le ofrecimos la propiedad de \"${serverName}\" a esa persona.`);\\n' +\n    '    // The owner now has an outgoing pending transfer: re-read it so the\\n' +\n    '    // notice appears if the form is opened again.\\n' +\n    '    void syncNow();\\n' +\n    '  }\\n' +\n    '\\n' +\n    '  function onTransferResolved(transferId: string, serverName: string, outcome: TransferOutcome) {\\n' +\n    '    setResolvedTransfers((current) => [...current, transferId]);\\n' +\n    '    showSuccess(\\n' +\n    '      outcome === accepted\\n' +\n    '        ? `Ahora sos el dueño de \"${serverName}\".`\\n' +\n    '        : `Rechazaste la transferencia de \"${serverName}\".`,\\n' +\n    '    );\\n' +\n    '    // `relationship`, the can* flags and every sidebar control come from the\\n' +\n    '    // server payload: re-read them instead of patching the local state.\\n' +\n    '    void syncNow();\\n' +\n    '  }\\n' +\n    '\\n' +\n    '  const activeEntry = servers?.find((server) => server.id === activeServerId) ?? null;\\n',\n  'handlers',\n);\n\n// 4) derived values\nreplaceOnce(\n  '  const activeChannel = activeServer?.channels.find((channel) => channel.id === activeChannelId) ?? null;\\n',\n  '  const activeChannel = activeServer?.channels.find((channel) => channel.id === activeChannelId) ?? null;\\n' +\n    '  // Ownership decides the transfer affordance (HU #10); the management\\n' +\n    '  // capabilities keep coming from the server itself.\\n' +\n    '  const ownsActiveServer = Boolean(activeServer) && isOwner(activeEntry);\\n' +\n    '  // Ownership offers waiting for an answer, one banner each, above the\\n' +\n    '  // layout. Answered ones stay out until the re-read list agrees.\\n' +\n    '  const pendingIncoming = incomingTransfers(servers, userId).filter(\\n' +\n    '    ({ transfer }) => !resolvedTransfers.includes(transfer.id),\\n' +\n    '  );\\n',\n  'derived',\n);\n\n// 5) sidebar props\nreplaceOnce(\n  '        isOwnerOfActiveServer={Boolean(activeServer) && isOwner(activeEntry)}\\n',\n  '        isOwnerOfActiveServer={ownsActiveServer}\\n',\n  'sidebar-owner',\n);\nreplaceOnce(\n  '        onShareActiveServer={\\n          activeServer ? () => void shareServerLink(activeServer.id) : undefined\\n        }\\n',\n  '        onShareActiveServer={\\n          activeServer ? () => void shareServerLink(activeServer.id) : undefined\\n        }\\n' +\n    '        onTransferActiveServer={\\n' +\n    '          ownsActiveServer && activeEntry ? () => setTransferring(true) : undefined\\n' +\n    '        }\\n',\n  'sidebar-transfer',\n);\n\n// 6) layout wrap\nreplaceOnce('    <View style={styles.root}>\\n      <Sidebar\\n', '    <View style={styles.root}>\\n      {pendingIncoming.map(({ server, transfer }) => (\\n        <OwnershipTransferBanner\\n          key={transfer.id}\\n          server={server}\\n          transfer={transfer}\\n          onResolved={(outcome) => onTransferResolved(transfer.id, server.name, outcome)}\\n        />\\n      ))}\\n\\n      <View style={styles.layout}>\\n        <Sidebar\\n', 'layout-open');\nreplaceOnce(\n  '      <Popup visible={profileOpen} onDismiss={closeProfile}>\\n',\n  '      </View>\\n\\n      <Popup visible={profileOpen} onDismiss={closeProfile}>\\n',\n  'layout-close',\n);\n\n// 7) transfer popup, after the leave-server one\nreplaceOnce(\n  '          <LeaveServerConfirmation\\n            server={activeServer}\\n            onLeft={onServerLeft}\\n            onGone={onLeftServerGone}\\n            onCancel={() => setLeavingServer(false)}\\n          />\\n        </Popup>\\n      )}\\n',\n  '          <LeaveServerConfirmation\\n            server={activeServer}\\n            onLeft={onServerLeft}\\n            onGone={onLeftServerGone}\\n            onCancel={() => setLeavingServer(false)}\\n          />\\n        </Popup>\\n      )}\\n' +\n    '\\n' +\n    '      {activeEntry && transferring && (\\n' +\n    '        <Popup visible={transferring} onDismiss={() => setTransferring(false)}>\\n' +\n    '          <TransferOwnershipForm\\n' +\n    '            server={activeEntry}\\n' +\n    '            userId={userId}\\n' +\n    '            onInitiated={onTransferInitiated}\\n' +\n    '            onCancel={() => setTransferring(false)}\\n' +\n    '          />\\n' +\n    '        </Popup>\\n' +\n    '      )}\\n',\n  'popup',\n);\n\n// 8) styles\nreplaceOnce(\n  '  root: { flex: 1, flexDirection: \\'row\\', backgroundColor: colors.bg },\\n',\n  '  root: { flex: 1, backgroundColor: colors.bg },\\n' +\n    '  // The Discord-like split keeps its own row so the transfer banners can\\n' +\n    '  // stack above it without breaking the sidebar/channel layout.\\n' +\n    '  layout: { flex: 1, flexDirection: \\'row\\' },\\n',\n  'styles-root',\n);\n\n// The wrapped block is indented one level deeper now.\nfs.writeFileSync(path, crlf ? source.replace(/\\n/g, '\\r\\n') : source);\nconsole.log('ok');\nJS_EOF\nnode .tmp-index.js && rm .tmp-index.js && echo HEcho",
+			"isBackground": false
+		},
+		{
+			"label": "r1",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && sed -n '90,200p' ServerControllerUnitTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh61",
+			"type": "shell",
+			"command": "cd web-client && git --no-pager diff --stat && npx tsc --noEmit 2>&1 | head -20",
+			"isBackground": false
+		},
+		{
+			"label": "r2",
+			"type": "shell",
+			"command": "cd server && grep -rn 'new ListServers(\\|ServerListResponse.from' src --include=*.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh62",
+			"type": "shell",
+			"command": "cd web-client && cat > .tmp-fix.js <<'JS_EOF'\nconst fs = require('fs');\n\nconst path = 'src/app/pages/index.tsx';\nconst raw = fs.readFileSync(path, 'utf8');\nconst crlf = raw.includes('\\r\\n');\nlet source = raw.replace(/\\r\\n/g, '\\n');\n\nconst fixes = [\n  ['  const { showError } = useNotifications();\\n', '  const { showError, showSuccess } = useNotifications();\\n'],\n  ['      outcome === accepted\\n', \"      outcome === 'accepted'\\n\"],\n];\nfor (const [anchor, replacement] of fixes) {\n  if (!source.includes(anchor)) throw new Error('ancla: ' + anchor);\n  source = source.replace(anchor, replacement);\n}\n\nfs.writeFileSync(path, crlf ? source.replace(/\\n/g, '\\r\\n') : source);\nconsole.log('ok');\nJS_EOF\nnode .tmp-fix.js && rm .tmp-fix.js && npx tsc --noEmit 2>&1 | head -20",
+			"isBackground": false
+		},
+		{
+			"label": "r3",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && sed -n '40,60p' ServerControllerUnitTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "sh63",
+			"type": "shell",
+			"command": "cd web-client && git --no-pager diff src/app/pages/index.tsx",
+			"isBackground": false
+		},
+		{
+			"label": "edit-uctest",
+			"type": "shell",
+			"command": "cd server && cat > scratch-insert.txt << 'EOF'\n    @Test\n    void list_projectsThePendingTransferTheCallerTakesPartIn() {\n        OffsetDateTime createdAt = OffsetDateTime.now();\n        OwnershipTransfer pending = new OwnershipTransfer(\n                UUID.randomUUID(), serverId, ownerId, \"target-9\", OwnershipTransferStatus.PENDING, createdAt);\n        transferRepository.save(pending);\n\n        Response response = controller.list(ownerId);\n\n        assertEquals(200, response.getStatus());\n        ServerListResponse body = (ServerListResponse) response.getEntity();\n        assertEquals(1, body.count());\n        ServerListResponse.PendingTransfer projected = body.servers().get(0).ownershipTransfer();\n        assertNotNull(projected);\n        assertEquals(pending.id(), projected.id());\n        assertEquals(ownerId, projected.initiatedBy());\n        assertEquals(\"target-9\", projected.targetUserId());\n        assertEquals(createdAt, projected.createdAt());\n    }\n\n    @Test\n    void list_withoutPendingTransfer_leavesTheProjectionNull() {\n        Response response = controller.list(ownerId);\n\n        assertEquals(200, response.getStatus());\n        ServerListResponse body = (ServerListResponse) response.getEntity();\n        assertEquals(1, body.servers().size());\n        assertNull(body.servers().get(0).ownershipTransfer());\n    }\n\n    private static class FakeOwnershipTransferRepository implements OwnershipTransferRepository {\n        private final List<OwnershipTransfer> saved = new ArrayList<>();\n\n        @Override\n        public OwnershipTransfer save(OwnershipTransfer transfer) {\n            saved.add(transfer);\n            return transfer;\n        }\n\n        @Override\n        public Optional<OwnershipTransfer> findById(UUID id) {\n            return saved.stream().filter(t -> t.id().equals(id)).findFirst();\n        }\n\n        @Override\n        public void updateStatus(UUID id, OwnershipTransferStatus status) {\n        }\n\n        @Override\n        public List<OwnershipTransfer> findByServerId(UUID serverId) {\n            return saved.stream().filter(t -> t.serverId().equals(serverId)).toList();\n        }\n\n        @Override\n        public List<OwnershipTransfer> findPendingInvolving(String userId) {\n            return saved.stream()\n                    .filter(t -> t.status() == OwnershipTransferStatus.PENDING)\n                    .filter(t -> userId.equals(t.targetUserId()) || userId.equals(t.currentOwnerId()))\n                    .toList();\n        }\n\n        @Override\n        public int cancelPendingByServerId(UUID serverId) {\n            return 0;\n        }\n\n        @Override\n        public boolean resolve(UUID id, OwnershipTransferStatus from, OwnershipTransferStatus to) {\n            return false;\n        }\n    }\n\nEOF\nawk '/^    private static class FakeServerRepository implements ServerRepository \\{$/ { while ((getline line < \"scratch-insert.txt\") > 0) print line } { print }' src/test/java/discordia/ServerControllerUnitTest.java > scratch-out.java && mv scratch-out.java src/test/java/discordia/ServerControllerUnitTest.java && rm scratch-insert.txt && grep -n 'list_projectsThePendingTransfer\\|FakeOwnershipTransferRepository' src/test/java/discordia/ServerControllerUnitTest.java | head",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "verify-uctest",
+			"type": "shell",
+			"command": "cd server && grep -n 'list_projectsThePendingTransfer\\|FakeOwnershipTransferRepository\\|class FakeServerRepository' src/test/java/discordia/ServerControllerUnitTest.java | head && git status --short",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "edit-uctest2",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && sed -i \\\n -e 's#^import static org.junit.jupiter.api.Assertions.assertEquals;#import static org.junit.jupiter.api.Assertions.assertEquals;\\nimport static org.junit.jupiter.api.Assertions.assertNotNull;\\nimport static org.junit.jupiter.api.Assertions.assertNull;#' \\\n -e 's#^import discordia.controller.contract.DeleteServerRequest;#import discordia.controller.contract.DeleteServerRequest;\\nimport discordia.controller.contract.ServerListResponse;#' \\\n -e 's#^import discordia.core.gateway.ManageRolesPolicy;#import discordia.core.gateway.ManageRolesPolicy;\\nimport discordia.core.gateway.OwnershipTransferRepository;#' \\\n -e 's#^import discordia.core.usecase.dto.Channel;#import discordia.core.usecase.dto.Channel;\\nimport discordia.core.usecase.dto.OwnershipTransfer;\\nimport discordia.core.usecase.dto.OwnershipTransferStatus;#' \\\n -e 's#^    private FakeChannelRepository channelRepository;#    private FakeChannelRepository channelRepository;\\n    private FakeOwnershipTransferRepository transferRepository;#' \\\n -e 's#^        channelRepository = new FakeChannelRepository();#        channelRepository = new FakeChannelRepository();\\n        transferRepository = new FakeOwnershipTransferRepository();#' \\\n -e 's#new ListServers(serverRepository)#new ListServers(serverRepository, transferRepository)#' \\\n ServerControllerUnitTest.java && sed -n '1,30p' ServerControllerUnitTest.java && sed -n '55,70p' ServerControllerUnitTest.java",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "compile2",
+			"type": "shell",
+			"command": "cd server && JAVA_TOOL_OPTIONS=\"-Duser.timezone=UTC\" cmd //c \"gradlew.bat compileTestJava --console=plain\" 2>&1 | tail -25",
+			"args": [],
+			"isBackground": false
+		},
+		{
+			"label": "chk-files",
+			"type": "shell",
+			"command": "cd server/src/test/java/discordia && wc -l TransferOwnershipTest.java ListServersTest.java && tail -5 TransferOwnershipTest.java && echo '---' && tail -5 ListServersTest.java",
+			"args": [],
+			"isBackground": false
+		}
+	]
+}

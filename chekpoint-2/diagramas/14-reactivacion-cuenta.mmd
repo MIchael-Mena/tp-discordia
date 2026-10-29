@@ -1,0 +1,25 @@
+%%{init: {'theme':'base','themeVariables':{'fontSize':'22px','fontFamily':'Segoe UI, Arial, Helvetica, sans-serif'},'sequence':{'useMaxWidth':false,'mirrorActors':false,'messageAlign':'center','actorMargin':52,'boxMargin':10,'messageMargin':26}}}%%
+sequenceDiagram
+    autonumber
+    actor AD as Backoffice Admin
+    participant G as Gateway
+    participant A as auth-service
+    participant B as RabbitMQ
+    participant P as profile-worker
+    participant T as text-channel
+    actor U as Usuario
+
+    AD->>G: PATCH /api/admin/accounts/42/status
+    G->>G: exige role == admin (403 si no)
+    G->>A: PATCH /account/42/status<br/>+ X-User-Id del staff
+    A->>A: ACTIVE · no revoca sesiones
+    A->>B: AccountReactivated<br/>en account_events (fanout)
+    B-->>P: fan-out a la cola del worker
+    P->>P: el perfil vuelve a servirse<br/>(200 en vez de 404)
+    B-->>T: fan-out (lo ignora: solo<br/>escucha AccountSuspended)
+    A-->>G: 200 con revoked_session_ids vacío
+    G-->>AD: 200 {account_id, status: ACTIVE}
+    U->>G: POST /api/login (de nuevo)
+    G->>A: POST /login
+    A-->>U: access 15 min + refresh:<br/>la cuenta ya está ACTIVE
+    U->>G: WS /api/ws/channels/7

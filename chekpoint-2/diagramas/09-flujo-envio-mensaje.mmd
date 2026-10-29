@@ -1,0 +1,21 @@
+%%{init: {'theme':'base','themeVariables':{'fontSize':'22px','fontFamily':'Segoe UI, Arial, Helvetica, sans-serif'},'sequence':{'useMaxWidth':false,'mirrorActors':false,'messageAlign':'center','actorMargin':55,'boxMargin':10}}}%%
+sequenceDiagram
+    autonumber
+    actor C as Cliente
+    participant G as Gateway
+    participant T as text-channel
+    participant S as server
+    participant M as MongoDB Atlas
+    participant R as Redis
+
+    C->>G: WebSocket /api/ws/channels/42
+    G->>T: relay del WS + X-User-Id
+    T-->>C: conexión aceptada
+    C->>T: frame send_message
+    T->>S: GET /internal/channels/42/send-permission
+    Note over T,S: X-Internal-Token · caché 5 s · fail-closed
+    S-->>T: allow
+    T->>M: inserta el mensaje
+    T->>R: publish al topic del canal
+    R-->>T: fan-out a todas las réplicas
+    T-->>C: frame message a cada conectado
