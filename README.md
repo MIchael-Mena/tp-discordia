@@ -8,6 +8,9 @@ herramientas comunes. Los servicios de la aplicación se mantienen como
 repositorios Git independientes dentro de este directorio y, por ese motivo,
 no se versionan desde este repositorio raíz.
 
+EL estado de las historias de usuario se encuentra en [estado-historias.md](./estado-historias.md).
+Y todas las historias de usuario, completadas o no, se encuentran en [Discordia-TP](./infra/docs/discordia-tp.md).
+
 ## Repositorios independientes
 
 | Servicio | Descripción |
@@ -18,6 +21,9 @@ no se versionan desde este repositorio raíz.
 | [`web-client`](./web-client) | Cliente web/mobile basado en Expo y React Native |
 | [`text-channel`](./text-channel) | Servicio de canales de texto |
 | [`server`](./server) | Servicio de servidores de la plataforma |
+| [`voice-calls`](./voice-calls) | Orquestación de canales de voz contra LiveKit |
+| [`backoffice`](./backoffice) | Cliente de staff para la administración de la plataforma |
+| [`notifications`](./notifications) | Notificaciones a usuarios finales e indicadores de no leído |
 | [`infra`](./infra) | Infraestructura, despliegue y configuración operativa |
 
 Estos directorios están excluidos en [`.gitignore`](./.gitignore), al igual

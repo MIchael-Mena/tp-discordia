@@ -922,6 +922,128 @@
 			"command": "cd server/src/test/java/discordia && wc -l TransferOwnershipTest.java ListServersTest.java && tail -5 TransferOwnershipTest.java && echo '---' && tail -5 ListServersTest.java",
 			"args": [],
 			"isBackground": false
+		},
+		{
+			"label": "copilot-shell",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"echo SHELL_OK && cd"
+			],
+			"group": "none"
+		},
+		{
+			"label": "explore-server",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"cd 'server'; git status --short; git branch --show-current; git log --oneline -6; echo '---FILES---'; Get-ChildItem -Recurse -File src,specs,docs -Include *.java,*.sql,*.md -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName.Replace($PWD.Path + '\\','') }"
+			]
+		},
+		{
+			"label": "explore-server-2",
+			"type": "shell",
+			"command": "cd server && git status --short && git branch --show-current && git log --oneline -8 && echo ---FILES--- && find src specs docs -type f \\( -name \"*.java\" -o -name \"*.sql\" -o -name \"*.md\" -o -name \"*.properties\" -o -name \"*.yaml\" \\) | sort",
+			"args": []
+		},
+		{
+			"label": "z1",
+			"type": "shell",
+			"command": "cd server && git status --short && echo --- && find src/main/java -type f | sort",
+			"args": []
+		},
+		{
+			"label": "copilot-bash",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"echo HELLO && pwd && ls | head -30"
+			],
+			"group": "none"
+		},
+		{
+			"label": "z2",
+			"type": "shell",
+			"command": "cd server && git status --short && echo --- && find src/test -type f | sort",
+			"args": []
+		},
+		{
+			"label": "cp-read-plan",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"cat '/c/Users/Michael/.copilot/session-state/944e56dc-f267-4ce9-a8a2-124fdd188382/plan.md'"
+			],
+			"group": "none"
+		},
+		{
+			"label": "z3",
+			"type": "shell",
+			"command": "cd server && find src/main/java -type f | sort | head -n 45",
+			"args": []
+		},
+		{
+			"label": "cp-read-plan-1",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"sed -n '1,120p' '/c/Users/Michael/.copilot/session-state/944e56dc-f267-4ce9-a8a2-124fdd188382/plan.md'"
+			],
+			"group": "none"
+		},
+		{
+			"label": "z4",
+			"type": "shell",
+			"command": "cd server && find src/main/java -type f | sort | tail -n +46 && echo ---RESOURCES--- && find src/main/resources -type f | sort",
+			"args": []
+		},
+		{
+			"label": "cp-plan-index",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"grep -n '^#\\{1,4\\} ' '/c/Users/Michael/.copilot/session-state/944e56dc-f267-4ce9-a8a2-124fdd188382/plan.md'"
+			],
+			"group": "none"
+		},
+		{
+			"label": "z5",
+			"type": "shell",
+			"command": "cd server && find src/main/java -type f | sort | tail -n +46 | head -n 40",
+			"args": []
+		},
+		{
+			"label": "z6",
+			"type": "shell",
+			"command": "cd server && find src/main/java -type f | sort | tail -n +86 && echo ---RESOURCES--- && find src/main/resources -type f | sort",
+			"args": []
+		},
+		{
+			"label": "cp-plan-index2",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"grep -nE \"^#{1,4} \" \"/c/Users/Michael/.copilot/session-state/944e56dc-f267-4ce9-a8a2-124fdd188382/plan.md\""
+			],
+			"group": "none"
+		},
+		{
+			"label": "cp-plan-webclient",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"sed -n \"240,350p\" \"/c/Users/Michael/.copilot/session-state/944e56dc-f267-4ce9-a8a2-124fdd188382/plan.md\""
+			],
+			"group": "none"
 		}
 	]
 }

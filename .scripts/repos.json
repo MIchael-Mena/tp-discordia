@@ -8,6 +8,8 @@
     { "folder": "text-channel" },
     { "folder": "server" },
     { "folder": "voice-calls" },
+    { "folder": "backoffice" },
+    { "folder": "notifications" },
     { "folder": "infra", "branch": "main" }
   ]
 }

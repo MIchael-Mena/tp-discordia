@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-10-29T00:42:29.566Z",
+  "last_updated": "2026-10-30T21:10:00.000Z",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -65,7 +65,7 @@
         "TSK-036",
         "TSK-041"
       ],
-      "context": "Pendientes descubiertos en TSK-036 y TSK-041. Los bans quedaron owner-only en v1 porque no existia el modelo de roles y jerarquia que exige la HU obligatoria de moderacion. Falta: (1) evaluar BAN_MEMBERS en BanUser y MANAGE_CHANNELS en ChannelAuthorizer (hoy ambos son owner-only) sobre el conjunto efectivo de permisos; (2) impedir que un moderador actue sobre miembros con roles de posicion igual o superior (restriccion por jerarquia), la misma comparacion que necesita MANAGE_ROLES.",
+      "context": "Pendientes descubiertos en TSK-036 y TSK-041. Los bans quedaron owner-only en v1 porque no existia el modelo de roles y jerarquia que exige la HU obligatoria de moderacion. Falta: (1) evaluar BAN_MEMBERS en BanUser y MANAGE_CHANNELS en ChannelAuthorizer (hoy ambos son owner-only) sobre el conjunto efectivo de permisos; (2) impedir que un moderador actue sobre miembros con roles de posicion igual o superior (restriccion por jerarquia), la misma comparacion que necesita MANAGE_ROLES. Estado 2026-10-29: (1) BAN_MEMBERS y (2) la restriccion por jerarquia quedaron implementadas en la spec 019-ban-unban-members (server, gateway, web-client y text-channel). Estado 2026-10-29: MANAGE_CHANNELS quedo evaluado en la spec 023-channel-categories (MemberPermissionChannelAuthorizer acepta MANAGE_CHANNELS | ADMINISTRATOR y se aplica a canales y categorias; GET /servers/{id} expone canManageChannels). Sigue pendiente extender la comparacion por jerarquia a MANAGE_ROLES.",
       "pull_request": null,
       "exception_note": null,
       "discovered_pending_tasks": []
@@ -81,7 +81,7 @@
         "TSK-040",
         "TSK-042"
       ],
-      "context": "Pendientes descubiertos en TSK-040 y TSK-042 (el mismo HU 22 reportado dos veces). Tres HUs de la epica Roles y Permisos. (1) Editar los permisos de un rol por endpoint, sin exponer el bitmask y con la restriccion de no quitarse el propio ADMINISTRATOR: hoy MANAGE_MESSAGES solo se puede otorgar por SQL. (2) Reordenar la jerarquia con el mismo lock pesimista (ServerRepository.lockById) y reescribir 0..n-1 dentro de una transaccion, aprovechando que la constraint de posicion es diferida. (3) Rol por defecto sobre la columna is_default ya creada: asignacion automatica al unirse, bloqueo de borrado y nombres reservados como @everyone.",
+      "context": "Pendientes descubiertos en TSK-040 y TSK-042 (el mismo HU 22 reportado dos veces). Tres HUs de la epica Roles y Permisos. (1) Editar los permisos de un rol por endpoint, sin exponer el bitmask y con la restriccion de no quitarse el propio ADMINISTRATOR: hoy MANAGE_MESSAGES solo se puede otorgar por SQL. (2) Reordenar la jerarquia con el mismo lock pesimista (ServerRepository.lockById) y reescribir 0..n-1 dentro de una transaccion, aprovechando que la constraint de posicion es diferida. (3) Rol por defecto sobre la columna is_default ya creada: asignacion automatica al unirse, bloqueo de borrado y nombres reservados como @everyone. Estado 2026-10-29: (1) editar los permisos de un rol quedo implementado en la spec 020-edit-role-permissions (server, gateway y web-client, con el limite de no quitarse el propio ADMINISTRATOR). Siguen pendientes (2) reordenar la jerarquia y (3) el rol por defecto. Estado 2026-10-29: el patron para (2) ya esta implementado en canales y categorias (HU 41, spec 024-channel-reordering): lock pesimista de la fila del server, renumeracion 0..n-1 en una transaccion y constraint UNIQUE DEFERRABLE INITIALLY DEFERRED como backstop; server_roles ya tiene su constraint diferida (V4), asi que alcanza con reusar esa forma.",
       "pull_request": null,
       "exception_note": null,
       "discovered_pending_tasks": []
@@ -96,7 +96,7 @@
       "origin": [
         "TSK-038"
       ],
-      "context": "Pendientes descubiertos en TSK-038. (1) voice-calls no consume account_events: un usuario suspendido sigue conectado a su sala de voz (el CA 2 de HU 29 solo esta cubierto para las WebSockets de text-channel); falta un consumidor de AccountSuspended en la replica que mantiene el estado en memoria. (2) El kick de WebSockets depende de un publish fire-and-forget: si RabbitMQ esta caido al suspender, la conexion ya establecida sigue abierta y el gateway no revalida el token despues del handshake (repetir la suspension republica el evento, los consumidores son idempotentes). (3) web-client no maneja el frame session_ended ni el codigo de cierre: el usuario suspendido ve una desconexion generica en lugar de un mensaje de cuenta suspendida.",
+      "context": "Pendientes descubiertos en TSK-038. (1) voice-calls no consume account_events: un usuario suspendido sigue conectado a su sala de voz (el CA 2 de HU 29 solo esta cubierto para las WebSockets de text-channel); falta un consumidor de AccountSuspended en la replica que mantiene el estado en memoria. (2) El kick de WebSockets depende de un publish fire-and-forget: si RabbitMQ esta caido al suspender, la conexion ya establecida sigue abierta y el gateway no revalida el token despues del handshake (repetir la suspension republica el evento, los consumidores son idempotentes). (3) web-client no maneja el frame session_ended ni el codigo de cierre: el usuario suspendido ve una desconexion generica en lugar de un mensaje de cuenta suspendida. Estado 2026-10-29: la UI de suspension ya existe en el repo backoffice (listado con busqueda por usuario/email y filtro por estado, suspender con confirmacion y reactivar), asi que HU 29/30/31 quedan completas de punta a punta junto con el kick de WebSockets de text-channel (frame session_ended y cierre) y la revocacion de access tokens en el gateway por los sid devueltos. Siguen abiertos: (1) voice-calls no consume account_events; (2) el publish sigue siendo fire-and-forget y el gateway no revalida el token despues del handshake; (3) web-client no maneja el frame session_ended (solo reacciona al cierre 4401 como sesion vencida), asi que un suspendido no ve un mensaje especifico.",
       "pull_request": null,
       "exception_note": null,
       "discovered_pending_tasks": []
@@ -111,7 +111,7 @@
       "origin": [
         "TSK-045"
       ],
-      "context": "Pendientes descubiertos en TSK-045. Critico (ADR-007): GET /profiles/{user_id}/public responde 200 o 404 y el limite actual de 20 req/s por IP permite enumerar ids de usuario; falta un limite estricto por IP (por ejemplo 1 req/s) en el gateway antes de exponerlo masivamente. Complementario: exigir que el solicitante comparta al menos un servidor con el perfil consultado antes de devolver la proyeccion publica. Ademas, evaluar POST /profiles/public/batch para que el chat resuelva varios autores en una sola request y baje la presion sobre el rate limit.",
+      "context": "Pendientes descubiertos en TSK-045 (completado parcialmente en TSK-061). Hecho: `GET /profiles/{user_id}/public` ya tiene presupuesto propio en el gateway (`PUBLIC_PROFILE_RATE_LIMIT=10/second;120/minute` por IP real, ruta declarada antes del catch-all), lo que baja el techo de enumeracion de 1200/min a 120/min. Falta: (1) exigir que el solicitante comparta al menos un servidor con el perfil consultado antes de devolver la proyeccion publica (no vive en profile ni en gateway: hace falta un endpoint interno de co-membership en server); (2) recien con eso, `POST /profiles/public/batch` para que el chat resuelva varios autores en una sola request; (3) y entonces ajustar el limite a ~1 req/s, porque hoy la rafaga de 10/s existe para etiquetar una lista de 50 miembros con cache frio.",
       "pull_request": null,
       "exception_note": null,
       "discovered_pending_tasks": []
@@ -182,16 +182,22 @@
       "id": "TSK-057",
       "checkpoint": 3,
       "title": "server: concurrencia de position, orden 404-403 y categorias de canales",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-10-29",
       "severity": "should",
       "origin": [
         "TSK-035"
       ],
-      "context": "Pendientes descubiertos en TSK-035. (1) Dos creates concurrentes de canal pueden compartir position porque max+1 es read-then-write y no hay constraint que lo detecte: resolverlo en la HU de reorden (lock pesimista) o con un unique diferido. (2) El orden 404 -> 403 -> 428 permite a un caller autenticado distinguir si un channel_id existe; mismo criterio que DeleteServer, a corregir cuando existan roles. (3) category_id/categoryId se persisten y se usan para la unicidad pero no hay tabla ni endpoint: falta la HU de categorias.",
-      "pull_request": null,
+      "context": "Pendientes descubiertos en TSK-035, resueltos en la spec 023-channel-categories (HU 14). (1) La posicion de canales y categorias se calcula con MAX en SQL y bajo lock pesimista de la fila del server (ServerRepository.lockById), igual que la jerarquia de roles; channel_categories suma UNIQUE (server_id, position) DEFERRABLE INITIALLY DEFERRED como backstop. (2) UpdateChannel, DeleteChannel y los casos de uso de categorias autorizan antes de resolver el recurso, asi que un caller sin permisos recibe 403 tanto para un id existente como para uno inventado (400 -> 404 server -> 403 -> 404 recurso). (3) Tabla channel_categories con FK ON DELETE SET NULL desde channels.category_id, endpoints POST/GET/PATCH/DELETE en server y relay en gateway. Acompanan los PRs gateway#57 y web-client#154.",
+      "pull_request": "https://github.com/fiuba-IS2-Discordia/server/pull/28",
       "exception_note": null,
-      "discovered_pending_tasks": []
+      "discovered_pending_tasks": [
+        {
+          "description": "El arrastre de la barra lateral no tiene auto-scroll: si las secciones de un servidor no entran en pantalla, el gesto solo alcanza lo visible y el resto queda cubierto por Subir/Bajar de los menus. Seguir el puntero cerca del borde para scrollear el ScrollView es un follow-up acotado del cliente que no cambia el contrato con server.",
+          "severity": "nice-to-have",
+          "resolved": false
+        }
+      ]
     },
     {
       "id": "TSK-058",
@@ -244,35 +250,30 @@
       "id": "TSK-061",
       "checkpoint": 3,
       "title": "Perfil publico: completar el CA1 de HU-36 y la pantalla de perfil",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-10-30",
       "severity": "should",
       "origin": [
         "TSK-045"
       ],
-      "context": "Pendientes descubiertos en TSK-045. El CA1 de HU-36 quedo incompleto: falta decidir si el estado de actividad y los servidores en comun entran en PublicProfileResponse o en otro endpoint. En web-client el endpoint publico solo se usa para resolver nombre y avatar en el chat y el panel de miembros: falta la pantalla de perfil publico.",
-      "pull_request": null,
+      "context": "HU optativa 36 completada (2 pts). profile: el fan-out de presencia de HU-37 difundia cada transicion a todos los sockets y el snapshot inicial traia todos los usuarios conectados, asi que cualquier sesion veia quien estaba en linea en toda la plataforma; paso a suscripcion por socket (`subscribe`/`unsubscribe`, snapshot inicial vacio) con token bucket por usuario (rafaga 3, 1 comando/s, retenido 60 s tras cerrar el ultimo socket), tope de 200 ids por comando y 8 sockets por usuario (cierre 4429), mas gather con timeout por envio (PR profile#30, apilado sobre profile#29). gateway: `GET /profiles/{id}/public` declarado antes del catch-all para llevar su propio rate limit (PUBLIC_PROFILE_RATE_LIMIT=10/second;120/minute, con la IP real del cliente) y relay de `GET /users/{id}/mutual-servers` (gateway#59). web-client: `PublicProfilePopup` con avatar, nombre, presencia, descripcion y servidores en comun; 404 -> perfil no disponible; degrada sin activity_status y con reintento si fallan los servidores en comun; `ProfilePreviewProvider` monta un solo popup y se abre desde la fila de un miembro y desde el autor ajeno del chat; la barra de usuario paso a ser un menu (Mi perfil / Editar perfil / Cerrar sesion) con ProfileView#autoEdit (web-client#158). Verificado end-to-end con docker: mutual-servers 0/1 segun membresia, activity_status ONLINE/OFFLINE, DND e INVISIBLE proyectados, rafaga 10x200 + 429 y PATCH no afectado por el limite de la ruta, 422 sin llamar al upstream, y socket de presencia con snapshot vacio, suscripcion filtrada y rate_limited en el 4to comando. Gates: profile ruff + 203 tests + 42 escenarios; gateway ruff + 294 tests (96.8%); web-client tsc + expo lint + 105 suites/793 tests + export web.",
+      "pull_request": "gateway #59; web-client #158; profile #29 (HU-37, base); profile #30 (apilado); server #31 (HU-36, base)",
       "exception_note": null,
-      "discovered_pending_tasks": []
+      "discovered_pending_tasks": [
+        {
+          "description": "El rate limit del perfil publico baja el techo de enumeracion de 1200/min a 120/min, pero no lo cierra: falta validar que quien consulta comparte un servidor con el consultado. Con esa validacion se puede habilitar el endpoint batch y bajar el limite a 1 req/s sin romper el etiquetado de la lista de miembros.",
+          "severity": "must",
+          "resolved": false
+        },
+        {
+          "description": "La presencia en WS sigue siendo un oraculo de conexion (un id inexistente y uno desconectado son indistinguibles), pero con el token bucket por proceso: con N replicas de profile el techo se multiplica por N y el fan-out no cruza replicas. Mudar hub y bucket a Redis junto con la validacion de servidor compartido.",
+          "severity": "should",
+          "resolved": false
+        }
+      ]
     },
     {
       "id": "TSK-062",
-      "checkpoint": 3,
-      "title": "Infra: higiene operativa (volumenes huerfanos y compose de la VM sincronizado)",
-      "status": "pending",
-      "start_date": null,
-      "severity": "nice-to-have",
-      "origin": [
-        "TSK-008",
-        "TSK-031"
-      ],
-      "context": "Pendientes descubiertos en TSK-008 y TSK-031. (1) Eliminar los volumenes discordia_auth_pgdata y discordia_profile_pgdata de la EC2 una vez vencido el periodo de gracia posterior a la migracion a RDS (los contenedores ya no existen). (2) Aplicar en la VM el compose vigente segun el runbook de infra/docs/servicios/text-channel.md y verificar la regla de oro: git show HEAD:compose.prod.yaml | diff --strip-trailing-cr - /opt/discordia/docker-compose.yml debe salir vacio.",
-      "pull_request": null,
-      "exception_note": null,
-      "discovered_pending_tasks": []
-    },
-    {
-      "id": "TSK-063",
       "checkpoint": 3,
       "title": "Ver miembros por rol: filtro por roleId y paginacion por cursor",
       "status": "pending",
@@ -287,7 +288,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-064",
+      "id": "TSK-063",
       "checkpoint": 3,
       "title": "HU 10: transferencia de propiedad del servidor (server + web-client)",
       "status": "completed",
@@ -298,6 +299,71 @@
       "pull_request": "server #27; web-client #153",
       "exception_note": null,
       "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-064",
+      "checkpoint": 3,
+      "title": "HU 14: organizar canales en categorias (server + gateway + web-client)",
+      "status": "completed",
+      "start_date": "2026-10-29",
+      "severity": "must",
+      "origin": [],
+      "context": "HU obligatoria 14 (3 pts), implementada de punta a punta en la spec 023-channel-categories. server: tabla channel_categories (V6) con indice lower(name), constraint de posicion diferida, saneamiento del category_id viejo y FK ON DELETE SET NULL desde channels; CRUD de categorias (POST/GET /servers/{id}/categories y PATCH/DELETE .../{categoryId}); categoryId explicito en ChannelPatch/UpdateChannelRequest (null = General) y nextPositionForServer por bucket; MemberPermissionChannelAuthorizer evalua MANAGE_CHANNELS | ADMINISTRATOR en canales y categorias y GET /servers/{id} expone canManageChannels sin embeber las categorias. gateway: las cuatro rutas relayadas con X-User-Id inyectado. web-client: barra lateral agrupada por categoria con seccion General para los canales sin ninguna, formularios y menus de categoria, selector de categoria al crear y editar canal, y la misma agrupacion en el modo lectura. Verificado: server 554 tests; gateway 279 tests con 96,8% de cobertura y ruff limpio; web-client 693 tests con tsc y expo lint limpios. Los pendientes que absorbio la spec quedaron registrados en TSK-057 (completed) y la nota de MANAGE_CHANNELS en TSK-049.",
+      "pull_request": "server #28; gateway #57; web-client #154",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-065",
+      "checkpoint": 3,
+      "title": "HU 41: reordenar canales y categorias (server + web-client)",
+      "status": "completed",
+      "start_date": "2026-10-29",
+      "severity": "should",
+      "origin": [],
+      "context": "HU optativa 41 (2 pts), implementada en la spec 024-channel-reordering sobre la base de la HU 14. server: position aditivo en PATCH /channels/{id} y PATCH /categories/{id} con semantica de hueco de insercion sobre la lista original (el corrimiento slot - 1 del mismo bucket lo aplica el servidor y el cliente manda el hueco crudo), renumeracion 0..n-1 bajo lock pesimista de la fila del server y constraint UNIQUE NULLS NOT DISTINCT (server_id, category_id, position) DEFERRABLE INITIALLY DEFERRED (V7) como backstop; al borrar una categoria se renumera General porque la FK SET NULL devolvia los canales con posiciones duplicadas. gateway: sin cambios, relaya el cuerpo tal cual. web-client: arrastre con PanResponder (touch en movil y mouse en web, sin dependencias nuevas), linea de insercion y scroll desactivado durante el gesto, mas Subir/Bajar en los menus como camino accesible, con orden persistido de forma optimista y rollback. Verificado: server 595 tests; web-client 720 tests en 97 suites con tsc y expo lint limpios. La rama 023-channel-categories ya esta mergeada en develop, asi que el PR del web-client se reapunto contra develop y se resolvio el conflicto con la transferencia de propiedad (HU #10) conservando reorderError y los tests de Subir/Bajar; web-client 768 tests en 101 suites con tsc y expo lint limpios. El patron de renumeracion reutilizable para la jerarquia de roles (HU 56) quedo anotado en TSK-050 y el auto-scroll durante el arrastre en TSK-057.",
+      "pull_request": "server #29; web-client #156",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-066",
+      "checkpoint": 3,
+      "title": "HU 56: reordenar la jerarquia de roles (server + gateway + web-client)",
+      "status": "completed",
+      "start_date": "2026-10-29",
+      "severity": "should",
+      "origin": [
+        "TSK-050"
+      ],
+      "context": "HU optativa 56 (3 pts), implementada en la spec 025-role-hierarchy sobre el patron de reordenamiento de la HU 41. server: PATCH /servers/{serverId}/roles/{roleId} con position como hueco de insercion (slot - 1 lo aplica el servidor), renumeracion 0..n-1 en una transaccion bajo el lock pesimista de la fila del server y la constraint UNIQUE (server_id, position) DEFERRABLE INITIALLY DEFERRED de V4 como backstop (sin migracion nueva), mas dos reglas en RoleEditRules: no se mueve un rol igual o superior al propio y el destino tampoco puede quedar por encima. La comparacion del destino es por indice y no por position: al insertar arriba el rol propio se corre un lugar, y comparar contra el numero original dejaba pasar el hueco inmediatamente superior. gateway: relay puro de la ruta (422 por UUID malformado, 502 sin reintento en 5xx). web-client: arrastre con el ReorderHandle extraido del Sidebar, botones Subir/Bajar como camino accesible, hueco crudo con orden optimista y rollback, y la jerarquia elevada al estado de la pagina (activeRoles por servidor) porque GET /servers/{id} no embebe roles y el live sync no la trae. La base 024 se reapunto contra develop (con la transferencia de propiedad ya mergeada) y el PR se actualizo sobre ella: el conflicto en los tests se resolvio conservando los bloques de HU 56, HU 41 y HU #10; web-client 782 tests en 102 suites con tsc y expo lint limpios. TSK-050 conserva pendiente el rol por defecto (item 3) y MANAGE_ROLES sigue sin evaluarse (TSK-058). Verificado: server 627 tests + smoke E2E con docker compose, gateway 272 tests con ruff limpio, web-client 734 tests en 98 suites con tsc y expo lint limpios.",
+      "pull_request": "server #30; gateway #58; web-client #157",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-067",
+      "checkpoint": 3,
+      "title": "HU 37: estado de actividad en tiempo real (profile + gateway + web-client)",
+      "status": "completed",
+      "start_date": "2026-10-30",
+      "severity": "should",
+      "origin": [],
+      "context": "HU optativa 37 completada (5 pts). profile: el backend ya estaba en el PR #29 (REST GET/PATCH de actividad, WS /ws/presence con subscribe/unsubscribe/activity, barrido de inactividad y codigos 4401/4404/4429); a esa misma rama se le sumo el fix de presencia por suscripcion del PR #30, que reemplazo el broadcast global (que entregaba la presencia de toda la plataforma a cualquier sesion) por suscripcion por socket con token bucket por usuario (rafaga 3, 1 comando/s, retenido 60 s tras el ultimo socket), tope de 200 ids y 8 sockets por usuario. gateway: relay WS /ws/presence (gateway#60) con el patron de notifications.py, y la unica diferencia es que propaga los codigos de cierre privados del upstream (4000-4999): sin eso 4429/4404 llegan como 1005 y el cliente reconecta en bucle contra un servicio que lo sigue rechazando. web-client: presenceSocket + getActivity + presenceState (reductor puro, etiquetas/colores compartidos, plan de suscripcion con tope de 200) y PresenceProvider con una sola conexion por sesion (web-client#159, apilado sobre #158). El cliente espeja el presupuesto: usePresenceWatch registra interes, el provider fusiona los watchers en un set, agrupa las altas con 1 s de debounce y posterga el envio con un token bucket local; las bajas van por unsubscribe (gratis) y un rate_limited del servicio drena el bucket, reintenta a los 1,2 s y conserva lo mostrado. El latido solo sale tras interaccion real y con la pestana visible (asi una sesion inactiva deriva a AWAY, CA2) y se manda en el acto al volver, con piso de 1 s. El estado propio se lee por REST porque INVISIBLE llega proyectado como OFFLINE. UI: punto + etiqueta por miembro en MembersPopup, estado en vivo en PublicProfilePopup (el frame pisa el snapshot del REST) y punto propio + entrada Estado en el menu de usuario con ActivityStatusPopup (5 opciones). Verificado end-to-end con docker (profile en la rama de HU-37, gateway reconstruido): 20/20 checks sobre los cuatro criterios mas presupuesto (rafaga -> rate_limited), 200 ids, 4401 sin token y 4429 al noveno socket. El E2E encontro el bug del close code, que los tests con fakes no veian. Gates: profile ruff + 203 tests + 42 escenarios; gateway ruff + 297 tests (96.12%); web-client tsc + expo lint + 109 suites/851 tests + export web.",
+      "pull_request": "profile #29 (HU-37, base); profile #30 (fix de presencia, apilado); gateway #60; web-client #159 (apilado sobre #158)",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+        {
+          "description": "El hub de presencia y el token bucket viven en memoria de cada proceso: con N replicas de profile el techo de subscribe se multiplica por N y el fan-out no cruza replicas. Mudarlos a Redis y unirlos con la validacion de servidor compartido que ya esta pendiente para el perfil publico.",
+          "severity": "should",
+          "resolved": false
+        },
+        {
+          "description": "La presencia sigue siendo un oraculo de conexion: un id inexistente y uno desconectado son indistinguibles. Cerrarlo exige validar servidor compartido antes de responder presencia, igual que en el perfil publico.",
+          "severity": "must",
+          "resolved": false
+        }
+      ]
     }
   ]
 }

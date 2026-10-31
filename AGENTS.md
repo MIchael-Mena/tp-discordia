@@ -6,14 +6,18 @@
 
 Los repositorios reales son subdirectorios independientes, cada uno con su propio `.git`:
 
-| Subdirectorio   | Repositorio GitHub                                | Ramas disponibles            |
-|-----------------|---------------------------------------------------|------------------------------|
-| `auth-service/` | `github.com/[org]/auth-service`                   | `main`, `develop`, features  |
-| `gateway/`      | `github.com/[org]/gateway`                        | `main`, `develop`, features  |
-| `profile/`      | `github.com/[org]/profile`                        | `main`, `develop`, features  |
-| `web-client/`   | `github.com/[org]/web-client`                     | `main`, `develop`, features  |
-| `server/`       | `github.com/[org]/server`                         | `main`, `develop`, features  |
-| `infra/`        | `github.com/[org]/infra`                          | **solo `main`** (sin develop)|
+| Subdirectorio    | Repositorio GitHub                    | Ramas disponibles             |
+|------------------|---------------------------------------|-------------------------------|
+| `auth-service/`  | `github.com/[org]/auth-service`       | `main`, `develop`, features   |
+| `backoffice/`    | `github.com/[org]/backoffice`         | `main`, `develop`, features   |
+| `gateway/`       | `github.com/[org]/gateway`            | `main`, `develop`, features   |
+| `infra/`         | `github.com/[org]/infra`              | **solo `main`** (sin develop) |
+| `notifications/` | `github.com/[org]/notifications`      | `main`, `develop`, features   |
+| `profile/`       | `github.com/[org]/profile`            | `main`, `develop`, features   |
+| `server/`        | `github.com/[org]/server`             | `main`, `develop`, features   |
+| `text-channel/`  | `github.com/[org]/text-channel`       | `main`, `develop`, features   |
+| `voice-calls/`   | `github.com/[org]/voice-calls`        | `main`, `develop`, features   |
+| `web-client/`    | `github.com/[org]/web-client`         | `main`, `develop`, features   |
 
 > **⚠️ Importante — repo `infra`:** solo tiene rama `main`. No existe rama `develop`. Todos los cambios se mergeando directamente a `main`. Los PRs de infra se crean con base `main`.
 
@@ -24,7 +28,7 @@ Los repositorios reales son subdirectorios independientes, cada uno con su propi
 Algunos repositorios tienen su propio `AGENTS.md` con reglas y contexto específico del servicio. **Si vas a trabajar dentro de un repositorio específico, léelo antes de hacer cualquier cambio:**
 
 - **`profile/AGENTS.md`** — reglas de Clean Architecture, convenciones de testing (pytest + behave), manejo de identidad con `X-User-Id`, y creación asíncrona de perfiles (ADR-004). **Usa ese archivo como fuente primaria cuando trabajes en `profile/`.**
-- Los demás repos (`auth-service/`, `gateway/`, `web-client/`, `server/`, `infra/`) pueden incorporar su propio `AGENTS.md` en el futuro; si lo encuentras, úsalo.
+- Los demás repos (`auth-service/`, `backoffice/`, `gateway/`, `notifications/`, `server/`, `text-channel/`, `voice-calls/`, `web-client/`, `infra/`) pueden incorporar su propio `AGENTS.md` en el futuro; si lo encuentras, úsalo.
 
 ---
 
@@ -38,14 +42,16 @@ Discordia es una plataforma tipo Discord compuesta por microservicios:
 - **server**: Servicio Quarkus (Java). Gestiona "servidores" y canales de la plataforma. Solo interno: el gateway expone `/api/servers...`; el servicio no tiene ruta pública. Base: `discordia_server` en Amazon RDS (Flyway al arrancar).
 - **text-channel**: Mensajería por canal (historial REST + WebSocket). Store principal: MongoDB en **Atlas** (`TEXT_CHANNEL_MONGO_URL`); el contenedor `mongo:7` queda solo para el modo de contingencia (`mongo-mode.sh`). Redis como bus pub/sub entre réplicas.
 - **voice-calls**: Orquestación de canales de voz contra **LiveKit Cloud**. Estado de presencia **en memoria** (sin base de datos). Solo interno: el gateway expone `/api/voice/...`. Tiene `/livez` y `/readyz` (chequeo de LiveKit).
+- **notifications**: Notificaciones a usuarios finales (HU 27/28). Consume los exchanges fanout que ya publican otros servicios —`account_events` de `auth-service`, `server_events` de `server` y `message_events` de `text-channel`— y mantiene su propia copia de membresías y canales para resolver audiencias sin llamar a nadie. Posee los **marcadores de lectura** y el estado de no leído por canal y servidor. MongoDB propio (`discordia_notifications`). Solo interno: el gateway expone `/api/notifications/...` y `/api/ws/notifications`. Está en `compose.prod.yaml` (`discordia-notifications`, redes `proxy` y `rabbitmq-network`) con su propia imagen ECR y deploy por SSM.
 - **web-client**: App Expo/React Native. Interfaces web y mobile. Login por password y Google (Google Identity Services / `@react-native-google-signin`).
+- **backoffice**: Cliente Expo/React Native para el **staff de la plataforma** (es un cliente, no un microservicio). Se autentica contra el mismo gateway que el `web-client` y descarta la sesión si el claim `role` del JWT no es `admin`; expone el listado de cuentas con búsqueda y filtro por estado, y las acciones de suspender/reactivar (HU 29/30/31). Se publica como web en Expo Hosting.
 - **infra**: Configuración de infraestructura AWS (EC2, RDS, ECR), `compose.prod.yaml`, scripts (`script/startup-infra.sh`, `script/startup-servers.sh`, `script/apply-prod-env.sh`), documentación ADR y CI/CD.
 
 ### Comunicación
-- **HTTP**: web-client → gateway → (auth-service | profile | server | text-channel | voice-calls). Solo el gateway (y Traefik para `/api`) es público.
-- **WebSocket**: web-client → gateway → text-channel (`/api/ws/channels/{id}`).
+- **HTTP**: `web-client` y `backoffice` → gateway → (auth-service | profile | server | text-channel | voice-calls | notifications). Solo el gateway (y Traefik para `/api`) es público.
+- **WebSocket**: `web-client` → gateway → text-channel (`/api/ws/channels/{id}`) y → notifications (`/api/ws/notifications`).
 - **Media**: voice-calls → LiveKit Cloud (externo).
-- **Async (RabbitMQ)**: auth-service publica → profile consume.
+- **Async (RabbitMQ)**: auth-service publica → profile consume; text-channel y server publican → notifications consume.
 - El gateway **no llama a auth en cada request**; verifica el JWT localmente con `JWT_SECRET` compartido.
 
 ### URLs de producción
@@ -96,7 +102,7 @@ Discordia es una plataforma tipo Discord compuesta por microservicios:
 | `GOOGLE_CLIENT_ID`    | `auth-service`, `web-client`   | Mismo Web Client ID en ambos                       |
 | `TEXT_CHANNEL_MONGO_URL` / `TEXT_CHANNEL_MONGO_URL_ATLAS` | `text-channel` | URI completa de MongoDB Atlas; `_ATLAS` es la persistente y `mongo-mode.sh` conmuta la activa |
 | `LIVEKIT_URL` / `LIVEKIT_API_KEY` / `LIVEKIT_API_SECRET` | `voice-calls` | Credenciales de LiveKit Cloud; obligatorias en el compose |
-| `INTERNAL_SERVICE_TOKEN` | `server`, `text-channel` | Token compartido del endpoint interno de permiso; **mismo valor** en ambos |
+| `INTERNAL_SERVICE_TOKEN` | `server`, `text-channel`, `notifications` | Token compartido de los endpoints internos (permiso de envío y membresías); **mismo valor** en los tres |
 
 ---
 
@@ -192,6 +198,7 @@ El backlog del proyecto se encuentra en **`Backlog.json`** en la raíz de este d
 - **Conexión a bases RDS:** usar `infra/script/db-shell.sh` (solo desde la EC2).
 - **Regla de oro de compose:** el `compose.prod.yaml` del repo `infra` y el `/opt/discordia/docker-compose.yml` de la EC2 deben ser idénticos (`git show HEAD:compose.prod.yaml | diff --strip-trailing-cr - /opt/discordia/docker-compose.yml` → vacío). Si hay cambio en el compose, sincronizar el archivo en la VM antes de redesplegar.
 - **`discordia-key.pem`** en la raíz de `TP-Discordia/` es la clave privada SSH de la EC2. No commitear ni exponer.
+- **Configuración de timezone:** para evitar problemas con la zona horaria, se debe configurar el entorno con `_JAVA_OPTIONS=-Duser.timezone=UTC`. Esto es especialmente importante en entornos locales donde el timezone por defecto puede ser diferente.
 
 ---
 
