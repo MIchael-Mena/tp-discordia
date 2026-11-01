@@ -383,8 +383,8 @@ def parsear_args(argv=None) -> argparse.Namespace:
         help="borra también las ramas con remota borrada y merge no detectable (squash)",
     )
     parser.add_argument("--only", default="", help="procesar solo estas carpetas (separadas por coma)")
-    parser.add_argument("--config", default="", help="ruta a repos.json (default: <root>/repos.json)")
-    parser.add_argument("--root", default="", help="raíz del workspace (default: carpeta del script)")
+    parser.add_argument("--config", default="", help="ruta a repos.json (default: .scripts/repos.json o <root>/repos.json)")
+    parser.add_argument("--root", default="", help="raíz del workspace (default: raíz del proyecto)")
     return parser.parse_args(argv)
 
 
@@ -454,14 +454,35 @@ def main(argv=None) -> int:
     configurar_salida()
     args = parsear_args(argv)
 
-    root = Path(args.root).resolve() if args.root else Path(__file__).resolve().parent
+    script_dir = Path(__file__).resolve().parent
+    if args.root:
+        root = Path(args.root).resolve()
+    elif script_dir.name == ".scripts":
+        root = script_dir.parent
+    else:
+        root = script_dir
+
     if not root.exists():
         print(f"[error] la raíz indicada no existe: {root}")
         return 1
-    config_path = Path(args.config) if args.config else root / "repos.json"
+
+    if args.config:
+        config_path = Path(args.config)
+        if not config_path.is_absolute():
+            config_path = (root / args.config).resolve() if (root / args.config).exists() else (script_dir / args.config).resolve()
+    else:
+        if (script_dir / "repos.json").exists():
+            config_path = script_dir / "repos.json"
+        elif (root / "repos.json").exists():
+            config_path = root / "repos.json"
+        elif (root / ".scripts" / "repos.json").exists():
+            config_path = root / ".scripts" / "repos.json"
+        else:
+            config_path = script_dir / "repos.json"
+
     if not config_path.exists():
         print(f"[error] no se encontró la configuración: {config_path}")
-        print("        creá repos.json junto al script (o pasá --config PATH).")
+        print("        creá repos.json en .scripts/ o en la raíz (o pasá --config PATH).")
         return 1
     try:
         entradas = cargar_config(config_path)

@@ -755,7 +755,6 @@
 			"args": [],
 			"isBackground": false
 		},
-		{},
 		{
 			"label": "w-initiate",
 			"type": "shell",

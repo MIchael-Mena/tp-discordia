@@ -1,8 +1,8 @@
 # Estado de las Historias de Usuario — Discordia
 
-**Actualizado:** 2026-10-30 (tener en cuenta que hay otros miembros del equipo que pueden haber avanzado en paralelo y no tienen acceso a este documento).
+**Actualizado:** 2026-11-01 (tener en cuenta que hay otros miembros del equipo que pueden haber avanzado en paralelo y no tienen acceso a este documento).
 
-Seguimiento de todas las HU: completadas, parciales y sin implementar. Para ver el detalle de cada historia, ver [Discordia-TP](infra/docs/discordia-tp.md).
+Seguimiento de todas las HU: completadas, parciales y sin implementar. Para ver el detalle de cada historia, ver [Discordia-TP](infra/discordia-tp.md).
 
 **Criterio:** una HU se marca como completada cuando el flujo funciona de punta a punta en el cliente que le corresponde —`web-client` para las historias de usuario final, `backoffice` para las de staff—, con su respaldo en el servicio correspondiente y el relay del `gateway`. Las que tienen backend sin UI, o UI incompleta, se listan en «Parciales o solo backend».
 
@@ -53,6 +53,7 @@ Seguimiento de todas las HU: completadas, parciales y sin implementar. Para ver 
 | 44 | Editar mensaje | Mensajería | 3 | 2 |
 | 45 | Eliminar mensaje | Mensajería | 3 | 2 |
 | 56 | Reordenar jerarquía de roles | Roles y Permisos | 3 | 3 |
+| 57 | Sobrescribir permisos de un rol en un canal específico | Roles y Permisos | 5 | 3 |
 | 58 | Ver miembros por rol | Roles y Permisos | 2 | 2 |
 
 **Total implementado de punta a punta: 130 pts** (100 obligatorios + 30 optativos).

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-10-30T21:10:00.000Z",
+  "last_updated": "2026-11-01T00:43:00-03:00",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -43,14 +43,14 @@
       "id": "TSK-048",
       "checkpoint": 3,
       "title": "text-channel: autorizar la lectura del historial por membresia del canal",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-01",
       "severity": "must",
       "origin": [
         "TSK-034"
       ],
-      "context": "Pendiente descubierto en TSK-034. El GET del historial solo exige identidad (X-User-Id): cualquier usuario autenticado que conozca un channel_id puede leer los mensajes. El envio ya consulta el endpoint interno de permiso de server (can_send); falta el equivalente de lectura (membresia / VIEW_CHANNELS) con su timeout y la misma degradacion que usa el envio.",
-      "pull_request": null,
+      "context": "Pendiente descubierto en TSK-034, resuelto mediante la implementación de HU-57 (Sobrescribir permisos de un rol en un canal específico). El endpoint interno /internal/channels/{id}/send-permission de server expone canViewChannel resolviendo overrides de rol con bitmasks disjuntos; text-channel valida permissions.can_view tanto en el historial como en el WebSocket handshake. Acompañan los PRs server#34, gateway#66 y web-client#161.",
+      "pull_request": "https://github.com/fiuba-IS2-Discordia/text-channel/pull/15",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -364,6 +364,32 @@
           "resolved": false
         }
       ]
+    },
+    {
+      "id": "TSK-068",
+      "checkpoint": 3,
+      "title": "fix: CORS del gateway no permitía PUT (editar permisos de rol, asignar rol y marcador de lectura)",
+      "status": "completed",
+      "start_date": "2026-10-31",
+      "severity": "must",
+      "origin": [],
+      "context": "Bug reportado desde el frontend: en «Gestionar Roles» fallaban con «No pudimos conectar con el servidor» tanto editar los permisos de un rol (HU-22) como asignar un rol a un miembro (HU-23). El mensaje lo emite el cliente solo ante una falla de transporte, así que el problema estaba antes del status HTTP: CORSMiddleware de gateway/app/main.py declaraba allow_methods sin PUT, y los tres flujos que fallan usan justamente PUT — PUT /servers/{id}/roles/{roleId}/permissions, PUT /servers/{id}/members/{userId}/roles/{roleId} y PUT /notifications/read-markers/channels/{id} (HU-28, que fallaba en silencio). Reproducido contra producción: el preflight de GET, POST, PATCH y DELETE devolvía 200 y el de PUT 400 con el cuerpo «Disallowed CORS method», así que el navegador nunca mandaba la request real y fetch tiraba TypeError (clasificado como NetworkError por rolesErrors). Fix: agregar PUT a allow_methods y tests que derivan los verbos esperados de app.routes en vez de una lista hardcodeada (test_preflight_accepts_every_method_the_app_routes, parametrizado, y test_put_relay_responses_carry_cors_headers), verificado en rojo sin el fix. Se verificó también que el bloqueo no era del servicio server. El segundo síntoma reportado (los permisos «Ver canales» y «Enviar mensajes» no se pueden destildar) no es un bug: FR-004 de la spec 020-edit-role-permissions exige que se muestren siempre activos y no removibles porque todo miembro los tiene (el backend calcula RolePermissions.DEFAULT | requested); se decidió dejar la UI como está. Desplegado y verificado en producción: preflight PUT 200 con PUT en Access-Control-Allow-Methods en los tres flujos, PUT real con token inválido 401 con Access-Control-Allow-Origin, sin regresiones en /livez, /readyz ni en el rechazo de orígenes desconocidos.",
+      "pull_request": "gateway #64; release gateway #65 (tag v2026.10.31)",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-069",
+      "checkpoint": 3,
+      "title": "HU 57: sobrescribir permisos de un rol en un canal específico (server + gateway + web-client)",
+      "status": "completed",
+      "start_date": "2026-11-01",
+      "severity": "should",
+      "origin": [],
+      "context": "HU optativa 57 completada (5 pts). server: migración Flyway V8 con tabla channel_role_overrides y check de bitmasks disjuntos ((allow & deny) == 0). Bitmask CHANNEL_OVERRIDABLE (VIEW_CHANNELS, SEND_MESSAGES, MANAGE_MESSAGES). ChannelRoleOverrideRepository con consulta batch findByChannelIds para evitar N+1 en lecturas masivas. Caso de uso ResolveChannelPermissions con resolución batch y orden jerárquico position DESC (el rol más alto en la jerarquía prevalece ante conflictos) y corte implícito de permisos al denegar VIEW_CHANNELS. ChannelOverrideController con GET/PUT/DELETE bajo /servers/{serverId}/channels/{channelId}/overrides respetando orden de errores para no filtrar existencia de canales privados (400 payload -> 404 server -> 403 ManageRolesPolicy/jerarquía -> 404 canal/rol). Exposición de canViewChannel en GET /internal/channels/{id}/send-permission y filtrado de canales privados en RetrieveServerWithChannels y ListChannelsByServer para miembros sin permisos de administración. gateway: relay de GET/PUT/DELETE de overrides de canal con sanitización de headers, inyección confiable de X-User-Id y validación 422 de UUIDs (cobertura 96.20%, 100% en servers.py). web-client: contratos y API (getChannelOverrides, upsertChannelOverride, deleteChannelOverride), mapeo de errores en rolesErrors.ts, lógica pura en channelOverrides.ts (tri-state allow/inherit/deny), modal ChannelPermissionsModal con selector de roles y SegmentedButtons por permiso, affordance en ChannelActionsMenu accesible para administradores, y soporte de canales de solo lectura (canSendMessages === false) en ChatPanel. Cierra además TSK-048 (text-channel exige permissions.can_view en historial y handshake de WebSocket).",
+      "pull_request": "server #34; gateway #66; web-client #161; text-channel #15",
+      "exception_note": null,
+      "discovered_pending_tasks": []
     }
   ]
 }

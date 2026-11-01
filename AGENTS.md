@@ -71,10 +71,56 @@ Discordia es una plataforma tipo Discord compuesta por microservicios:
 - **Nunca** crear PRs de servicios con base `main` directamente (salvo hotfixes acordados).
 
 ### Convenciones de commits
+- Atomizar los commits: un commit = un cambio lógico. No mezclar refactor + fix + feature en un solo commit, ejemplo un PR puede tener varios commits, cada uno con su propio scope y tipo. Un PR no debe tener un solo commit que mezcle varios scopes y tipos.
 - Formato **Conventional Commits** en **español**.
 - Ejemplos: `feat(gateway): agregar endpoint GET /me`, `fix(auth): corregir emit de rol en attach`, `docs(infra): actualizar ci-cd.md con paso de migración`.
 - Atomizar los commits: un commit = un cambio lógico. No mezclar refactor + fix + feature en un solo commit, ejemplo un PR puede tener varios commits, cada uno con su propio scope y tipo.
 - **Sin co-autoría de IA**: el commit debe quedar a nombre **únicamente** de la persona desarrolladora. **Nunca** agregar trailers de coautoría de agentes/herramientas de IA (p. ej. `Co-authored-by: Copilot <...>`) ni firmas de "generado por IA" en el mensaje, aunque una herramienta lo proponga. Si un commit de una rama aún no mergeada ya los tiene, eliminar el trailer con `git rebase`/`amend` y republicar la rama con `git push --force-with-lease`.
+
+### Spec-Driven Development (SDD) — Carpeta `specs/`
+
+Cada microservicio cuenta con un directorio `specs/` versionado en su propio repositorio donde el equipo documenta las especificaciones técnicas y funcionales. Al desarrollar nuevas funcionalidades, modificar contratos o alterar lógica de dominio, es obligatorio seguir el flujo SDD:
+
+1. **Inspección previa (Consistencia con el equipo):**
+   - Antes de crear o editar una especificación en `<servicio>/specs/`, lee al menos 2 archivos existentes en esa misma carpeta (o en otro servicio si estuviera vacía) para **respetar exactamente la convención de nombres, estructura de secciones y formato** que ya utiliza el equipo.
+
+2. **Flujo obligatorio Spec-First (Integración con `/plan`):**
+   - **Fase de Planificación:** Antes de proponer cambios, lee 1 o 2 archivos existentes en `<servicio>/specs/` para imitar el formato del equipo.
+   - **Validación única:** Si el usuario inicia en modo `/plan`, incluye la estructura de la especificación dentro del plan. Una vez aprobado el plan, **no vuelvas a detenerte**: genera o actualiza el archivo en `<servicio>/specs/` como primer paso y continúa directo con el código y los tests. Si no se usó `/plan`, redacta primero la spec y pide confirmación antes de programar.
+   - **Sincronización pre-PR:** Si durante la codificación cambia algún detalle técnico, actualiza el archivo en `specs/` antes de hacer commit para que coincida con el código final.
+
+3. **Reglas de contenido en `specs/`:**
+   - **PROHIBIDO filtrar el Backlog local:** Los archivos dentro de `specs/` son públicos para todo el equipo. **Nunca** incluyas referencias a `Backlog.json` ni identificadores `TSK-*`. Utiliza únicamente referencias compartidas como Historias de Usuario (`HU XX`) o `ADR-XXX`.
+   - **Alineación entre servicios:** Si una spec modifica un contrato que cruza servicios (ej. rutas expuestas en `gateway` o eventos publicados hacia `profile` o `notifications`), verifica las specs o el código de los servicios afectados para evitar inconsistencias.
+
+### Formato de Pull Requests (PRs)
+
+Todo PR debe seguir una estructura uniforme en español para facilitar la revisión y trazabilidad entre microservicios:
+
+- **Título del PR:** Usar formato **Conventional Commits** en español (`tipo(alcance): descripción breve`, ej. `feat(notifications): agregar consumidor de message_events`).
+- **Reglas de privacidad y autoría:**
+  - **PROHIBIDO** mencionar identificadores locales (`TSK-*`) o hacer referencia a `Backlog.json` en el título, descripción o comentarios del PR (el backlog es de uso estrictamente local). Si corresponde, referenciar Historias de Usuario (`HU XX`), ADRs (`ADR-XXX`) o números de PR/Issues de GitHub (`#12`).
+  - **Sin firmas de IA:** No incluir leyendas ni footers generados por herramientas de IA (ej. *"Generated with Claude/Copilot"*).
+- **Plantilla obligatoria para la descripción (Body):**
+
+  ```md
+  ## Resumen
+  Breve explicación de qué problema resuelve este PR y por qué es necesario (referenciar HU o ADR si aplica).
+
+  ## Cambios principales
+  - Lista concisa de los cambios técnicos agrupados por capa o módulo.
+  - Omitir detalles triviales que ya son evidentes en el diff.
+
+  ## Contratos e Impacto Operativo
+  - **APIs / Eventos:** Cambios en rutas HTTP/WS, payloads o exchanges/colas de RabbitMQ (indicar cómo afecta a productores, `gateway` o consumidores). Si no hay, indicar "Sin cambios".
+  - **Base de datos:** Migraciones de Alembic/Flyway (aclarar si sigue el patrón expand/contract). Si no hay, indicar "Sin cambios".
+  - **Configuración / Infra:** Nuevas variables de entorno (`.env.example`) o cambios requeridos en `infra/compose.prod.yaml`. Si no hay, indicar "Sin cambios".
+  - **PRs relacionados / apilados:** Enlace a PRs base si este PR está apilado sobre otra rama o depende de un cambio en otro repositorio.
+
+  ## Verificación
+  - [ ] Linter ejecutado sin errores (`ruff` / equivalente del stack).
+  - [ ] Tests automatizados pasando (cobertura >= 70% en servicios Python).
+  - [ ] Verificación manual o de integración (detallar brevemente comandos o flujo probado).
 
 ### Migraciones de base de datos (ADR-008)
 - **auth-service** y **profile** usan **Alembic** como única fuente del esquema. El punto de entrada es `db/migrate.sh`.
@@ -194,7 +240,7 @@ El backlog del proyecto se encuentra en **`Backlog.json`** en la raíz de este d
 ## 7. Notas operativas
 
 - **Stack local:** levantarlo con `infra/script/startup-infra.sh` (RabbitMQ + bases) y luego `infra/script/startup-servers.sh` (los servicios). Cada servicio tiene su propio `.env` (copiar desde `.env.example`).
-- **Pruebas locales:** el ciclo completo para probar el proyecto está automatizado por esos scripts y documentado en [`infra/README.local.md`](infra/README.local.md).
+- **Pruebas locales:** el ciclo completo para probar el proyecto está automatizado por esos scripts y documentado en [`infra/README.local.md`](infra/README.local.md), para el cliente se usa el comando de expo `npx expo start` (web).
 - **Conexión a bases RDS:** usar `infra/script/db-shell.sh` (solo desde la EC2).
 - **Regla de oro de compose:** el `compose.prod.yaml` del repo `infra` y el `/opt/discordia/docker-compose.yml` de la EC2 deben ser idénticos (`git show HEAD:compose.prod.yaml | diff --strip-trailing-cr - /opt/discordia/docker-compose.yml` → vacío). Si hay cambio en el compose, sincronizar el archivo en la VM antes de redesplegar.
 - **`discordia-key.pem`** en la raíz de `TP-Discordia/` es la clave privada SSH de la EC2. No commitear ni exponer.
