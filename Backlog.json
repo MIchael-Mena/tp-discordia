@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-01T00:43:00-03:00",
+  "last_updated": "2026-11-01T18:28:35.068Z",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -58,15 +58,15 @@
       "id": "TSK-049",
       "checkpoint": 3,
       "title": "Moderacion con permisos y jerarquia: bans, canales y acciones administrativas",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-01",
       "severity": "must",
       "origin": [
         "TSK-036",
         "TSK-041"
       ],
       "context": "Pendientes descubiertos en TSK-036 y TSK-041. Los bans quedaron owner-only en v1 porque no existia el modelo de roles y jerarquia que exige la HU obligatoria de moderacion. Falta: (1) evaluar BAN_MEMBERS en BanUser y MANAGE_CHANNELS en ChannelAuthorizer (hoy ambos son owner-only) sobre el conjunto efectivo de permisos; (2) impedir que un moderador actue sobre miembros con roles de posicion igual o superior (restriccion por jerarquia), la misma comparacion que necesita MANAGE_ROLES. Estado 2026-10-29: (1) BAN_MEMBERS y (2) la restriccion por jerarquia quedaron implementadas en la spec 019-ban-unban-members (server, gateway, web-client y text-channel). Estado 2026-10-29: MANAGE_CHANNELS quedo evaluado en la spec 023-channel-categories (MemberPermissionChannelAuthorizer acepta MANAGE_CHANNELS | ADMINISTRATOR y se aplica a canales y categorias; GET /servers/{id} expone canManageChannels). Sigue pendiente extender la comparacion por jerarquia a MANAGE_ROLES.",
-      "pull_request": null,
+      "pull_request": "server #35; web-client #162",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -74,15 +74,15 @@
       "id": "TSK-050",
       "checkpoint": 3,
       "title": "Roles: editar permisos, reordenar jerarquia y definir el rol por defecto",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-01",
       "severity": "must",
       "origin": [
         "TSK-040",
         "TSK-042"
       ],
       "context": "Pendientes descubiertos en TSK-040 y TSK-042 (el mismo HU 22 reportado dos veces). Tres HUs de la epica Roles y Permisos. (1) Editar los permisos de un rol por endpoint, sin exponer el bitmask y con la restriccion de no quitarse el propio ADMINISTRATOR: hoy MANAGE_MESSAGES solo se puede otorgar por SQL. (2) Reordenar la jerarquia con el mismo lock pesimista (ServerRepository.lockById) y reescribir 0..n-1 dentro de una transaccion, aprovechando que la constraint de posicion es diferida. (3) Rol por defecto sobre la columna is_default ya creada: asignacion automatica al unirse, bloqueo de borrado y nombres reservados como @everyone. Estado 2026-10-29: (1) editar los permisos de un rol quedo implementado en la spec 020-edit-role-permissions (server, gateway y web-client, con el limite de no quitarse el propio ADMINISTRATOR). Siguen pendientes (2) reordenar la jerarquia y (3) el rol por defecto. Estado 2026-10-29: el patron para (2) ya esta implementado en canales y categorias (HU 41, spec 024-channel-reordering): lock pesimista de la fila del server, renumeracion 0..n-1 en una transaccion y constraint UNIQUE DEFERRABLE INITIALLY DEFERRED como backstop; server_roles ya tiene su constraint diferida (V4), asi que alcanza con reusar esa forma.",
-      "pull_request": null,
+      "pull_request": "server #36, #37; gateway #67; web-client #163, #164",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -119,21 +119,6 @@
     {
       "id": "TSK-053",
       "checkpoint": 3,
-      "title": "CI: activar branch protection en develop y main con el check Lint & Tests como requerido",
-      "status": "pending",
-      "start_date": null,
-      "severity": "should",
-      "origin": [
-        "TSK-002"
-      ],
-      "context": "Pendiente descubierto en TSK-002. Activar branch protection en main y develop de auth-service, gateway y profile (y evaluar el resto de los repos) exigiendo el check 'Lint & Tests' del pipeline unificado, para que un PR no pueda mergearse con los tests en rojo. Es configuracion de GitHub, no codigo: se aplica desde Settings o con gh api, y conviene documentar el estado en infra/docs/ci-cd.md.",
-      "pull_request": null,
-      "exception_note": null,
-      "discovered_pending_tasks": []
-    },
-    {
-      "id": "TSK-054",
-      "checkpoint": 3,
       "title": "server: agregar /livez y /readyz y su healthcheck en compose.prod.yaml",
       "status": "pending",
       "start_date": null,
@@ -147,7 +132,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-055",
+      "id": "TSK-054",
       "checkpoint": 3,
       "title": "text-channel: POST REST para enviar mensajes y su relay en gateway",
       "status": "pending",
@@ -162,7 +147,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-056",
+      "id": "TSK-055",
       "checkpoint": 3,
       "title": "text-channel: replay consistente en la reanudacion (ediciones y tombstones) y E2E del ancla eliminada",
       "status": "pending",
@@ -179,7 +164,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-057",
+      "id": "TSK-056",
       "checkpoint": 3,
       "title": "server: concurrencia de position, orden 404-403 y categorias de canales",
       "status": "completed",
@@ -200,7 +185,7 @@
       ]
     },
     {
-      "id": "TSK-058",
+      "id": "TSK-057",
       "checkpoint": 3,
       "title": "Permisos: consistencia del evaluador (ADMINISTRATOR, MANAGE_ROLES) y permisos por canal",
       "status": "pending",
@@ -215,7 +200,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-059",
+      "id": "TSK-058",
       "checkpoint": 3,
       "title": "Mensajes eliminados: politica de purga o retencion del contenido",
       "status": "pending",
@@ -230,7 +215,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-060",
+      "id": "TSK-059",
       "checkpoint": 3,
       "title": "web-client: deuda pendiente de arquitectura y plataforma web",
       "status": "pending",
@@ -247,7 +232,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-061",
+      "id": "TSK-060",
       "checkpoint": 3,
       "title": "Perfil publico: completar el CA1 de HU-36 y la pantalla de perfil",
       "status": "completed",
@@ -273,7 +258,7 @@
       ]
     },
     {
-      "id": "TSK-062",
+      "id": "TSK-061",
       "checkpoint": 3,
       "title": "Ver miembros por rol: filtro por roleId y paginacion por cursor",
       "status": "pending",
@@ -288,7 +273,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-063",
+      "id": "TSK-062",
       "checkpoint": 3,
       "title": "HU 10: transferencia de propiedad del servidor (server + web-client)",
       "status": "completed",
@@ -301,7 +286,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-064",
+      "id": "TSK-063",
       "checkpoint": 3,
       "title": "HU 14: organizar canales en categorias (server + gateway + web-client)",
       "status": "completed",
@@ -314,7 +299,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-065",
+      "id": "TSK-064",
       "checkpoint": 3,
       "title": "HU 41: reordenar canales y categorias (server + web-client)",
       "status": "completed",
@@ -327,7 +312,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-066",
+      "id": "TSK-065",
       "checkpoint": 3,
       "title": "HU 56: reordenar la jerarquia de roles (server + gateway + web-client)",
       "status": "completed",
@@ -342,7 +327,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-067",
+      "id": "TSK-066",
       "checkpoint": 3,
       "title": "HU 37: estado de actividad en tiempo real (profile + gateway + web-client)",
       "status": "completed",
@@ -366,7 +351,7 @@
       ]
     },
     {
-      "id": "TSK-068",
+      "id": "TSK-067",
       "checkpoint": 3,
       "title": "fix: CORS del gateway no permitía PUT (editar permisos de rol, asignar rol y marcador de lectura)",
       "status": "completed",
@@ -379,7 +364,7 @@
       "discovered_pending_tasks": []
     },
     {
-      "id": "TSK-069",
+      "id": "TSK-068",
       "checkpoint": 3,
       "title": "HU 57: sobrescribir permisos de un rol en un canal específico (server + gateway + web-client)",
       "status": "completed",
@@ -388,6 +373,37 @@
       "origin": [],
       "context": "HU optativa 57 completada (5 pts). server: migración Flyway V8 con tabla channel_role_overrides y check de bitmasks disjuntos ((allow & deny) == 0). Bitmask CHANNEL_OVERRIDABLE (VIEW_CHANNELS, SEND_MESSAGES, MANAGE_MESSAGES). ChannelRoleOverrideRepository con consulta batch findByChannelIds para evitar N+1 en lecturas masivas. Caso de uso ResolveChannelPermissions con resolución batch y orden jerárquico position DESC (el rol más alto en la jerarquía prevalece ante conflictos) y corte implícito de permisos al denegar VIEW_CHANNELS. ChannelOverrideController con GET/PUT/DELETE bajo /servers/{serverId}/channels/{channelId}/overrides respetando orden de errores para no filtrar existencia de canales privados (400 payload -> 404 server -> 403 ManageRolesPolicy/jerarquía -> 404 canal/rol). Exposición de canViewChannel en GET /internal/channels/{id}/send-permission y filtrado de canales privados en RetrieveServerWithChannels y ListChannelsByServer para miembros sin permisos de administración. gateway: relay de GET/PUT/DELETE de overrides de canal con sanitización de headers, inyección confiable de X-User-Id y validación 422 de UUIDs (cobertura 96.20%, 100% en servers.py). web-client: contratos y API (getChannelOverrides, upsertChannelOverride, deleteChannelOverride), mapeo de errores en rolesErrors.ts, lógica pura en channelOverrides.ts (tri-state allow/inherit/deny), modal ChannelPermissionsModal con selector de roles y SegmentedButtons por permiso, affordance en ChannelActionsMenu accesible para administradores, y soporte de canales de solo lectura (canSendMessages === false) en ChatPanel. Cierra además TSK-048 (text-channel exige permissions.can_view en historial y handshake de WebSocket).",
       "pull_request": "server #34; gateway #66; web-client #161; text-channel #15",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-069",
+      "checkpoint": 3,
+      "title": "Definir rol por defecto para nuevos miembros (HU-24)",
+      "status": "completed",
+      "start_date": "2026-11-01",
+      "severity": "must",
+      "origin": [
+        "TSK-050"
+      ],
+      "context": "HU obligatoria 24 (2 pts). Permite a los administradores configurar un rol como rol por defecto del servidor. Todo usuario que se une adquiere automáticamente el rol. Bloqueo de ADMINISTRATOR en rol por defecto y de nombres reservados (@everyone). Exposición en gateway, server (V9 índice único parcial, lockById y flush), y UI en web-client con badge y switch protegido.",
+      "pull_request": "server #36; gateway #67; web-client #163",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-070",
+      "checkpoint": 3,
+      "title": "Eliminar rol (HU-55)",
+      "status": "completed",
+      "start_date": "2026-11-01",
+      "severity": "should",
+      "origin": [
+        "TSK-049",
+        "TSK-050"
+      ],
+      "context": "HU optativa 55 (3 pts). Permite eliminar un rol existente desasignándolo en cascada y renumerando las posiciones restantes 0..n-2. Control de jerarquía (DELETE_HIERARCHY), prohibición de auto-eliminación del único rol de administrador (DELETE_OWN_ADMINISTRATOR) y bloqueo de eliminación si el rol es el rol por defecto del servidor (HU-24 CA 2 / 409 Conflict). Modal de confirmación en web-client.",
+      "pull_request": "server #37; gateway #67; web-client #164",
       "exception_note": null,
       "discovered_pending_tasks": []
     }

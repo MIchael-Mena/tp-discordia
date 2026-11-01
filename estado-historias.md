@@ -6,7 +6,7 @@ Seguimiento de todas las HU: completadas, parciales y sin implementar. Para ver 
 
 **Criterio:** una HU se marca como completada cuando el flujo funciona de punta a punta en el cliente que le corresponde —`web-client` para las historias de usuario final, `backoffice` para las de staff—, con su respaldo en el servicio correspondiente y el relay del `gateway`. Las que tienen backend sin UI, o UI incompleta, se listan en «Parciales o solo backend».
 
-## Obligatorias completadas — 100 / 104 pts
+## Obligatorias completadas — 102 / 104 pts
 
 | # | Historia | Épica | Puntos | Checkpoint |
 | -- | --- | --- | --: | --: |
@@ -33,6 +33,7 @@ Seguimiento de todas las HU: completadas, parciales y sin implementar. Para ver 
 | 21 | Crear rol | Roles y Permisos | 3 | 2 |
 | 22 | Editar permisos de un rol | Roles y Permisos | 5 | 3 |
 | 23 | Asignar rol a un miembro | Roles y Permisos | 3 | 2 |
+| 24 | Definir rol por defecto para nuevos miembros | Roles y Permisos | 2 | 3 |
 | 25 | Banear miembro del servidor | Moderación | 3 | 3 |
 | 26 | Revocar baneo | Moderación | 2 | 3 |
 | 27 | Ver notificaciones no leídas | Notificaciones | 3 | 3 |
@@ -41,7 +42,7 @@ Seguimiento de todas las HU: completadas, parciales y sin implementar. Para ver 
 | 30 | Reactivar usuario suspendido | Administración | 1 | 2 |
 | 31 | Ver listado de usuarios con filtros | Administración | 2 | 2 |
 
-## Optativas completadas — 30 pts
+## Optativas completadas — 38 pts
 
 | # | Historia | Épica | Puntos | Checkpoint |
 | -- | --- | --- | --: | --: |
@@ -52,29 +53,29 @@ Seguimiento de todas las HU: completadas, parciales y sin implementar. Para ver 
 | 41 | Reordenar canales | Canales | 2 | 3 |
 | 44 | Editar mensaje | Mensajería | 3 | 2 |
 | 45 | Eliminar mensaje | Mensajería | 3 | 2 |
+| 55 | Eliminar rol | Roles y Permisos | 3 | 3 |
 | 56 | Reordenar jerarquía de roles | Roles y Permisos | 3 | 3 |
 | 57 | Sobrescribir permisos de un rol en un canal específico | Roles y Permisos | 5 | 3 |
 | 58 | Ver miembros por rol | Roles y Permisos | 2 | 2 |
 
-**Total implementado de punta a punta: 130 pts** (100 obligatorios + 30 optativos).
+**Total implementado de punta a punta: 140 pts** (102 obligatorios + 38 optativos).
 
 ## Parciales o solo backend
 
 | # | Historia | Épica | Puntos | Estado |
 | -- | --- | --- | --: | --- |
-| 24 | Definir rol por defecto para nuevos miembros | Roles y Permisos | 2 | Solo el flag `isDefault` en el modelo; no se asigna ni se configura. |
 | 32 | Ver listado de servidores de la plataforma | Administración | 2 | No implementado. |
 
 ## Sin implementar
 
-Optativas 34–35, 38–39, 42–43, 46–55, 57 y 59–69 (PIN, 2FA, estado personalizado, configuración de servidor, DMs, adjuntos, menciones, reacciones, búsqueda, voz avanzada, moderación ampliada y notificaciones push).
+Optativas 34–35, 38–39, 42–43, 46–54 y 59–69 (PIN, 2FA, estado personalizado, configuración de servidor, DMs, adjuntos, menciones, reacciones, búsqueda, voz avanzada, moderación ampliada y notificaciones push).
 
 ## Notas
 
 - **HU-14:** las categorías se administran desde la barra lateral (crear, renombrar, eliminar y mover canales) y agrupan canales de texto y de voz en una sección por categoría, con **General** para los que no tienen ninguna. El backend es la fuente de verdad (`channel_categories` con FK `ON DELETE SET NULL`, `V6`), `GET /servers/{id}` expone `canManageChannels` y las rutas nuevas se relayan por el gateway (`023-channel-categories`).
 - **HU-41:** el orden se cambia con un `position` **aditivo** en los dos `PATCH` que ya existían (`024-channel-reordering`), definido como **hueco de inserción** sobre la lista original — el corrimiento del mismo bucket (`slot - 1`) lo aplica el servidor, y el cliente manda el hueco crudo. El servidor renumera `0..n-1` bajo el lock pesimista del server y la base lo respalda con `UNIQUE NULLS NOT DISTINCT (server_id, category_id, position) DEFERRABLE` (V7); al borrar una categoría, General se renumera porque la FK `SET NULL` devolvía los canales con posiciones duplicadas. En el cliente se arrastra con `PanResponder` (touch en móvil y mouse en web, sin dependencias nuevas) y hay «Subir»/«Bajar» en los menús como camino accesible, con orden optimista y rollback. **El gateway no cambió**: relaya el cuerpo tal cual. Sigue fuera de alcance el auto-scroll durante el arrastre. El reorden de la jerarquía de roles (HU-56) reusa el mismo patrón y está implementado en `025-role-hierarchy`.
 - **HU-56:** el orden de la jerarquía se cambia con `PATCH /servers/{serverId}/roles/{roleId}` y un `position` que también es **hueco de inserción** (`025-role-hierarchy` en `server`, `gateway` y `web-client`). El servidor renumera `0..n-1` bajo el lock pesimista del server, respaldado por la constraint diferida que ya tenía `V4` (**sin migración nueva**), y responde con la jerarquía completa ya renumerada. El CA 2 se aplica con dos guards: no se mueve un rol igual o superior al propio **y** el destino no puede quedar por encima del rol más alto del caller (si no, mover un rol propio al tope sorteaba la regla). En el cliente la misma señal `editable` de la HU-22 decide qué filas se pueden mover y dónde está el tope; hay arrastre con el handle de la HU-41 y flechas Subir/Bajar, con orden optimista y rollback. La jerarquía dejó de vivir en el popup: `pages/index.tsx` la guarda por servidor porque `GET /servers/{id}` no embebe roles y el live sync no la trae.
-- **HU-21/22/23:** el gestor de roles permite listar, crear, asignar, **editar los permisos de un rol** (`020-edit-role-permissions`) y **reordenar la jerarquía** (HU-56, `025-role-hierarchy`). Falta el rol por defecto (HU-24).
+- **HU-21/22/23/24/55/56/57/58 (Épica Roles y Permisos 100% completada):** el gestor de roles permite listar, crear, asignar y desasignar miembros respetando jerarquía (Etapa 1), **editar los permisos de un rol** (HU-22), **reordenar la jerarquía** (HU-56), **definir el rol por defecto del servidor** (HU-24, asignación automática al unirse, índice único parcial en PostgreSQL V9 y switch protegido en la UI) y **eliminar roles** (HU-55, desasignación en cascada, renumeración 0..n-2, bloqueo por jerarquía y bloqueo al intentar eliminar el rol por defecto).
 - **HU-25/26:** el baneo evalúa `BAN_MEMBERS` con restricción por jerarquía y el baneado ve el servidor como inexistente; `text-channel` corta también el acceso al historial. UI en el panel de miembros (`BanConfirmation` / `RevokeBanConfirmation`) con listado de baneados (`019-ban-unban-members`).
 - **HU-27/28:** el estado de no leído lo posee el servicio `notifications` (`GET /notifications/unread`, `PUT /notifications/read-markers/channels/{id}` y `POST /notifications/read-markers/read-all`, alimentado por los `message_events` que publica `text-channel` y por la copia propia de membresías que refresca contra `server`); el `gateway` lo relayá por REST y WebSocket (`app/notifications.py`) y el cliente pinta el punto por canal y por servidor, lo limpia al abrir el canal y ofrece «Marcar todo como leído» (`022-unread-indicators`). El **CA 3 de la HU-27** (indicador destacado para menciones) queda pendiente porque depende de la optativa HU-46 (menciones), fuera de alcance. **Despliegue pendiente:** `notifications` todavía no está en `infra/compose.prod.yaml`, así que en producción esas rutas responden 502 hasta que se lo agregue.
 - **HU-29/30/31:** el `backoffice` (cliente Expo de staff) lista cuentas con búsqueda por usuario/email y filtro por estado, suspende con confirmación y reactiva; `auth-service` es el dueño del estado (`PATCH /account/{id}/status`), invalida los refresh tokens y publica `AccountSuspended` / `AccountReactivated`; el `gateway` exige `role == "admin"`, reenvía el `X-User-Id` del staff (para impedir la auto-suspensión) y revoca los access tokens de los `sid` devueltos; `profile` oculta el perfil y lo restituye, y `text-channel` cierra el WebSocket. **Pendiente menor:** `voice-calls` no consume `AccountSuspended`, así que un suspendido no se desconecta de una sala de voz.
