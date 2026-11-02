@@ -58,10 +58,20 @@ Si el PR no se puede mergear por conflictos, eso es P1 **en el body** (no hay l�
 
 ## Comentarios inline
 
-Encabezado con prioridad entre corchetes; después evidencia; después fix.
+Encabezado con etiqueta descriptiva entre corchetes; después evidencia; después fix sugerido (o resolución aplicada si se commiteó en la rama).
+
+**Etiquetas recomendadas:**
+- `[Prioridad 1 · bloqueante]` o `[Bloqueante · <categoría>]`: para fallas críticas antes del merge.
+- **Etiquetas semánticas por categoría** para hallazgos convenientes (evitar `[Prioridad 2]` genérico cuando no hay P1s o resulta poco informativo):
+  - `[Bugfix de UI / Paginación]`
+  - `[Alineación con dominio]`
+  - `[Cobertura de tests]`
+  - `[Robustez / Fallback]`
+  - `[Contrato API]`
+- `[Nit · <tema>]` o `[Nit]`: detalles menores de estilo, nombres o código muerto.
 
 ````markdown
-**[Prioridad 1 · bloqueante] <Título: qué se rompe, en una línea.>**
+**[<Etiqueta semántica o Bloqueante>] <Título: qué se rompe o mejora, en una línea.>**
 
 <Qué pasa, con la línea concreta.>
 
@@ -71,7 +81,8 @@ Encabezado con prioridad entre corchetes; después evidencia; después fix.
 
 <Consecuencia real, no teórica.>
 
-**Fix:** <una o dos líneas de código, o la opción A/B.>
+**Fix sugerido:** <una o dos líneas de código, o la opción A/B.>
+*(Si el usuario ordenó aplicar la corrección directamente en el PR: "Se aplica el fix/test directamente en esta rama (commit `<hash>`).")*
 ````
 
 Para un nit alcanza con una línea:
@@ -86,7 +97,7 @@ Para un nit alcanza con una línea:
 > Medí con `request_timeout_seconds=1` y una tarea de 2 s: la llamada **bloquea 2.00 s** y recién ahí levanta. El timeout no acota nada.
 
 **Decisión mal justificada**:
-> La frase "membership and roles do not exist yet" no es cierta en `develop`: `server_members` y `ServerMemberRepository.existsByServerIdAndUserId` existen desde `c0c1a3e` y ya se aplican en `LeaveServer`/`InitiateOwnershipTransfer`. La política v1 sigue siendo defendible, pero por **otro** motivo: …
+> La frase "membership and roles do not exist yet" no es cierta en `develop`: `server_members` y `ServerMemberRepository.existsByServerIdAndUserId` existen desde `c0c1a3e` y ya se aplicaban en `LeaveServer`/`InitiateOwnershipTransfer`. La política v1 sigue siendo defendible, pero por **otro** motivo: …
 
 **Doc desalineada**:
 > T015 corrigió `README.md` y `contracts/`, pero `data-model.md:34` quedó con "<texto viejo>". Es el archivo que alguien va a leer para entender el passthrough.
@@ -109,6 +120,7 @@ Para un nit alcanza con una línea:
 | "Deberías crear un ticket." | "Como recomendación para un PR aparte: …" |
 | "Según el backlog…" | (no aplica: el backlog no se menciona). |
 | "Creo que `shutdown` espera." | "`shutdown(wait=True)` espera; lo medí: 2.00 s." |
+| "[Prioridad 2] ..." (cuando no hay P1s) | "[Bugfix de UI / Paginación] ..." o "[Alineación con dominio] ..." |
 
 **Falsos positivos a evitar** (ya pasaron):
 
@@ -134,7 +146,8 @@ Para un nit alcanza con una línea:
 
 - `side: "RIGHT"` siempre (el comentario va sobre el estado nuevo).
 - No pongas `comments` con `position`: usá `line` + `side`.
-- Escribí el JSON con `fs.writeFileSync` de node. `Out-File -Encoding utf8` de PowerShell 5.1 agrega BOM y `gh api --input` responde `Problems parsing JSON`.
+- Escribí el JSON con un script de Node (`fs.writeFileSync`) o Python (`json.dump` con `encoding='utf-8'`). **Nunca** uses `Out-File -Encoding utf8` de PowerShell 5.1 porque antepone un BOM UTF-8 (`\xef\xbb\xbf`) y `gh api --input` responde `Problems parsing JSON (HTTP 400)`.
+- Si aplicaste correcciones en la misma rama antes o junto con la publicación de los comentarios, aclará explícitamente en el inline qué commit resuelve la observación.
 - Después de postear, listá los comentarios por API y confirmá **cuántos** y en **qué línea** quedaron. Si falta uno, publicalo suelto y avisá que no está dentro del bloque de la review.
 
 ---
@@ -144,6 +157,8 @@ Para un nit alcanza con una línea:
 - [ ] Cada inline está en una línea **agregada** del diff.
 - [ ] El body no menciona backlog, `TSK-`, tickets ni rutas locales del usuario.
 - [ ] Cada P1 explica **qué se rompe** y por qué no puede esperar.
+- [ ] Los hallazgos convenientes usan etiquetas semánticas descriptivas en lugar de un `[Prioridad 2]` ambiguo.
+- [ ] Si se commiteó un fix directamente en la rama, el comentario inline aclara el commit de resolución.
 - [ ] Cada hallazgo tiene evidencia (grep, test, medición o línea de código).
 - [ ] Hay una sección de "lo que está bien".
 - [ ] El orden de prioridad está explícito en el body y en cada inline.

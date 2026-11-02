@@ -1,7 +1,7 @@
 ---
 name: reviewing-discordia-prs
 description: 'Revisar pull requests de los repositorios de Discordia (server, gateway, profile, auth-service, text-channel, web-client, voice-calls, infra): verificar si las decisiones están justificadas, detectar errores graves de ingeniería, priorizar hallazgos y publicar comentarios accionables. Use when: revisar un PR, hacer code review, dejar comentarios en un pull request, auditar un cambio antes de mergear, evaluar una decisión de diseño, revisar un feature apilado (stacked) entre servicios, o corregir un PR ya abierto.'
-argument-hint: '<repo>#<número> — p. ej. server#10'
+argument-hint: '<repo>#<número> [repo2#número2...] — p. ej. server#10 o server#32 gateway#61 backoffice#3'
 ---
 
 # Revisar PRs de Discordia
@@ -11,6 +11,7 @@ Code review de un microservicio del TP con el criterio del equipo: **primero el 
 ## Cuándo usar
 
 - "Revisá el PR #N de `<repo>`" / "dale una revisión a este PR" / "¿están bien las decisiones de este PR?"
+- Features fullstack o que cruzan múltiples servicios con PRs relacionados (p. ej. `server` + `gateway` + `backoffice` / `web-client`), evaluando contratos y orden de merge conjunto.
 - Antes de mergear una feature que cruza servicios (`server` ↔ `gateway` ↔ `voice-calls` ↔ `web-client`).
 - Un PR apilado (stacked) cuya base todavía no está en `develop`.
 
@@ -38,11 +39,16 @@ Mirá de entrada:
 - **`mergeable`**: `CONFLICTING` = no se puede mergear, por más que el código esté bien.
 - **Frescura del CI**: compará el `updatedAt` de los runs con el último commit de la base. Un check verde viejo no representa el merge.
 - **PRs hermanos abiertos**: dos PRs que implementan lo mismo son un hallazgo de coordinación (ver catálogo, H1).
+- **Revisión multi-PR / fullstack**: Si se revisan varios PRs de una misma HU o feature (p. ej. `server#32`, `gateway#61`, `backoffice#3`), relacioná los números, extraé los criterios de aceptación compartidos (de `infra/discordia-tp.md` o specs), verificá contratos de punta a punta y definí el orden de despliegue/merge.
 
 ### 2. Aislar el código
 
 ```powershell
+# Solo lectura y verificación:
 git -C <repo> worktree add "$env:TEMP\<pr>" origin/<headRefName> --detach
+
+# Si el usuario pide aplicar correcciones y commitear en la rama del PR:
+git -C <repo> worktree add "$env:TEMP\<pr>" -b <headRefName> origin/<headRefName>
 ```
 
 Trabajá siempre ahí. Al terminar, borrá el worktree y los temporales (receta con `node_modules` en [verification-recipes.md](./references/verification-recipes.md)).
@@ -62,9 +68,9 @@ Corré los gates del repo y, cuando un hallazgo dependa de comportamiento de una
 
 | Prioridad | Qué entra |
 |---|---|
-| **P1 · antes del merge** | Bypass o ausencia real de autorización; pérdida/ fuga de datos; recurso que queda vivo tras un error (micrófono, sesión, sala); contrato roto que deja un consumidor ya mergeado sin funcionar; producción/despliegue que no puede arrancar; el PR no mergea (conflictos). |
-| **P2 · conviene en este PR** | Correctitud que va a morder pronto (mapeo de errores incompleto, carrera, timeout que no acota, condición de borde sin cubrir), criterios de aceptación declarados que no se verifican, fragilidad estructural con fix barato. |
-| **P3 · nit** | Deriva de documentación, nombres, UX, accesibilidad, estilo, código muerto. |
+| **P1 · antes del merge** | Bypass o ausencia real de autorización; pérdida/fuga de datos; recurso que queda vivo tras un error (micrófono, sesión, sala); contrato roto que deja un consumidor ya mergeado sin funcionar; producción/despliegue que no puede arrancar; el PR no mergea (conflictos). Tag inline: `[Prioridad 1 · bloqueante]` o `[Bloqueante · <categoría>]`. |
+| **P2 · conviene en este PR** | Correctitud que va a morder pronto (mapeo de errores incompleto, carrera, timeout que no acota, condición de borde sin cubrir), criterios de aceptación declarados que no se verifican, fragilidad estructural con fix barato. **Evitá la etiqueta genérica `[Prioridad 2]`** (puede ser confusa y poco informativa, especialmente cuando no hay P1s); usá **etiquetas semánticas por categoría** (p. ej. `[Bugfix de UI / Paginación]`, `[Alineación con dominio]`, `[Cobertura de tests]`, `[Robustez / Fallback]`, `[Contrato API]`). |
+| **P3 · nit** | Deriva de documentación, nombres, UX, accesibilidad, estilo, código muerto. Tag inline: `[Nit · <tema>]` o `[Nit]`. |
 
 Regla de honestidad: si una decisión es **defendible pero su justificación escrita es falsa**, decilo así — separá la decisión de su fundamento. Es un hallazgo de P1/P2 aunque el código esté bien.
 
@@ -72,13 +78,13 @@ Regla de honestidad: si una decisión es **defendible pero su justificación esc
 
 Estructura fija, en este orden:
 
-1. **Veredicto** en 3-5 líneas: qué tan sólido es el PR y qué lo bloquea, si algo.
+1. **Veredicto** en 3-5 líneas: qué tan sólido es el PR y qué lo bloquea, si algo. Si es multi-PR, incluí un resumen global y el desglose por repo.
 2. **Agradecimiento concreto**: 3-6 cosas que están bien y no hay que tocar (con nombre y archivo). Nunca un review sin esto.
 3. **Decisiones del PR**: tabla `decisión · ¿correcta? · comentario`. Ahí se responde "¿están justificadas?".
-4. **Hallazgos** ordenados por prioridad, cada uno con `archivo:línea`, evidencia y fix sugerido.
-5. **Verificación hecha**: qué corriste y qué resultado dio (tests, cobertura, probe).
-6. **Observaciones de cadena** que no son defectos de este PR.
-7. **Plan de comentarios**: tabla `# · archivo:línea · tema · prioridad` + una línea diciendo qué va en el body.
+4. **Hallazgos** ordenados por prioridad/categoría, cada uno con `archivo:línea`, evidencia y fix sugerido.
+5. **Verificación hecha**: qué corriste y qué resultado dio (tests, cobertura, probe, lint, typecheck).
+6. **Observaciones de cadena** que no son defectos de este PR (contratos cruzados, orden de merge).
+7. **Plan de comentarios**: tabla `# · archivo:línea · tema · etiqueta` + una línea diciendo qué va en el body.
 8. Cerrar con `ask_user` ofreciendo el alcance (todo / sin nits / sólo bloqueantes / nada).
 
 ### 7. Publicar (con aprobación)
@@ -86,6 +92,8 @@ Estructura fija, en este orden:
 Un solo POST de review con `event: COMMENT`; los inline van dentro de `comments` (formato en [comment-style.md](./references/comment-style.md)).
 
 - Verificá que cada `line` sea una línea **agregada** del diff; si no, GitHub rechaza el comentario o lo ancla mal.
+- **Si el usuario instruye aplicar los fixes y commitear en la rama**: incluí en el cuerpo del comentario inline la cláusula de resolución explícita: `Se aplica el fix/test directamente en esta rama (commit <hash>).`
+- Para evitar errores de parseo JSON (`HTTP 400 Problems parsing JSON`) en Windows/PowerShell, generá el payload con Node.js o Python en UTF-8 sin BOM y usá `gh api --input` (receta en [verification-recipes.md](./references/verification-recipes.md)).
 - Después de publicar, leé los comentarios por API y confirmá cuántos quedaron y en qué línea.
 - Si un nit queda fuera de la review (por ejemplo agregado después), publicalo como comentario suelto y avisá que no aparece dentro del bloque de la review.
 

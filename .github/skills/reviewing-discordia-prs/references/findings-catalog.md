@@ -1,6 +1,6 @@
 # Catálogo de fallas recurrentes
 
-Fallas que ya aparecieron en la cadena `server` → `gateway` → `voice-calls` → `web-client`. Cada entrada trae cómo detectarla rápido y el fix típico. **Ordená la búsqueda por este catálogo**: cubre la mayoría de los hallazgos reales.
+Fallas que ya aparecieron en la cadena `server` → `gateway` → `voice-calls` → `web-client` / `backoffice`. Cada entrada trae cómo detectarla rápido y el fix típico. **Ordená la búsqueda por este catálogo**: cubre la mayoría de los hallazgos reales.
 
 ---
 
@@ -59,6 +59,15 @@ El servicio público confía en `X-User-Id` y se alcanza directo (ver A4). Cualq
 **B6 · Verbatim relay + contrato distinto.**
 El gateway reenvía el body tal cual: si el productor usa snake_case y el cliente camelCase, nada falla en el relay y todo falla en el borde. *Detectar:* comparar los tres (productor, relay, cliente) campo por campo.
 
+**B7 · Inconsistencia de etiqueta de paginador con total = 0 en UI (1-0 de 0).**
+Fórmula clásica `${offset + 1}-${Math.min(offset + pageSize, total)} de ${total}`: cuando la lista está vacía (`total === 0`), muestra `1-0 de 0`.
+*Detectar:* buscá dónde se computa el rango visible en tablas y paginadores; probá el caso borde con 0 elementos.
+*Fix:* `total === 0 ? "0 de 0" : ...` o `const from = total === 0 ? 0 : offset + 1`.
+
+**B8 · Falta de fallback defensivo ante respuestas de deslogueo en Expo.**
+El wrapper `apiFetch` captura 401 y devuelve `{ detail: 'unlogged' }` en vez de tirar o devolver un objeto paginado vacío: el componente hace `page.items.map(...)` esperando un array y explota con `TypeError: Cannot read properties of undefined (reading 'map')`.
+*Detectar:* revisá el wrapper de red de los clientes; si una respuesta no-2xx puede resolverse como objeto de error sin `throw`, verificá que los componentes hagan fallback defensivo (`page?.items ?? []`) o validen `Array.isArray`.
+
 ---
 
 ## C. Persistencia y esquema
@@ -82,6 +91,11 @@ La columna queda `TEXT NOT NULL` sin `CHECK (x IN (...))`, y como `%test` usa `h
 
 **C5 · `max + 1` para el próximo orden.**
 No es atómico: dos altas concurrentes se pisan. Aceptable si está documentado; hallazgo si el contrato promete unicidad o determinismo.
+
+**C6 · Membresía implícita vs conteo en storage.**
+El creador/owner de una entidad (p. ej. un servidor) es miembro por regla de dominio, pero la tabla de membresías (`server_members`) no inserta fila para él al crearse el recurso. Si una query de conteo hace `count(m.id)` o `inner join` con miembros, un servidor recién creado reporta **0 miembros** (inconsistente con el dominio donde el owner siempre es miembro).
+*Detectar:* revisá si `exists` o `count` contemplan al owner (`m.user_id = :userId OR s.owner_id = :userId`), o si la creación del servidor omite el registro en la tabla de miembros.
+*Fix:* alinear la query (`count(m.id) + (case when ... then 1 else 0 end)` o coalesce/inclusión explícita del owner) o persistir la membresía del owner al crear el servidor.
 
 ---
 

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-01T18:28:35.068Z",
+  "last_updated": "2026-11-02T21:31:55.557Z",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -226,7 +226,7 @@
         "TSK-036",
         "TSK-044"
       ],
-      "context": "Pendientes descubiertos en TSK-019, TSK-036 y TSK-044. (1) Alinear el cliente con capas de Clean Architecture (dominio aislado y puertos) y corregir la inversion core->components: src/core/useGoogleSubmit.ts importa @/components/NotificationsProvider; hoy la arquitectura es por capas pragmatica (documentada en el README). (2) Las rutas dinamicas del export web estatico (/invitations/[code] y /pages/servers/[serverId]) no tienen generateStaticParams y dependen del hosting de EAS: verificar el deep link en produccion o pasar a output single/SPA con catch-all. (3) Una eliminacion hecha por otro cliente tarda hasta 20 s en verse: si se necesita tiempo real, publicar ServerDeleted/ChannelDeleted en server, consumirlos en text-channel para cerrar los sockets del canal y exponer un WebSocket de usuario en gateway.",
+      "context": "Pendientes descubiertos en TSK-019, TSK-036 y TSK-044. (1) Alinear el cliente con capas de Clean Architecture (dominio aislado y puertos) y corregir la inversion core->components: src/core/useGoogleSubmit.ts importa @/components/NotificationsProvider; hoy la arquitectura es por capas pragmatica (documentada en el README). (2) Las rutas dinamicas del export web estatico (/invitations/[code] y /pages/servers/[serverId]) no tienen generateStaticParams y dependen del hosting de EAS: verificar el deep link en produccion o pasar a output single/SPA con catch-all. (3) [RESUELTO en TSK-071] Sincronización en tiempo real vía WebSocket /ws/notifications y RabbitMQ server_events, eliminando la latencia de 20 s de useLiveSync y cerrando sockets en text-channel.",
       "pull_request": null,
       "exception_note": null,
       "discovered_pending_tasks": []
@@ -404,6 +404,21 @@
       ],
       "context": "HU optativa 55 (3 pts). Permite eliminar un rol existente desasignándolo en cascada y renumerando las posiciones restantes 0..n-2. Control de jerarquía (DELETE_HIERARCHY), prohibición de auto-eliminación del único rol de administrador (DELETE_OWN_ADMINISTRATOR) y bloqueo de eliminación si el rol es el rol por defecto del servidor (HU-24 CA 2 / 409 Conflict). Modal de confirmación en web-client.",
       "pull_request": "server #37; gateway #67; web-client #164",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-071",
+      "checkpoint": 3,
+      "title": "HU-27/28: bandeja agrupada de notificaciones, badge en riel y sincronización reactiva sobre WebSocket",
+      "status": "completed",
+      "start_date": "2026-11-02",
+      "severity": "must",
+      "origin": [
+        "TSK-059"
+      ],
+      "context": "Reemplazo del sondeo de 20 s de useLiveSync por sincronización estructural reactiva sobre /ws/notifications (RabbitMQ server_events en server, proyector ephemeral en notifications, cierre de sockets en text-channel y atenuación de sondeo a 180 s en web-client; cierra el ítem 3 de TSK-059). Mejora de HU-27 y HU-28 incorporando botón de campana permanente con badge numérico en ServerRail, bandeja agrupada por servidor (NotificationsInboxPopup), navegación directa, marcado individual con lastActivityAt sin clock skew y marcado masivo en cabecera, retirando la opción del engranaje de servidor.",
+      "pull_request": "server #38, text-channel #18, notifications #4, web-client #165, web-client #166",
       "exception_note": null,
       "discovered_pending_tasks": []
     }

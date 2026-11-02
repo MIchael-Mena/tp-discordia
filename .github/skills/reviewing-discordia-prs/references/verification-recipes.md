@@ -9,7 +9,12 @@ Todo lo de acá se probó en esta máquina (Windows + PowerShell). Los comandos 
 ```powershell
 cd "<repo>"
 git --no-pager fetch origin --quiet
+
+# Caso A: Solo lectura y verificación
 git worktree add "$env:TEMP\pr-<n>" origin/<headRefName> --detach
+
+# Caso B: Si se van a commitear y pushear fixes directamente en la rama del PR
+git worktree add "$env:TEMP\pr-<n>" -b <headRefName> origin/<headRefName>
 ```
 
 Leer y correr **siempre** desde `$env:TEMP\pr-<n>`.
@@ -41,7 +46,7 @@ Después, en el repo real: `git worktree prune` y verificá `git status --short 
 - `@QuarkusTest` necesita **Docker corriendo** (Dev Services levanta Postgres). Aun filtrando a tests unitarios, Gradle inicializa el modelo de test y falla con `Please configure the datasource URL … or ensure the Docker daemon is up`.
 - Antes de intentarlo: `docker info --format "{{.ServerVersion}}"`. Si falla, decilo en el informe ("no pude ejecutar los `@QuarkusTest`; CI está verde") y no inventes el resultado.
 
-### Python (`gateway`, `voice-calls`, `profile`, `auth-service`, `text-channel`)
+### Python (`gateway`, `voice-calls`, `profile`, `auth-service`, `text-channel`, `notifications`)
 
 ```powershell
 uv run pytest -q                      # crea .venv e instala; necesita red
@@ -52,8 +57,16 @@ uv run ruff check .
 - Para correr **un** archivo: `uv run pytest tests/unit/test_x.py -q`.
 - El piso de cobertura (70%) se incumple al correr un solo archivo: es esperado, no es un hallazgo.
 
-### Node / Expo (`web-client`)
+### Node / Expo (`backoffice`, `web-client`)
 
+Para `backoffice`:
+```powershell
+npm ci --no-audit --no-fund
+npm run lint         # expo lint (eslint)
+npm run typecheck    # tsc --noEmit
+```
+
+Para `web-client`:
 ```powershell
 npm ci --no-audit --no-fund     # ~4-5 min, 1100+ paquetes
 npx tsc --noEmit
@@ -120,14 +133,35 @@ Buscá `traefik.http.routers.*.rule` y `.middlewares`: `PathPrefix('/x')` + `str
 
 ## Publicar la review
 
-```powershell
-# 1) armar el JSON con node (nunca con Out-File -Encoding utf8: escribe BOM y `gh` falla con "Problems parsing JSON")
-node "$env:TEMP\payload.js" "$env:TEMP\payload.json"
+Para evitar el error `Problems parsing JSON (HTTP 400)` generado por PowerShell (`Out-File -Encoding utf8` suele anteponer BOM `\xef\xbb\xbf` o romper el escape de comillas), generá el JSON con Node.js o Python:
 
-# 2) postear
+### Opción con Python:
+```powershell
+uv run python -c "
+import json
+payload = {
+    'body': '''$reviewBody''',
+    'event': 'COMMENT',
+    'comments': [
+        {'path': 'src/archivo.ts', 'line': 42, 'side': 'RIGHT', 'body': '''**[Bugfix de UI / Paginación] ...**'''}
+    ]
+}
+with open(r'$env:TEMP\payload.json', 'w', encoding='utf-8') as f:
+    json.dump(payload, f, ensure_ascii=False, indent=2)
+"
+```
+
+### Opción con Node:
+```powershell
+node "$env:TEMP\payload.js" "$env:TEMP\payload.json"
+```
+
+### Posteo y verificación:
+```powershell
+# 1) postear
 gh api repos/fiuba-IS2-Discordia/<repo>/pulls/<n>/reviews -X POST --input "$env:TEMP\payload.json"
 
-# 3) verificar
+# 2) verificar
 gh api repos/fiuba-IS2-Discordia/<repo>/pulls/<n>/comments --paginate |
   Out-File "$env:TEMP\c.json" -Encoding utf8
 node -e "const a=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8').replace(/^\uFEFF/,''));console.log(a.length);a.forEach(c=>console.log(c.path+':'+c.line))" "$env:TEMP\c.json"
