@@ -29,7 +29,7 @@ Guía y plantilla estándar para diseñar planes de implementación multi-servic
 
 ### 1. Investigación previa (obligatoria antes de escribir el plan)
 
-1. **Requisitos y alcance:** Leé los Criterios de Aceptación exactos en `infra/discordia-tp.md`, el estado actual en `estado-historias.md` y los nodos involucrados en `Backlog.json`.
+1. **Requisitos y alcance:** Leé los Criterios de Aceptación exactos en `historias-usuario.md`, el estado actual en `estado-historias.md` y los nodos involucrados en `Backlog.json`.
 2. **Reglas por servicio:** Si trabajás en un repo con su propio `AGENTS.md` (p. ej. `profile/AGENTS.md`), leelo primero. Leé 2 carpetas recientes de `<servicio>/specs/` para respetar numeración correlativa y secciones.
 3. **Estado Git y PRs abiertos:** En cada repo afectado verificá ramas y PRs abiertos:
    ```powershell

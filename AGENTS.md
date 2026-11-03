@@ -76,7 +76,7 @@ Al desarrollar funcionalidades nuevas, modificar contratos o alterar lógica de 
    - Si se inicia con `/plan`, incluir la estructura de la spec dentro del plan. Una vez aprobado el plan, **no volver a detenerse**: crear/actualizar el archivo en `<servicio>/specs/` como primer paso y continuar directo con código y tests. Si no se usó `/plan`, redactar primero la spec y pedir confirmación antes de programar.
    - **Sincronización pre-PR:** Si durante la implementación cambia algún detalle técnico, actualizar `specs/` antes de commitear para que coincida con el código final.
 3. **Reglas de contenido en `specs/`:**
-   - **PROHIBIDO filtrar el Backlog local:** Nunca incluir referencias a `Backlog.json` ni identificadores `TSK-*` (usar solo `HU XX` o `ADR-XXX`).
+   - **PROHIBIDO filtrar el Backlog local:** Nunca incluir referencias a `Backlog.json` ni identificadores `TSK-*` (usar solo `HU XX` según [`historias-usuario.md`](historias-usuario.md) o `ADR-XXX`).
    - **Alineación entre servicios:** Si cambia un contrato transversal (rutas en `gateway`, payloads o eventos RabbitMQ), verificar specs y código de todos los servicios afectados.
 
 ### Documentación de ADRs
@@ -114,8 +114,14 @@ Al desarrollar funcionalidades nuevas, modificar contratos o alterar lógica de 
 
 ---
 
-## 5. Protocolo de Gestión del Backlog
+## 5. Historias de Usuario, Seguimiento y Backlog
 
+### Catálogo de Historias y Estado de Avance
+En la raíz de `TP-Discordia/` se encuentran los dos documentos de referencia funcional del proyecto:
+- **[`historias-usuario.md`](historias-usuario.md):** Catálogo de las 12 épicas y las 81 Historias de Usuario con sus Criterios de Aceptación (CA) completos, Requisitos No Funcionales (RNF) e instancias de entrega. Cada historia se encuentra identificada unívocamente con el prefijo `HU <N>: <Título>` (ej. `HU 1: Registro de usuarios`). Es la fuente de verdad técnica para consultar el alcance, redactar especificaciones en `specs/` y verificar criterios de aceptación.
+- **[`estado-historias.md`](estado-historias.md):** Matriz de seguimiento y avance de todas las historias (obligatorias y optativas). Cada fila enlaza directamente a su criterio en `historias-usuario.md` e indica puntos, épica, motivo o dependencia, y el `Checkpoint` en que fue completada (`-` si continúa pendiente). Contiene además el puntaje total acumulado (104/104 obligatorios + 38 optativos = 142 pts), mínimos por equipo y las notas técnicas de implementación de punta a punta.
+
+### Protocolo de Gestión del Backlog (`Backlog.json`)
 `Backlog.json` (en la raíz de `TP-Discordia/`) es de **uso estrictamente local**; el resto del equipo no tiene acceso a él. Nunca menciones `Backlog.json` ni IDs `TSK-*` en repositorios compartidos.
 
 Todas las reglas obligatorias para consultar y modificar `Backlog.json` (búsqueda por ID inmutable, vinculación de `pull_request` o `exception_note`, estructura y `severity` de `discovered_pending_tasks`, integridad de serialización JSON con `JSON.stringify(data, null, 2) + "\n"`, estados válidos, `start_date` y `checkpoint`) están definidas en **[`.agents/rules/backlog.md`](.agents/rules/backlog.md)** (regla `always_on` en Antigravity; lectura obligatoria antes de editar `Backlog.json` en cualquier otra herramienta).
@@ -150,4 +156,4 @@ Skill con la plantilla y flujo estándar para planificar e implementar HUs/tarea
 
 - **Topología de ramas y PRs apilados** diagramada en Mermaid + invariantes de diseño y SDD/ADRs desde la planificación.
 - **Secuencia explícita de commits atómicos** declarada por cada PR dentro del plan (`docs` → `feat` → `test`, sin coautoría de IA).
-- **Publicación obligatoria de PRs** (`git push` en orden topológico + `gh pr create` en PowerShell con la plantilla de la sección 4) apenas todos los linters y tests pasen, **antes** de cerrar las tareas en `Backlog.json` y actualizar `estado-historias.md`.
+- **Publicación obligatoria de PRs** (`git push` en orden topológico + `gh pr create` en PowerShell con la plantilla de la sección 4) apenas todos los linters y tests pasen, **antes** de cerrar las tareas en `Backlog.json` y actualizar [`estado-historias.md`](estado-historias.md).

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-02T21:31:55.557Z",
+  "last_updated": "2026-11-03T17:12:22.292Z",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -261,14 +261,14 @@
       "id": "TSK-061",
       "checkpoint": 3,
       "title": "Ver miembros por rol: filtro por roleId y paginacion por cursor",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-03",
       "severity": "nice-to-have",
       "origin": [
         "TSK-041"
       ],
-      "context": "Pendientes descubiertos en TSK-041. La HU Ver miembros por rol puede reusar GET /servers/{id}/members, pero falta el filtro por roleId (el indice ya esta creado). Si el panel necesitara consistencia exacta bajo alta concurrencia, reemplazar limit/offset por un cursor (after) sobre (joined_at, user_id).",
-      "pull_request": null,
+      "context": "Pendientes descubiertos en TSK-041, resueltos con la implementaci?n de punta a punta de la HU optativa 58 (Ver miembros por rol, 2 pts). server (spec 031-role-members-filter): extiende GET /servers/{serverId}/members con el query param opcional roleId (UUID), validando en orden estricto membres?a (403) -> ManageRolesPolicy (403) -> pertenencia del rol al servidor (404) antes de consultar ServerMemberRepository.findByServerIdAndRoleId y countByServerIdAndRoleId mediante JOIN server_member_roles apoyado en idx_server_member_roles_role (V5). gateway: sin cambios, ya reenv?a request.url.query intacto. web-client (spec 034-role-members-filter): extiende getMembers con roleId y rolesFormError con 404 Role not found; agrega selector SegmentedButtons (?Todos? / ?Con este rol?) en RoleMembers.tsx con ajuste de offset al desasignar en la vista filtrada, y barra horizontal de chips por rol en MembersPopup.tsx para administradores (canManageRoles === true) con descarte de respuestas obsoletas (requestIdRef) y recuperaci?n autom?tica ante 404 si el rol fue eliminado concurrentemente.",
+      "pull_request": "server #39; web-client #168",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
