@@ -12,3 +12,12 @@ web client/
 voice-calls/
 backoffice/
 notifications/
+
+# Artefactos locales de Python (tests y lint)
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/

@@ -22,5 +22,28 @@
   // Word wrap en JSON para evitar scroll horizontal (ej. backlog.json)
   "[json]": {
     "editor.wordWrap": "on"
-  }
+  },
+  "java.compile.nullAnalysis.mode": "automatic",
+
+  // Evitar que el watcher y el índice de búsqueda sigan artefactos de build
+  "files.watcherExclude": {
+    "**/.expo/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/target/**": true,
+    "**/__pycache__/**": true,
+    "**/.venv/**": true,
+    "**/.pytest_cache/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.expo": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/target": true,
+    "**/__pycache__": true,
+    "**/.venv": true,
+    "**/.pytest_cache": true
+  },
+  "typescript.disableAutomaticTypeAcquisition": true
 }

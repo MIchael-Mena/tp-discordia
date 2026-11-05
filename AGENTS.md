@@ -136,6 +136,7 @@ Todas las reglas obligatorias para consultar y modificar `Backlog.json` (búsque
 - **Regla de oro de Compose:** `infra/compose.prod.yaml` y `/opt/discordia/docker-compose.yml` en la EC2 deben ser idénticos (`git show HEAD:compose.prod.yaml | diff --strip-trailing-cr - /opt/discordia/docker-compose.yml` → vacío). Sincronizar en la VM antes de redesplegar si cambia.
 - **`discordia-key.pem`** en la raíz de `TP-Discordia/` es la clave privada SSH de la EC2: nunca commitear ni exponer.
 - **Timezone en Java (`server`):** ejecutar siempre tests y procesos locales con `_JAVA_OPTIONS=-Duser.timezone=UTC`.
+- **Costo de entorno y verificación:** instalar dependencias sólo si cambió el lockfile, correr tests dirigidos durante la iteración y **una sola** suite completa al cierre, y preferir `git switch` sobre un worktree cuando el árbol está limpio. Reglas completas en [`env-cost.md`](.agents/rules/env-cost.md) (regla `always_on`); recetas en [`verification-recipes.md`](.agents/skills/reviewing-discordia-prs/references/verification-recipes.md).
 
 ---
 

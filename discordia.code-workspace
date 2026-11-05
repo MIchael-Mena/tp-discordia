@@ -1,0 +1,48 @@
+// Workspace multi-root: abrí este archivo en lugar de la carpeta TP-Discordia cuando
+// trabajes en un servicio puntual, y comentá las carpetas que no estés tocando.
+// Cada carpeta abierta cuesta escaneo de SCM (su propio .git) y un proyecto de tsserver.
+{
+  "folders": [
+    { "path": "server" },
+    { "path": "gateway" },
+    { "path": "auth-service" },
+    { "path": "profile" },
+    { "path": "text-channel" },
+    { "path": "voice-calls" },
+    { "path": "notifications" },
+    { "path": "web-client" },
+    { "path": "backoffice" },
+    { "path": "infra" }
+  ],
+  // Mantener sincronizado con .vscode/settings.json
+  "settings": {
+    "files.watcherExclude": {
+      "**/.expo/**": true,
+      "**/dist/**": true,
+      "**/build/**": true,
+      "**/target/**": true,
+      "**/__pycache__/**": true,
+      "**/.venv/**": true,
+      "**/.pytest_cache/**": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/.expo": true,
+      "**/dist": true,
+      "**/build": true,
+      "**/target": true,
+      "**/__pycache__": true,
+      "**/.venv": true,
+      "**/.pytest_cache": true
+    },
+    "typescript.disableAutomaticTypeAcquisition": true,
+    "gradle.autoDetect": "off",
+    "java.import.gradle.enabled": false,
+    "java.import.exclusions": [
+      "**/node_modules/**",
+      "**/.metadata/**",
+      "**/web-client/**",
+      "**/backoffice/**"
+    ]
+  }
+}

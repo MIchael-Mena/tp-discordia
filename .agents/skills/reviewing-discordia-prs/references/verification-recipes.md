@@ -19,6 +19,21 @@ git worktree add "$env:TEMP\pr-<n>" -b <headRefName> origin/<headRefName>
 
 Leer y correr **siempre** desde `$env:TEMP\pr-<n>`.
 
+Pero antes de instalar nada: **un worktree nace sin `node_modules`** (Node no sube hasta el repo original) y casi nunca hace falta crearlo.
+
+```powershell
+# ¿la rama agrega o cambia dependencias respecto de la rama donde ya hay node_modules?
+git --no-pager -C "<repo>" diff --name-only origin/develop...origin/<headRefName> -- package.json package-lock.json
+```
+
+| Resultado | Qué hacer en el worktree |
+|---|---|
+| Vacío | **No instalar.** Linkear: `New-Item -ItemType Junction -Path "$env:TEMP\pr-<n>\node_modules" -Target "<repo>\node_modules"` |
+| Sólo `package.json` o `package-lock.json` | `npm install --prefer-offline --no-audit --no-fund` |
+| Validar lock ↔ package.json, o CI | `npm ci --no-audit --no-fund` (borra y recrea: minutos de disco) |
+
+Con junction, nunca corras `npm install` dentro del worktree: escribiría sobre el `node_modules` del repo original.
+
 ### Borrar el worktree cuando tiene `node_modules`
 
 Windows falla con *"Filename too long"*. La forma que funciona:
@@ -51,6 +66,23 @@ git push --force-with-lease origin <childBranch>
 
 ---
 
+## Costo de verificación
+
+La máquina es de la persona usuaria: misma evidencia, menos CPU.
+
+| Momento | Qué correr |
+|---|---|
+| Cada iteración / hipótesis | sólo el archivo de test tocado |
+| Antes de cada commit atómico | los tests del módulo |
+| Una sola vez, al cerrar | suite completa + typecheck + lint |
+
+- Probar que un test de regresión falla en el código viejo requiere **un** experimento por hallazgo, no la suite completa por commit.
+- Sin `--coverage` salvo pedido explícito.
+- `--maxWorkers=50%` cuando el runner satura la máquina.
+- No relanzar una suite que ya está corriendo: `read_powershell` de esa sesión.
+
+---
+
 ## Gates por stack
 
 ### Java / Quarkus (`server`)
@@ -76,21 +108,33 @@ uv run ruff check .
 
 ### Node / Expo (`backoffice`, `web-client`)
 
-Para `backoffice`:
+Primero decidí **si hay que instalar**: `npm ci` borra y recrea `node_modules` (≈200k archivos, 4-5 min) y en la mayoría de las reviews no hace falta.
+
 ```powershell
-npm ci --no-audit --no-fund
-npm run lint         # expo lint (eslint)
-npm run typecheck    # tsc --noEmit
+git --no-pager diff --name-only origin/develop...origin/<rama> -- package.json package-lock.json
 ```
 
-Para `web-client`:
+| Resultado | Qué hacer |
+|---|---|
+| Vacío | **No instalar** (en worktree: junction de `node_modules`, ver arriba) |
+| Sólo `package.json` | `npm install --prefer-offline --no-audit --no-fund` |
+| `package-lock.json` cambió | lo mismo; `npm ci` sólo si querés validar lock ↔ package.json |
+| CI | `npm ci --no-audit --no-fund` |
+
+Gates:
+
 ```powershell
-npm ci --no-audit --no-fund     # ~4-5 min, 1100+ paquetes
+# web-client
 npx tsc --noEmit
-npx jest --silent
+npx jest --silent --maxWorkers=50%
+npm run lint          # expo lint
+
+# backoffice
+npm run typecheck     # tsc --noEmit
+npm run lint
 ```
 
-Si el repo del usuario ya tiene `node_modules`, no sirve: la rama puede sumar dependencias nuevas (`livekit-client`). `npm ci` desde el lock del worktree es lo correcto.
+Durante la iteración corré sólo lo tocado: `npx jest src/core/chat/useDirectChat.test.ts`.
 
 ---
 
@@ -204,3 +248,4 @@ Reglas que evitan el 400/422:
 - Un comando que imprime `git : ...` en rojo con exit 0 no es un error: git escribe en stderr.
 - `Select-String` con `$env:TEMP` dentro de comillas dobles rompe el parseo (`\` + `:`), armá la ruta con `Join-Path`.
 - **Archivos `M` fantasma por `LF` vs `CRLF` (`core.autocrlf`):** Si un script o herramienta escribe archivos con `LF`, tras un `git rebase` o `checkout` pueden figurar archivos modificados (`M`) en `git status -sb` cuyo `git diff` está vacío (`warning: LF will be replaced by CRLF`). Antes de terminar, verificá `git diff --stat`; si da 0 líneas cambiadas, limpiá el árbol de trabajo con `git checkout -- .`.
+- **Nunca `cmd.exe` con comillas escapadas por `\`:** `& $env:ComSpec /c "rmdir /s /q \"$p\""` llega malformado (PowerShell no escapa `"` con `\`) y el `rmdir` puede ejecutarse sobre una ruta padre. Para borrados recursivos difíciles usá la receta `robocopy /MIR` de arriba y validá la ruta (absoluta, ≥3 segmentos, nunca la raíz ni el home).
