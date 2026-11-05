@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-03T17:12:22.292Z",
+  "last_updated": "2026-11-04",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -120,14 +120,14 @@
       "id": "TSK-053",
       "checkpoint": 3,
       "title": "server: agregar /livez y /readyz y su healthcheck en compose.prod.yaml",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-04",
       "severity": "should",
       "origin": [
         "TSK-009"
       ],
       "context": "Pendiente descubierto en TSK-009. server (Quarkus) es el unico servicio sin sondas: el bloque discordia-server de infra/compose.prod.yaml no declara healthcheck y el resto de los servicios si. Agregar quarkus-smallrye-health con /livez (proceso vivo, sin tocar RDS) y /readyz (valida la base) siguiendo el criterio del resto de los servicios, mas el healthcheck del compose. El servicio no tiene ruta publica: las sondas se consumen desde dentro de la red proxy.",
-      "pull_request": null,
+      "pull_request": "infra #38",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -419,6 +419,19 @@
       ],
       "context": "Reemplazo del sondeo de 20 s de useLiveSync por sincronización estructural reactiva sobre /ws/notifications (RabbitMQ server_events en server, proyector ephemeral en notifications, cierre de sockets en text-channel y atenuación de sondeo a 180 s en web-client; cierra el ítem 3 de TSK-059). Mejora de HU-27 y HU-28 incorporando botón de campana permanente con badge numérico en ServerRail, bandeja agrupada por servidor (NotificationsInboxPopup), navegación directa, marcado individual con lastActivityAt sin clock skew y marcado masivo en cabecera, retirando la opción del engranaje de servidor.",
       "pull_request": "server #38, text-channel #18, notifications #4, web-client #165, web-client #166",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-072",
+      "checkpoint": 3,
+      "title": "Administrar configuración del servidor (HU-39)",
+      "status": "completed",
+      "start_date": "2026-11-03",
+      "severity": "should",
+      "origin": [],
+      "context": "Implementación completa de HU 39 (Épica Servidores, 3 pts optativos) con subida directa de ícono y banner a Amazon S3. Permite al dueño o a miembros con permiso ADMINISTRATOR editar nombre, ícono y/o banner del servidor: en Quarkus server se proveen POST /servers/{serverId}/icon y /banner (firma local S3 POST SigV4 bajo el prefijo servers/{serverId}/{icon|banner}/ con sanitización de fileName, ADR-010) y PATCH /servers/{serverId} (migración V10, ManageServerPolicy, semántica JsonNode, validación de origen S3, borrado post-commit idempotente en S3 sólo cuando oldUrl != newUrl y evento RabbitMQ server.updated con scope: settings); en FastAPI gateway se relayan POST /icon, POST /banner y PATCH /servers/{id}; en infra se inyectan las variables S3_* en discordia-server; y en web-client se provee selección y subida directa a S3 (pickAvatarImage + uploadServerMediaToStorage con reutilización de publicUrl ante reintentos de PATCH), remoción de ícono con retorno a las iniciales del servidor, remoción de banner colapsando el espacio en la cabecera y sincronización reactiva por WebSocket.",
+      "pull_request": "gateway #69, server #40, server #41, gateway #70, infra #39, web-client #169",
       "exception_note": null,
       "discovered_pending_tasks": []
     }

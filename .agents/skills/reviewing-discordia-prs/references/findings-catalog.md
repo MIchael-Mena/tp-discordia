@@ -68,6 +68,16 @@ Fórmula clásica `${offset + 1}-${Math.min(offset + pageSize, total)} de ${tota
 El wrapper `apiFetch` captura 401 y devuelve `{ detail: 'unlogged' }` en vez de tirar o devolver un objeto paginado vacío: el componente hace `page.items.map(...)` esperando un array y explota con `TypeError: Cannot read properties of undefined (reading 'map')`.
 *Detectar:* revisá el wrapper de red de los clientes; si una respuesta no-2xx puede resolverse como objeto de error sin `throw`, verificá que los componentes hagan fallback defensivo (`page?.items ?? []`) o validen `Array.isArray`.
 
+**B9 · Puerto de eventos de dominio con `default` no-op en la interfaz y sin implementar en el adaptador real.**
+El caso de uso invoca `eventPublisher.serverUpdated(...)` y su test unitario con mock pasa en verde, pero la interfaz `ServerEventPublisher` define `default void serverUpdated(...) {}` y el adaptador real (`RabbitServerEventPublisher`) no lo sobrescribe ⇒ en producción el evento jamás se publica en RabbitMQ.
+*Detectar:* por cada método nuevo en un puerto de salida (`*Publisher`, `*Gateway`, `*Repository`), buscá todas sus implementaciones en `infra/` y desconfiá de métodos `default` vacíos en interfaces de dominio. Exigí test de integración (`@QuarkusTest` con `InMemoryConnector`) que verifique el payload en el sink.
+*Ejemplo:* `UpdateServerSettings` invocaba `serverUpdated` pero `RabbitServerEventPublisher` sólo implementaba `memberBanned` (server #40).
+
+**B10 · Mapeo de errores `400` del backend concentrado en un único campo cuando el endpoint valida varios.**
+El endpoint `PATCH` o `POST` valida múltiples campos (`name`, `iconUrl`, `bannerUrl`) y devuelve `400` con mensajes distintos, pero el formulario captura cualquier `400` con el helper de un solo campo (`serverNameFieldError`) y muestra el error de URL de ícono debajo del input de nombre (o en el toast general).
+*Detectar:* compará todos los mensajes de `400 Bad Request` que lanza el backend en ese endpoint contra el discriminador de errores de formulario del cliente.
+*Ejemplo:* `EditServerSettingsForm` usaba `serverNameFieldError` en vez de discriminar errores de `name`, `iconUrl` y `bannerUrl` (web-client #169).
+
 ---
 
 ## C. Persistencia y esquema
@@ -200,3 +210,29 @@ El `plan.md` dice "controller-owned HTTP error mapping" cuando el repo tiene 13 
 
 **H7 · Documentación desalineada tras una convergencia.**
 El PR corrige `README` y `contracts` pero deja `data-model.md` con el contrato viejo, o marca `[X]` una tarea cuyo texto dice "Pending". *Detectar:* `grep` del término viejo en **todos** los `.md` del feature.
+
+---
+
+## I. Arquitectura y Clean Code (Oportunidades de Refactor)
+
+Especialmente relevante al auditar **PRs propios** o evaluar pedidos de refactor en revisiones de código:
+
+**I1 · Lógica pura de negocio o decisiones de sincronización acopladas a la vista (`pages/` o `components/`).**
+Funciones puras que deciden transiciones de estado, coalescencia de colas (`mergeQueuedSync`), acciones ante eventos (`homeSyncAction`, `channelSyncAction`), textos de estado vacío (`memberMessages`) o formateo de fechas (`formatBanDate`) definidas dentro de archivos `.tsx` de pantallas o popups.
+*Detectar:* buscá helpers en `.tsx` que no dependan de JSX ni de hooks de React.
+*Refactor:* extraerlos a módulos puros en `src/core/<dominio>/*.ts` con sus propios tests unitarios directos (`.test.ts`).
+
+**I2 · Efectos de suscripción WebSocket, timers o paginación duplicados en componentes en vez de un custom hook en `src/core/`.**
+Dos o más pantallas/componentes repiten `useEffect` con suscripción a eventos, limpieza de `setTimeout` con jitter o paginación con control de concurrencia (`requestIdRef` + `loadedPagesRef` + `hasMore`).
+*Detectar:* compará el manejo de efectos entre componentes hermanos (p. ej. `index.tsx` vs `[channelId].tsx` para `subscribeServerSync`; `MembersPopup.tsx` vs `RoleMembers.tsx` para listado paginado de miembros).
+*Refactor:* extraer un custom hook a `src/core/` (ej. `useServerSync`, `useServerMembers`) usando un `callbackRef` (`useRef` actualizado en `useEffect`) para no recrear la suscripción ni cancelar timers cuando la vista re-renderiza.
+
+**I3 · Componente o popup monolítico con múltiples responsabilidades.**
+Un mismo archivo `.tsx` (> 250-300 líneas) concentra pestañas independientes, barras de filtros de roles, modales de confirmación y llamadas de red de distintos subdominios.
+*Detectar:* verificá si el popup tiene sub-secciones o tabs claramente separables (ej. `MembersPopup.tsx` mezclando el listado activo, la barra de chips de filtro por rol y toda la pestaña de baneados con su modal de revocación).
+*Refactor:* extraer subcomponentes cohesivos (`MemberRoleFilter`, `BannedMembersSection`) dejando al componente padre como orquestador declarativo.
+
+**I4 · `StyleSheet.create` inline dentro del componente en vez de `src/styles/`.**
+En `web-client` y `backoffice`, los estilos viven en `src/styles/<modulo>.ts`. Definir `StyleSheet.create` al final de un componente en `src/components/` rompe la convención del repositorio y abulta el archivo de vista.
+*Detectar:* `git grep "StyleSheet.create" src/components/ src/app/` sobre los archivos tocados por el PR.
+*Refactor:* mover o fusionar los estilos en `src/styles/<modulo>.ts`.

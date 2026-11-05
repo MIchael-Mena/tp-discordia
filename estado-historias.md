@@ -65,7 +65,7 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 36 | [Visualización de perfil público](historias-usuario.md#hu-36-visualización-de-perfil-público) | Perfil | 2 | 3 | Visualización de perfil propio |
 | 37 | [Estado de actividad](historias-usuario.md#hu-37-estado-de-actividad) | Perfil | 5 | 3 | Mensajería en tiempo real y sesiones autenticadas |
 | 38 | [Estado personalizado](historias-usuario.md#hu-38-estado-personalizado) | Perfil | 2 | - | Edición de perfil |
-| 39 | [Administrar configuración del servidor](historias-usuario.md#hu-39-administrar-configuración-del-servidor) | Servidores | 3 | - | Crear servidor |
+| 39 | [Administrar configuración del servidor](historias-usuario.md#hu-39-administrar-configuración-del-servidor) | Servidores | 3 | 3 | Crear servidor |
 | 40 | [Eliminar servidor](historias-usuario.md#hu-40-eliminar-servidor) | Servidores | 5 | 2 | Administrar configuración del servidor |
 | 41 | [Reordenar canales](historias-usuario.md#hu-41-reordenar-canales) | Canales | 2 | 3 | Organizar canales en categorías |
 | 42 | [Enviar mensaje directo (DM)](historias-usuario.md#hu-42-enviar-mensaje-directo-dm) | Mensajería | 8 | - | Bloquear y desbloquear usuarios; sesiones e historial de mensajería |
@@ -109,13 +109,13 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 80 | [Ver beneficios de servidor boosteado](historias-usuario.md#hu-80-ver-beneficios-de-servidor-boosteado) | Monetización | 3 | - | Usar puntos para boostear y gestionar emojis |
 | 81 | [Ver expediente de investigación de usuario o servidor](historias-usuario.md#hu-81-ver-expediente-de-investigación-de-usuario-o-servidor) | Administración | 5 | - | Reportar mensaje o usuario |
 
-**Puntaje optativo completado: 38 pts** (de 229 pts disponibles en el catálogo).
+**Puntaje optativo completado: 41 pts** (de 229 pts disponibles en el catálogo).
 
 ---
 
 ## Resumen de avance y puntaje
 
-**Total implementado de punta a punta: 142 pts** (104 obligatorios + 38 optativos).
+**Total implementado de punta a punta: 145 pts** (104 obligatorios + 41 optativos).
 
 ## Mínimo de puntos por tamaño de equipo
 
@@ -142,5 +142,6 @@ El total mínimo considera los 104 puntos obligatorios. Los RNF completos, la ap
 - **HU-36, pendiente de seguridad:** el techo de enumeración bajó de 1200/min a 120/min, pero cerrarlo del todo exige validar que quien consulta **comparte un servidor** con el consultado (no vive en `profile` ni en el `gateway`) y, con eso, el `POST /profiles/public/batch` que permitiría etiquetar una lista de miembros en una sola request. Además, en `WS /ws/presence` la presencia quedó **suscripción por usuario** con token bucket (1 comando/s, ráfaga 3, agregado por usuario y retenido entre reconexiones) porque el fan-out original entregaba la presencia de toda la plataforma a cualquier sesión; el riesgo residual es que la presencia es un oráculo de conexión y no de existencia, y se cierra con la misma validación de servidor compartido (ADR-008).
 - **HU-37:** el estado de actividad se ve **en vivo** en la lista de miembros, en el perfil público y en la barra de usuario (`027-presence-ui`), con un solo WebSocket por sesión que el `gateway` relaya (`027-presence-relay`). El cliente **espeja el presupuesto** del servicio en vez de gastarlo: los componentes registran interés con `usePresenceWatch`, el provider fusiona todos los watchers en un set (tope de 200 ids), agrupa las altas con 1 s de debounce y posterga el envío con un token bucket local; las bajas viajan como `unsubscribe`, que es gratis. El latido solo sale **tras interacción real y con la pestaña visible** —así una sesión inactiva de verdad deriva a ausente (CA2)— pero al volver se manda en el acto, con piso de 1 s. El estado propio se lee por REST porque `INVISIBLE` llega proyectado como `OFFLINE` por el socket. El relay del gateway **propaga los códigos de cierre privados** (4429, 4404): sin eso el cliente los ve como 1005 y reconecta en bucle contra un servicio que lo sigue rechazando (lo encontró el E2E, no los tests con fakes).
 - **HU-37, pendiente estructural:** el hub y el token bucket de `profile` viven en memoria, así que con más de una réplica el techo se multiplica y el fan-out no cruza réplicas; mudarlos a Redis va junto con la validación de servidor compartido de HU-36.
+- **HU-39:** la administración de la configuración del servidor permite editar nombre, ícono y banner al dueño o miembros con permiso ADMINISTRATOR (`ManageServerPolicy`). En `server` se implementa el flujo de tres fases con políticas `POST` firmadas hacia Amazon S3 (`POST /servers/{serverId}/icon` y `POST /servers/{serverId}/banner`, `ADR-010`, prefijo `servers/{serverId}/{icon|banner}/`), validación de origen del bucket en `PATCH /servers/{serverId}` con semántica `JsonNode` (distingue campo omitido de reseteo explícito a `null`, migración Flyway V10 aditiva), borrado best-effort post-commit en S3 al reemplazar o quitar una imagen, y publicación en RabbitMQ `server_events` (`server.updated`, `scope: "settings"`). El `gateway` relaya las rutas de presign y actualización con sesión obligatoria (`030-server-settings-relay`), e `infra` inyecta las variables `S3_*` en `discordia-server`. En `web-client`, `EditServerSettingsForm` permite seleccionar archivos locales (JPEG/PNG/WebP hasta 5 MB), subirlos directo a S3 (reutilizando la `publicUrl` si el `PATCH` posterior falla), quitar el ícono volviendo a las iniciales del servidor o quitar el banner ocultando por completo su recuadro; `Sidebar` muestra avatares en `ServerRail` con fallback a iniciales y banner decorativo superior que desaparece cuando no hay banner; y `pages/index.tsx` sincroniza reactivamente mediante WebSocket (`035-server-settings-ui`).
 - **HU-32:** el `backoffice` (cliente Expo de staff) lista todos los servidores de la plataforma (`GET /servers`), permitiendo supervisar el ecosistema de comunidades creadas.
 - **Trackers complementarios:** el detalle técnico de cada tarea y sus pendientes vive en [Backlog.json](Backlog.json); los pendientes de infraestructura y CI, en [mejoras-ci-cd.md](mejoras-ci-cd.md).

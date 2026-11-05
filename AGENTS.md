@@ -141,18 +141,20 @@ Todas las reglas obligatorias para consultar y modificar `Backlog.json` (búsque
 
 ## 7. Revisión de PRs
 
-Skill del equipo para revisar PRs en cualquier repositorio: **`.github/skills/reviewing-discordia-prs/SKILL.md`** (`/reviewing-discordia-prs`, expuesto también vía `.agents/skills.json`).
+Skill del equipo para revisar PRs en cualquier repositorio: **`.agents/skills/reviewing-discordia-prs/SKILL.md`** (`/reviewing-discordia-prs`, expuesto también vía `.agents/skills.json`).
 
-- **Primero el informe, después los comentarios**: publicar en GitHub solo con aprobación explícita del usuario.
-- Revisar siempre en un **worktree temporal** (`git worktree add "$env:TEMP\<pr>" origin/<branch> --detach`), nunca en el árbol de trabajo activo.
-- No afirmar defectos sin evidencia reproducible; clasificar por prioridad (**P1 antes del merge** / P2 / nit); prohibido mencionar `Backlog.json`/`TSK-*`; verificar ambos lados de cada contrato y `infra/compose.prod.yaml`.
+- **Detección automática de autoría (PR propio vs. PR de compañero)**:
+  - **PR propio**: no publicar comentarios en GitHub; buscar errores, huecos de contrato y oportunidades de refactor (Clean Architecture, SOLID, DRY, custom hooks, separación vista/lógica), presentar las propuestas y usar `ask_question` para confirmar cuáles aplicar antes de commitear, pushear y rebasar PRs apilados.
+  - **PR de compañero**: **primero el informe, después los comentarios**, publicando en GitHub solo con aprobación explícita del usuario.
+- Revisar en un **worktree temporal** (`git worktree add "$env:TEMP\<pr>" origin/<branch> --detach`) cuando solo se inspecciona o el árbol local tiene cambios, y asegurar que `git status -sb` quede limpio al cerrar.
+- No afirmar defectos sin evidencia reproducible; clasificar por prioridad (**P1 antes del merge** / P2 / Refactor / nit); prohibido mencionar `Backlog.json`/`TSK-*`; verificar ambos lados de cada contrato y `infra/compose.prod.yaml`.
 - Referencias: `findings-catalog.md`, `verification-recipes.md` y `comment-style.md`.
 
 ---
 
 ## 8. Planificación e Implementación de Features
 
-Skill con la plantilla y flujo estándar para planificar e implementar HUs/tareas por etapas: **`.github/skills/planning-discordia-features/SKILL.md`** (`/planning-discordia-features`, con plantilla en `references/plan-template.md`).
+Skill con la plantilla y flujo estándar para planificar e implementar HUs/tareas por etapas: **`.agents/skills/planning-discordia-features/SKILL.md`** (`/planning-discordia-features`, con plantilla en `references/plan-template.md`).
 
 - **Topología de ramas y PRs apilados** diagramada en Mermaid + invariantes de diseño y SDD/ADRs desde la planificación.
 - **Secuencia explícita de commits atómicos** declarada por cada PR dentro del plan (`docs` → `feat` → `test`, sin coautoría de IA).

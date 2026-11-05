@@ -32,6 +32,23 @@ Remove-Item -Recurse -Force $t, $e -ErrorAction SilentlyContinue
 
 Después, en el repo real: `git worktree prune` y verificá `git status --short --branch` (debe seguir en la rama del usuario, limpio).
 
+### Propagar fixes/refactors a PRs apilados (Stacked PRs)
+
+Cuando pusheás un commit nuevo a la rama `<baseBranch>` de un PR propio, cualquier PR abierto cuya base sea `<baseBranch>` queda desactualizado o en conflicto.
+
+```powershell
+# 1. Detectar PRs abiertos apilados sobre la rama modificada
+gh pr list -R fiuba-IS2-Discordia/<repo> --state open --json number,headRefName,baseRefName |
+  ConvertFrom-Json | Where-Object { $_.baseRefName -eq "<baseBranch>" }
+
+# 2. Para cada rama hija, hacer rebase sobre la nueva punta y pushear con --force-with-lease
+git checkout <childBranch>
+git pull --rebase origin <childBranch>
+git rebase <baseBranch>
+# Correr los gates del repo (tests, lint, tsc) y luego:
+git push --force-with-lease origin <childBranch>
+```
+
 ---
 
 ## Gates por stack
@@ -186,3 +203,4 @@ Reglas que evitan el 400/422:
 - Rutas con corchetes (`[channelId].tsx`) se interpretan como comodines: usá `-LiteralPath`.
 - Un comando que imprime `git : ...` en rojo con exit 0 no es un error: git escribe en stderr.
 - `Select-String` con `$env:TEMP` dentro de comillas dobles rompe el parseo (`\` + `:`), armá la ruta con `Join-Path`.
+- **Archivos `M` fantasma por `LF` vs `CRLF` (`core.autocrlf`):** Si un script o herramienta escribe archivos con `LF`, tras un `git rebase` o `checkout` pueden figurar archivos modificados (`M`) en `git status -sb` cuyo `git diff` está vacío (`warning: LF will be replaced by CRLF`). Antes de terminar, verificá `git diff --stat`; si da 0 líneas cambiadas, limpiá el árbol de trabajo con `git checkout -- .`.
