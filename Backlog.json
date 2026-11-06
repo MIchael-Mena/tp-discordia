@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-05",
+  "last_updated": "2026-11-06",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -432,6 +432,19 @@
       "origin": [],
       "context": "Implementación completa de HU 39 (Épica Servidores, 3 pts optativos) con subida directa de ícono y banner a Amazon S3. Permite al dueño o a miembros con permiso ADMINISTRATOR editar nombre, ícono y/o banner del servidor: en Quarkus server se proveen POST /servers/{serverId}/icon y /banner (firma local S3 POST SigV4 bajo el prefijo servers/{serverId}/{icon|banner}/ con sanitización de fileName, ADR-010) y PATCH /servers/{serverId} (migración V10, ManageServerPolicy, semántica JsonNode, validación de origen S3, borrado post-commit idempotente en S3 sólo cuando oldUrl != newUrl y evento RabbitMQ server.updated con scope: settings); en FastAPI gateway se relayan POST /icon, POST /banner y PATCH /servers/{id}; en infra se inyectan las variables S3_* en discordia-server; y en web-client se provee selección y subida directa a S3 (pickAvatarImage + uploadServerMediaToStorage con reutilización de publicUrl ante reintentos de PATCH), remoción de ícono con retorno a las iniciales del servidor, remoción de banner colapsando el espacio en la cabecera y sincronización reactiva por WebSocket.",
       "pull_request": "gateway #69, server #40, server #41, gateway #70, infra #39, web-client #169",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-073",
+      "checkpoint": 3,
+      "title": "Redise?o estilo Discord de men?s de usuario/servidor, sus modales y acceso a perfiles en listas de miembros (HU 4, HU 5, HU 36, HU 37, HU 58)",
+      "status": "completed",
+      "start_date": "2026-11-06",
+      "severity": "nice-to-have",
+      "origin": [],
+      "context": "Refactor est?tico y de experiencia de usuario en web-client para alinear la navegaci?n con el lenguaje visual oscuro y jer?rquico de Discord, sin alterar contratos HTTP/WS. UserMenu y ServerMenu se extraen a components/sidebar como popouts flotantes (mini-banner, avatar con presencia, @handle, tarjetas internas para Estado/Mi perfil/Editar perfil/Cerrar sesi?n, y cabecera del servidor cliqueable con grupos separados por divisores y resaltado rojo en acciones destructivas). Popup monta su Portal s?lo cuando est? visible y registra cada instancia en una pila LIFO (popupStack.ts) para que Escape y el tap exterior cierren ?nicamente el modal superior, de modo que un perfil apilado sobre la lista de miembros no cierre la lista. MembersPopup, RoleMembers y BannedMembersSection muestran MemberAvatar (avatar resuelto desde el cach? v2 de resolveProfileName, sin solicitudes adicionales) y abren el perfil al tocar la identidad, con el bloque pulsable como hermano de Banear/Switch/Revocar; pressar el propio usuario delega en ProfileView mediante registerOpenOwnProfile. resolveProfileName expone primeProfileCache, subscribeProfileCache y getCachedProfileName; useMemberNames y useMemberAvatars se suscriben para repintar las filas al instante cuando ProfileView guarda nombre o avatar. Se unifican ModalHeader y MemberAvatar y se redise?an todas las superficies (modal #313338 con borde #3f4147, tarjetas #232428/#1e1f22) con padding, tarjetas de perfil con banner de 96 px, vista previa en vivo en la configuraci?n del servidor y cajas de advertencia/peligro en las confirmaciones.",
+      "pull_request": "web-client #173",
       "exception_note": null,
       "discovered_pending_tasks": []
     }
