@@ -1,15 +1,16 @@
 {
-  "_ayuda": "folder: carpeta relativa a esta raíz. branch: override opcional de la rama a mantener (si falta se autodetecta: develop si existe; si no, main). enabled=false: se ignora sin aviso (útil para repos aún no clonados). keep: nombres de ramas extra que nunca se borran.",
+  "_ayuda": "folder: carpeta relativa a esta raíz. branch: override opcional de la rama a mantener para limpiar_ramas.py (si falta se autodetecta: develop si existe; si no, main). enabled=false: se ignora en ambos scripts (útil para repos aún no clonados). keep: nombres de ramas extra que nunca se borran.",
+  "_ayuda_deploy": "deploy (solo deploy.py): false excluye el repo del release/deploy. Objeto opcional con: order (orden de despliegue, menor primero), from/to (ramas origen/destino, default develop -> main), workflow (nombre del workflow de GitHub Actions que monitorea --watch), tag=false (no crear tag). Si una entrada no define 'deploy', se le aplica el orden interno de deploy.py.",
   "repos": [
-    { "folder": "auth-service" },
-    { "folder": "gateway" },
-    { "folder": "profile" },
-    { "folder": "web-client" },
-    { "folder": "text-channel" },
-    { "folder": "server" },
-    { "folder": "voice-calls" },
-    { "folder": "backoffice" },
-    { "folder": "notifications" },
-    { "folder": "infra", "branch": "main" }
+    { "folder": "auth-service", "deploy": { "order": 20, "workflow": "Build Auth Service" } },
+    { "folder": "gateway", "deploy": { "order": 70, "workflow": "Build gateway" } },
+    { "folder": "profile", "deploy": { "order": 10, "workflow": "Build & Push Profile Service" } },
+    { "folder": "web-client", "deploy": { "order": 80, "workflow": "Deploy Web & Build Android APK" } },
+    { "folder": "text-channel", "deploy": { "order": 40, "workflow": "Build text-channel" } },
+    { "folder": "server", "deploy": { "order": 30, "workflow": "Build Server" } },
+    { "folder": "voice-calls", "deploy": { "order": 50, "workflow": "Build voice-calls" } },
+    { "folder": "backoffice", "deploy": { "order": 90, "workflow": "Deploy Backoffice (Web & Android APK)" } },
+    { "folder": "notifications", "deploy": { "order": 60, "workflow": "Build notifications" } },
+    { "folder": "infra", "branch": "main", "deploy": false }
   ]
 }
