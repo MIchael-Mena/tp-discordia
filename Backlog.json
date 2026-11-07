@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-06",
+  "last_updated": "2026-11-07T04:43:14.325Z",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -372,7 +372,7 @@
       "severity": "should",
       "origin": [],
       "context": "HU optativa 57 completada (5 pts). server: migración Flyway V8 con tabla channel_role_overrides y check de bitmasks disjuntos ((allow & deny) == 0). Bitmask CHANNEL_OVERRIDABLE (VIEW_CHANNELS, SEND_MESSAGES, MANAGE_MESSAGES). ChannelRoleOverrideRepository con consulta batch findByChannelIds para evitar N+1 en lecturas masivas. Caso de uso ResolveChannelPermissions con resolución batch y orden jerárquico position DESC (el rol más alto en la jerarquía prevalece ante conflictos) y corte implícito de permisos al denegar VIEW_CHANNELS. ChannelOverrideController con GET/PUT/DELETE bajo /servers/{serverId}/channels/{channelId}/overrides respetando orden de errores para no filtrar existencia de canales privados (400 payload -> 404 server -> 403 ManageRolesPolicy/jerarquía -> 404 canal/rol). Exposición de canViewChannel en GET /internal/channels/{id}/send-permission y filtrado de canales privados en RetrieveServerWithChannels y ListChannelsByServer para miembros sin permisos de administración. gateway: relay de GET/PUT/DELETE de overrides de canal con sanitización de headers, inyección confiable de X-User-Id y validación 422 de UUIDs (cobertura 96.20%, 100% en servers.py). web-client: contratos y API (getChannelOverrides, upsertChannelOverride, deleteChannelOverride), mapeo de errores en rolesErrors.ts, lógica pura en channelOverrides.ts (tri-state allow/inherit/deny), modal ChannelPermissionsModal con selector de roles y SegmentedButtons por permiso, affordance en ChannelActionsMenu accesible para administradores, y soporte de canales de solo lectura (canSendMessages === false) en ChatPanel. Cierra además TSK-048 (text-channel exige permissions.can_view en historial y handshake de WebSocket).",
-      "pull_request": "server #34; gateway #66; web-client #161; text-channel #15",
+      "pull_request": "server #34; gateway #66; web-client #161; text-channel #15; web-client #176; server #44",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -418,7 +418,7 @@
         "TSK-059"
       ],
       "context": "Reemplazo del sondeo de 20 s de useLiveSync por sincronización estructural reactiva sobre /ws/notifications (RabbitMQ server_events en server, proyector ephemeral en notifications, cierre de sockets en text-channel y atenuación de sondeo a 180 s en web-client; cierra el ítem 3 de TSK-059). Mejora de HU-27 y HU-28 incorporando botón de campana permanente con badge numérico en ServerRail, bandeja agrupada por servidor (NotificationsInboxPopup), navegación directa, marcado individual con lastActivityAt sin clock skew y marcado masivo en cabecera, retirando la opción del engranaje de servidor.",
-      "pull_request": "server #38, text-channel #18, notifications #4, web-client #165, web-client #166",
+      "pull_request": "server #38, text-channel #18, notifications #4, web-client #165, web-client #166; web-client #175",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -438,13 +438,39 @@
     {
       "id": "TSK-073",
       "checkpoint": 3,
-      "title": "Redise?o estilo Discord de men?s de usuario/servidor, sus modales y acceso a perfiles en listas de miembros (HU 4, HU 5, HU 36, HU 37, HU 58)",
+      "title": "Rediseño estilo Discord de men?s de usuario/servidor, sus modales y acceso a perfiles en listas de miembros (HU 4, HU 5, HU 36, HU 37, HU 58)",
       "status": "completed",
       "start_date": "2026-11-06",
       "severity": "nice-to-have",
       "origin": [],
       "context": "Refactor est?tico y de experiencia de usuario en web-client para alinear la navegaci?n con el lenguaje visual oscuro y jer?rquico de Discord, sin alterar contratos HTTP/WS. UserMenu y ServerMenu se extraen a components/sidebar como popouts flotantes (mini-banner, avatar con presencia, @handle, tarjetas internas para Estado/Mi perfil/Editar perfil/Cerrar sesi?n, y cabecera del servidor cliqueable con grupos separados por divisores y resaltado rojo en acciones destructivas). Popup monta su Portal s?lo cuando est? visible y registra cada instancia en una pila LIFO (popupStack.ts) para que Escape y el tap exterior cierren ?nicamente el modal superior, de modo que un perfil apilado sobre la lista de miembros no cierre la lista. MembersPopup, RoleMembers y BannedMembersSection muestran MemberAvatar (avatar resuelto desde el cach? v2 de resolveProfileName, sin solicitudes adicionales) y abren el perfil al tocar la identidad, con el bloque pulsable como hermano de Banear/Switch/Revocar; pressar el propio usuario delega en ProfileView mediante registerOpenOwnProfile. resolveProfileName expone primeProfileCache, subscribeProfileCache y getCachedProfileName; useMemberNames y useMemberAvatars se suscriben para repintar las filas al instante cuando ProfileView guarda nombre o avatar. Se unifican ModalHeader y MemberAvatar y se redise?an todas las superficies (modal #313338 con borde #3f4147, tarjetas #232428/#1e1f22) con padding, tarjetas de perfil con banner de 96 px, vista previa en vivo en la configuraci?n del servidor y cajas de advertencia/peligro en las confirmaciones.",
       "pull_request": "web-client #173",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-074",
+      "checkpoint": 3,
+      "title": "Rediseño de menús y modales de canales y categorías (HU 11, HU 12, HU 13, HU 14, HU 41, HU 57)",
+      "status": "completed",
+      "start_date": "2026-11-06",
+      "severity": "nice-to-have",
+      "origin": [],
+      "context": "Rediseño de las hojas de mando de canales y categorías, formularios con vistas previas en vivo, navegación de retorno a la entidad vigente y administración visual triestado de permisos por canal; se preservan contratos HTTP/WS y bitmasks.",
+      "pull_request": "web-client #177",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-075",
+      "checkpoint": 3,
+      "title": "Refinar la identidad visual de perfiles, modales, barra lateral y chats",
+      "status": "completed",
+      "start_date": "2026-11-07",
+      "severity": "nice-to-have",
+      "origin": [],
+      "context": "Mejora optativa de identidad visual en web-client para perfiles, modales, barra lateral, cabeceras y chats. Se preservan contratos HTTP/WS y permisos; las etapas quedaron publicadas en los PRs apilados #178 y #179.",
+      "pull_request": "web-client #178; web-client #179",
       "exception_note": null,
       "discovered_pending_tasks": []
     }
