@@ -11,7 +11,7 @@ El equipo pidió, de forma explícita: **español**, con prioridades claras, sin
 3. **Nunca** propongas "crear un ticket". Si algo queda fuera del PR, decí "como recomendación para un PR aparte" o "deuda con impacto: …".
 4. **Referenciá con `archivo:línea`** en el texto del comentario (los inline ya están anclados, pero el body no).
 5. **Un comentario = un tema.** No mezcles un bug con un nit.
-6. **Empezá por lo que está bien.** En el body, siempre.
+6. **Destacá lo que está bien** cuando haya aciertos concretos verificados; no inventes una cantidad fija.
 7. Si una decisión es defendible pero el motivo escrito es falso, **separalos**:
    > "La decisión v1 sigue siendo defendible, **pero por otro motivo**: …"
 8. Cuando el autor tiene que elegir, **ofrecé opciones numeradas** y la consecuencia de cada una:
@@ -27,7 +27,7 @@ El equipo pidió, de forma explícita: **español**, con prioridades claras, sin
 
 Revisé <qué miraste> y <qué corriste>. **<Resultado verificable: tests, cobertura, tsc>**.
 
-**Lo que está bien y no hay que tocar:** <3-6 ítems concretos con su porqué>.
+**Lo que está bien y no hay que tocar:** <aciertos concretos verificados con su porqué, si los hay>.
 
 El orden de abajo es el de importancia.
 
@@ -144,21 +144,21 @@ Para un nit alcanza con una línea:
 }
 ```
 
-- `side: "RIGHT"` siempre (el comentario va sobre el estado nuevo).
+- Usá `side: "RIGHT"` para el lado nuevo y `side: "LEFT"` para una línea eliminada del lado anterior. Confirmá que la línea y el lado pertenezcan a un hunk válido del diff vigente; si no existe un anclaje válido, describí el hallazgo en el body con su ubicación.
 - No pongas `comments` con `position`: usá `line` + `side`.
 - Escribí el JSON con un script de Node (`fs.writeFileSync`) o Python (`json.dump` con `encoding='utf-8'`). **Nunca** uses `Out-File -Encoding utf8` de PowerShell 5.1 porque antepone un BOM UTF-8 (`\xef\xbb\xbf`) y `gh api --input` responde `Problems parsing JSON (HTTP 400)`.
 - Si aplicaste correcciones en la misma rama antes o junto con la publicación de los comentarios, aclará explícitamente en el inline qué commit resuelve la observación.
-- Después de postear, listá los comentarios por API y confirmá **cuántos** y en **qué línea** quedaron. Si falta uno, publicalo suelto y avisá que no está dentro del bloque de la review.
+- Después de postear, identificá la review creada, listá sus comentarios y confirmá **cuántos** y en **qué línea y lado** quedaron. Si falta uno, informalo y consultá antes de publicar un comentario adicional.
 
 ---
 
 ## Check final antes de publicar
 
-- [ ] Cada inline está en una línea **agregada** del diff.
+- [ ] Cada inline usa la línea y el lado correctos de un hunk del diff vigente; los hallazgos sin anclaje válido están en el body.
 - [ ] El body no menciona backlog, `TSK-`, tickets ni rutas locales del usuario.
 - [ ] Cada P1 explica **qué se rompe** y por qué no puede esperar.
 - [ ] Los hallazgos convenientes usan etiquetas semánticas descriptivas en lugar de un `[Prioridad 2]` ambiguo.
 - [ ] Si se commiteó un fix directamente en la rama, el comentario inline aclara el commit de resolución.
 - [ ] Cada hallazgo tiene evidencia (grep, test, medición o línea de código).
-- [ ] Hay una sección de "lo que está bien".
+- [ ] Los aciertos mencionados están verificados, si los hay.
 - [ ] El orden de prioridad está explícito en el body y en cada inline.

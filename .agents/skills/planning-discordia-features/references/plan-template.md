@@ -12,7 +12,7 @@ Usá este esqueleto al redactar `implementation_plan.md`. Adaptá la cantidad de
 <Resumen ejecutivo de qué se completa de punta a punta:>
 1. **<HU-XX — Nombre de la historia>** (*<Obligatoria | Optativa>, <N> pts*): <qué resuelve y qué tarea `TSK-XXX` o pendiente cierra>.
 2. **<Pre-requisito o HU sinérgica si aplica>**: <detalle breve>.
-3. **Cierre administrativo local**: publicar los PRs correspondientes, actualizar `<TSK-XXX>` (y registrar nuevas tareas si aplica) en `Backlog.json` con los números reales de PR, y actualizar `estado-historias.md` (llevando el puntaje a **<X> / 104 obligatorios** y **<Y> pts totales**).
+3. **Cierre administrativo local**: publicar los PRs correspondientes y actualizar `<TSK-XXX>` según `.agents/rules/backlog.md`. Actualizar `estado-historias.md` y sus puntajes sólo para las HUs que cumplan el criterio de cierre; el impacto previsto **<X> / 104 obligatorios** y **<Y> pts totales** es condicional.
 
 ---
 
@@ -25,6 +25,7 @@ Usá este esqueleto al redactar `implementation_plan.md`. Adaptá la cantidad de
 > - **<Contrato entre servicios 3>:** <Ej. códigos de estado HTTP exactos, payloads y propagación en `gateway`>.
 > - **Commits atómicos y sin rastro de IA:** Cada PR se divide en commits atómicos por cambio lógico (`docs`, `feat`, `test`) en formato Conventional Commits en español, sin trailers `Co-authored-by` ni leyendas generadas por IA.
 > - **Privacidad del Backlog en repositorios compartidos:** Ningún archivo en `specs/`, `docs/arquitectura/`, mensajes de commit ni descripciones de PR mencionará `Backlog.json` ni identificadores `TSK-*` (solo referencias a `HU XX`, `ADR-XXX` o PRs de GitHub).
+> - **Alcance de la aprobación:** Aprobar este plan autoriza la implementación, los commits, el push, la publicación de los PRs previstos y el seguimiento local, salvo límites expresos del usuario. Ante cambios materiales, decisiones no acordadas o bloqueos, detenerse e informar antes de continuar.
 
 ### Topología de Ramas y Pull Requests (<N> PRs en <M> etapas de código + publicación y cierre local)
 
@@ -48,6 +49,14 @@ flowchart LR
 > [!NOTE]
 > <Si existen otros PRs abiertos en los mismos repositorios, explicar cómo se evitan conflictos de merge o por qué conviene apilar sobre determinada rama.>
 
+### Dependencias operativas entre servicios *(si aplican)*
+
+| Productor / consumidor | Contrato y versiones compatibles | Orden de despliegue | Rollback |
+|---|---|---|---|
+| <servicios y PRs relacionados> | <rutas, eventos, esquema, compatibilidad durante el rollout> | <pasos y precondiciones> | <procedimiento y límites de reversión> |
+
+<Distinguir estas dependencias del apilamiento Git; indicar migraciones expand/contract, configuración y riesgos de versiones mixtas cuando corresponda.>
+
 ---
 
 ## Cambios Propuestos por Etapa
@@ -56,14 +65,14 @@ flowchart LR
 
 #### Repositorio `<repo-1>` (rama `feature/<slug>` desde `<rama-base>`)
 
-##### [NEW] `docs/arquitectura/adr-<NNN>-<slug>.md` *(si hay decisión arquitectónica)*
+##### [NEW] `docs/arquitectura/adr-<NNN>-<slug>.md` *(si hay decisión arquitectónica local; si es transversal, documentar en `infra/docs/adr/`)*
 - Contexto, Decisiones, Alternativas descartadas, Orden de errores / invariantes y Consecuencias (siguiendo el formato de los ADRs previos del servicio).
 
 ##### [NEW] `specs/<NNN>-<slug>/spec.md` (y `contracts/<api>.md`, `data-model.md` según convención del repo)
 - Especificación SDD imitando las specs existentes de `<repo-1>` (`Contexto`, `User Scenarios & Testing`, `Functional Requirements`). Sin referencias a `TSK-*` ni `Backlog.json`.
 
 ##### [NEW / MODIFY] [<ArchivoDeDominioORepositorio>](file:///ruta/absoluta/al/archivo)
-- Detalle concreto de cambios, firmas de métodos, migraciones, orden de validación de errores (`400` → `401` → `403` → `404` → `409`) y mensajes exactos de error.
+- Detalle concreto de cambios y, cuando apliquen, firmas, migraciones, códigos y payloads de error y precedencia justificada de validaciones solapadas.
 
 ##### [NEW / MODIFY] [<ArchivoDeTest>](file:///ruta/absoluta/al/test)
 - Casos unitarios y de integración a cubrir (camino feliz, bordes, jerarquía/permisos, concurrencia/esquema).
@@ -82,7 +91,7 @@ flowchart LR
 - Especificación SDD del cliente / gateway alineada con los contratos del backend.
 
 ##### [NEW / MODIFY] [<ClienteApiYMapeoDeErrores>](file:///ruta/absoluta/al/archivo)
-- Funciones de cliente HTTP/WS y mapeo exacto 1:1 de códigos/mensajes del backend a mensajes localizados en español para el usuario.
+- Funciones de cliente HTTP/WS y comportamiento ante errores conocidos y desconocidos, con mensajes localizados según las convenciones existentes y sin exigir traducción literal 1:1.
 
 ##### [NEW / MODIFY] [<ComponentesUI>](file:///ruta/absoluta/al/componente)
 - Estados visuales, accesibilidad (`accessibilityLabel`, `testID`), deshabilitación preventiva según permisos/jerarquía y actualización local del estado.
@@ -102,28 +111,14 @@ flowchart LR
 
 ## Plan de Verificación
 
-### 1. Tests Automatizados y Linters (obligatorios antes de pushear cada rama)
+### 1. Tests Automatizados y Linters
 
-- **Servicios Python (`gateway`, `auth-service`, `profile`, `text-channel`, `voice-calls`, `notifications`)** — `ruff` sin errores y cobertura >= 70%:
-  ```powershell
-  cd <servicio>
-  ruff check app tests
-  pytest --cov=app --cov-fail-under=70
-  ```
-  *(En `profile`, ejecutar además `behave` si se tocaron escenarios BDD).*
-- **`server` (Quarkus / Java 21 — obligatorio `_JAVA_OPTIONS=-Duser.timezone=UTC`)**:
-  ```powershell
-  cd server
-  $env:_JAVA_OPTIONS="-Duser.timezone=UTC"
-  .\gradlew.bat test
-  ```
-- **Clientes Expo / React Native (`web-client`, `backoffice`)**:
-  ```powershell
-  cd <cliente>
-  npx tsc --noEmit
-  npm run lint
-  npm test -- --watchAll=false
-  ```
+<Verificar scripts, configuración y comandos reales de cada repositorio y declarar los comandos concretos para cada rama. Ejecutar pruebas dirigidas durante la iteración; antes de publicar, ejecutar suite completa, lint y tipos aplicables al estado final de cada PR, reutilizando resultados sólo para el mismo SHA. No ejecutar la suite completa por cada commit.>
+
+- **Python:** `ruff` sin errores y cobertura >= 70% en la suite completa antes del PR; usar la configuración y el entorno del servicio. En `profile`, incluir `behave` si se tocaron escenarios BDD.
+- **`server`:** ejecutar tests y chequeos aplicables con `_JAVA_OPTIONS=-Duser.timezone=UTC`; documentar requisitos como Docker.
+- **Clientes Expo:** comprobar scripts en cada `package.json` antes de planificar lint, tipos y tests. Si falta un runner o script, informar la limitación y acordar cómo obtener evidencia; no afirmar que se ejecutaron tests inexistentes.
+- <Registrar comandos, SHA, resultados y cobertura real; si un gate obligatorio falla o no puede ejecutarse, detener la publicación e informar.>
 
 ### 2. Auditoría de Atomicidad, Autoría y Privacidad (previa al `git push`)
 
@@ -139,8 +134,8 @@ git -C <repo> diff <rama-base>...HEAD
 ### 3. Verificación Manual / Integración Punta a Punta
 
 1. Levantar stack local (`infra/script/startup-infra.sh` + `infra/script/startup-servers.sh`) y cliente (`npx expo start --web`).
-2. <Paso 1 verificando CA 1>.
-3. <Paso 2 verificando CA 2 / bloqueo / error esperado>.
+2. <Relacionar cada CA de la HU con pasos o pruebas de integración de punta a punta y resultados esperados, incluidos rechazos y casos borde aplicables>.
+3. <Registrar resultados, entorno y limitaciones; no inferir despliegue de producción a partir de pruebas locales>.
 
 ---
 
@@ -159,18 +154,22 @@ Cada PR debe usar la **plantilla obligatoria de `AGENTS.md`** (sin mencionar `TS
 - `## Contratos e Impacto Operativo` (`APIs / Eventos`, `Base de datos`, `Configuración / Infra`, `PRs relacionados / apilados`).
 - `## Verificación` (checks marcados `[x]` con los comandos y resultados reales ejecutados).
 
+Antes de cada push y creación, comprobar remoto, SHA, cabeza y base y consultar si ya existe el PR. Ante una interrupción, informar lo publicado y lo pendiente; al retomar, verificar el estado remoto y reutilizar el PR coincidente sin duplicarlo. No forzar push ni reescribir historia sin autorización expresa.
+
 ---
 
 ### Etapa <N> — Cierre de Backlog y Actualización de Estado de Historias
 
-Recién una vez creados los PRs y obtenidos sus números reales (`#<N>`):
+El seguimiento de inicio se registra al comenzar el trabajo; el cierre se realiza recién una vez creados los PRs necesarios y obtenidos sus números reales (`#<N>`):
 
 ##### [MODIFY] `Backlog.json`
 Siguiendo el protocolo en `.agents/rules/backlog.md` (lectura completa, modificación sobre el objeto parseado, actualización de `last_updated`, serialización `JSON.stringify(data, null, 2) + "\n"` y re-parseo de verificación):
-- Actualizar `<TSK-XXX>` (`status: "completed"`, `start_date` si estaba `null`, `pull_request: "<repo> #<N>; ..."`).
-- Registrar nuevas tareas completadas si el usuario lo solicitó, con su `checkpoint` activo, `severity`, `origin` y `pull_request` con los números reales de GitHub.
+- Al iniciar el trabajo, registrar `in_progress` y la fecha real de inicio si `start_date` es `null`; nunca cambiar una fecha existente.
+- Al finalizar, localizar `<TSK-XXX>` por ID y actualizar `status: "completed"` y `pull_request: "<repo> #<N>; ..."` sólo para trabajo terminado. Aplicar las excepciones sin PR previstas en el protocolo cuando correspondan.
+- Registrar trabajo adicional descubierto en `discovered_pending_tasks` de la tarea de origen, con `description`, `severity` y `resolved`; no crear automáticamente una tarea raíz. Las tareas nuevas solicitadas explícitamente siguen el protocolo aplicable.
+- Verificar tras cada escritura que el JSON parsea y que la cantidad e IDs de tareas no cambiaron accidentalmente.
 
 ##### [MODIFY] `estado-historias.md`
-- Mover/agregar las `HU-XX` completadas de punta a punta a la tabla correspondiente («Obligatorias completadas» u «Optativas completadas»), recalcular subtotales y puntaje total, limpiar «Parciales o solo backend» / «Sin implementar» y actualizar la sección «Notas».
+- Sólo marcar una HU como completada y sumar sus puntos si todos sus PRs necesarios están abiertos o mergeados y todos sus CA fueron verificados de punta a punta; registrar evidencia y entorno. Un PR abierto no implica despliegue.
+- Para las HUs que cumplan ese criterio, mover/agregar a la tabla correspondiente, recalcular subtotales y puntaje total y actualizar las notas. Si falta evidencia, conservar el estado parcial o pendiente y explicar qué falta.
 `````
-

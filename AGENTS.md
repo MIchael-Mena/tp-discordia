@@ -147,7 +147,7 @@ Skill del equipo para revisar PRs en cualquier repositorio: **`.agents/skills/re
 - **Detección automática de autoría (PR propio vs. PR de compañero)**:
   - **PR propio**: no publicar comentarios en GitHub; buscar errores, huecos de contrato y oportunidades de refactor (Clean Architecture, SOLID, DRY, custom hooks, separación vista/lógica), presentar las propuestas y usar `ask_question` para confirmar cuáles aplicar antes de commitear, pushear y rebasar PRs apilados.
   - **PR de compañero**: **primero el informe, después los comentarios**, publicando en GitHub solo con aprobación explícita del usuario.
-- Revisar en un **worktree temporal** (`git worktree add "$env:TEMP\<pr>" origin/<branch> --detach`) cuando solo se inspecciona o el árbol local tiene cambios, y asegurar que `git status -sb` quede limpio al cerrar.
+- Revisar en un **worktree temporal** cuando solo se inspecciona o el árbol local tiene cambios, siguiendo la receta de la skill para verificar los SHA y preservar la rama y el estado inicial del usuario al cerrar.
 - No afirmar defectos sin evidencia reproducible; clasificar por prioridad (**P1 antes del merge** / P2 / Refactor / nit); prohibido mencionar `Backlog.json`/`TSK-*`; verificar ambos lados de cada contrato y `infra/compose.prod.yaml`.
 - Referencias: `findings-catalog.md`, `verification-recipes.md` y `comment-style.md`.
 

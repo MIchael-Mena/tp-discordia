@@ -192,7 +192,7 @@ Los que más importan: micrófono denegado, clic derecho, `401` que no debe prop
 *Ejemplo:* `server` #10 ya traía `ChannelType` "ported from 003" con Flyway, mientras #13 lo agregaba de nuevo con init script.
 
 **H2 · PR apilado cuya base avanzó.**
-`baseRefName` ≠ `develop` + `mergeable: CONFLICTING` + CI de días atrás. Bloqueante de proceso: hay que rebasar y volver a correr los gates antes del review final.
+Identificá la rama de integración del repo (`main` en `infra`, `develop` en los demás, salvo excepciones) y comprobá si la base es la cabeza de otro PR. `mergeable: CONFLICTING` es bloqueante; verificá también qué SHA evaluó CI. Una base distinta o un check antiguo no demuestran por sí solos que haga falta un rebase. No reescribas ramas sin autorización explícita.
 
 **H3 · Código muerto / rama inalcanzable.**
 Excepción declarada y capturada que nadie lanza; use case que ningún router referencia; `403` en el mapa de errores que el backend no emite. *Detectar:* `grep` del símbolo en todo `src/` (sin contar tests).
@@ -217,22 +217,24 @@ El PR corrige `README` y `contracts` pero deja `data-model.md` con el contrato v
 
 Especialmente relevante al auditar **PRs propios** o evaluar pedidos de refactor en revisiones de código:
 
+Estos casos son señales para investigar, no reglas automáticas. Confirmá convenciones y contexto del repositorio, beneficio concreto, costo y alcance antes de proponer una extracción; una implementación simple y cohesiva puede ser preferible.
+
 **I1 · Lógica pura de negocio o decisiones de sincronización acopladas a la vista (`pages/` o `components/`).**
 Funciones puras que deciden transiciones de estado, coalescencia de colas (`mergeQueuedSync`), acciones ante eventos (`homeSyncAction`, `channelSyncAction`), textos de estado vacío (`memberMessages`) o formateo de fechas (`formatBanDate`) definidas dentro de archivos `.tsx` de pantallas o popups.
 *Detectar:* buscá helpers en `.tsx` que no dependan de JSX ni de hooks de React.
-*Refactor:* extraerlos a módulos puros en `src/core/<dominio>/*.ts` con sus propios tests unitarios directos (`.test.ts`).
+*Posible refactor:* si mejora cohesión o testabilidad, extraerlos a un módulo apropiado según las convenciones del repo y cubrir la lógica extraída con tests.
 
 **I2 · Efectos de suscripción WebSocket, timers o paginación duplicados en componentes en vez de un custom hook en `src/core/`.**
 Dos o más pantallas/componentes repiten `useEffect` con suscripción a eventos, limpieza de `setTimeout` con jitter o paginación con control de concurrencia (`requestIdRef` + `loadedPagesRef` + `hasMore`).
 *Detectar:* compará el manejo de efectos entre componentes hermanos (p. ej. `index.tsx` vs `[channelId].tsx` para `subscribeServerSync`; `MembersPopup.tsx` vs `RoleMembers.tsx` para listado paginado de miembros).
-*Refactor:* extraer un custom hook a `src/core/` (ej. `useServerSync`, `useServerMembers`) usando un `callbackRef` (`useRef` actualizado en `useEffect`) para no recrear la suscripción ni cancelar timers cuando la vista re-renderiza.
+*Posible refactor:* extraer un custom hook si los comportamientos realmente comparten responsabilidad y ciclo de vida. Evaluá la gestión de callbacks y dependencias según el caso; no apliques `callbackRef` por defecto.
 
 **I3 · Componente o popup monolítico con múltiples responsabilidades.**
-Un mismo archivo `.tsx` (> 250-300 líneas) concentra pestañas independientes, barras de filtros de roles, modales de confirmación y llamadas de red de distintos subdominios.
+Un mismo archivo `.tsx` concentra pestañas independientes, barras de filtros de roles, modales de confirmación y llamadas de red de distintos subdominios. La cantidad de líneas sola no demuestra un problema de diseño.
 *Detectar:* verificá si el popup tiene sub-secciones o tabs claramente separables (ej. `MembersPopup.tsx` mezclando el listado activo, la barra de chips de filtro por rol y toda la pestaña de baneados con su modal de revocación).
-*Refactor:* extraer subcomponentes cohesivos (`MemberRoleFilter`, `BannedMembersSection`) dejando al componente padre como orquestador declarativo.
+*Posible refactor:* extraer subcomponentes cohesivos (`MemberRoleFilter`, `BannedMembersSection`) cuando reduzca responsabilidades y complejidad sin fragmentar innecesariamente la vista.
 
 **I4 · `StyleSheet.create` inline dentro del componente en vez de `src/styles/`.**
-En `web-client` y `backoffice`, los estilos viven en `src/styles/<modulo>.ts`. Definir `StyleSheet.create` al final de un componente en `src/components/` rompe la convención del repositorio y abulta el archivo de vista.
+Comprobá dónde se ubican los estilos en archivos comparables del repositorio. Definir `StyleSheet.create` junto al componente no es por sí solo un defecto de diseño.
 *Detectar:* `git grep "StyleSheet.create" src/components/ src/app/` sobre los archivos tocados por el PR.
-*Refactor:* mover o fusionar los estilos en `src/styles/<modulo>.ts`.
+*Posible refactor:* mover o fusionar estilos si existe una convención aplicable o si mejora reutilización y mantenimiento, ponderando el alcance del PR.

@@ -1,6 +1,6 @@
 # Estado de las Historias de Usuario — Discordia
 
-**Actualizado:** 2026-11-03 (tener en cuenta que hay otros miembros del equipo que pueden haber avanzado en paralelo y no tienen acceso a este documento).
+**Actualizado:** 2026-11-07 (tener en cuenta que hay otros miembros del equipo que pueden haber avanzado en paralelo y no tienen acceso a este documento).
 
 Seguimiento de todas las HU: completadas y pendientes. Para ver el detalle y criterios de aceptación de cada historia, ver [Historias de Usuario](historias-usuario.md).
 
@@ -53,7 +53,7 @@ Los puntos no reemplazan los Requisitos No Funcionales: todos los RNF del enunci
 
 ---
 
-## Historias optativas — 38 / 229 pts
+## Historias optativas — 52 / 229 pts
 
 El puntaje optativo amplía las capacidades de la plataforma. La cantidad de puntos a implementar depende del tamaño del grupo (ver tabla de mínimos más abajo).
 
@@ -68,8 +68,8 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 39 | [Administrar configuración del servidor](historias-usuario.md#hu-39-administrar-configuración-del-servidor) | Servidores | 3 | 3 | Crear servidor |
 | 40 | [Eliminar servidor](historias-usuario.md#hu-40-eliminar-servidor) | Servidores | 5 | 2 | Administrar configuración del servidor |
 | 41 | [Reordenar canales](historias-usuario.md#hu-41-reordenar-canales) | Canales | 2 | 3 | Organizar canales en categorías |
-| 42 | [Enviar mensaje directo (DM)](historias-usuario.md#hu-42-enviar-mensaje-directo-dm) | Mensajería | 8 | - | Bloquear y desbloquear usuarios; sesiones e historial de mensajería |
-| 43 | [Bloquear y desbloquear usuarios](historias-usuario.md#hu-43-bloquear-y-desbloquear-usuarios) | Mensajería | 3 | - | Usuarios; complementa mensajes directos |
+| 42 | [Enviar mensaje directo (DM)](historias-usuario.md#hu-42-enviar-mensaje-directo-dm) | Mensajería | 8 | 3 | Bloquear y desbloquear usuarios; sesiones e historial de mensajería |
+| 43 | [Bloquear y desbloquear usuarios](historias-usuario.md#hu-43-bloquear-y-desbloquear-usuarios) | Mensajería | 3 | 3 | Usuarios; complementa mensajes directos |
 | 44 | [Editar mensaje](historias-usuario.md#hu-44-editar-mensaje) | Mensajería | 3 | 2 | Enviar mensaje en un canal o DM |
 | 45 | [Eliminar mensaje](historias-usuario.md#hu-45-eliminar-mensaje) | Mensajería | 3 | 2 | Enviar mensaje en un canal o DM |
 | 46 | [Menciones](historias-usuario.md#hu-46-menciones) | Mensajería | 5 | - | Mensajería, roles y notificaciones |
@@ -109,13 +109,13 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 80 | [Ver beneficios de servidor boosteado](historias-usuario.md#hu-80-ver-beneficios-de-servidor-boosteado) | Monetización | 3 | - | Usar puntos para boostear y gestionar emojis |
 | 81 | [Ver expediente de investigación de usuario o servidor](historias-usuario.md#hu-81-ver-expediente-de-investigación-de-usuario-o-servidor) | Administración | 5 | - | Reportar mensaje o usuario |
 
-**Puntaje optativo completado: 41 pts** (de 229 pts disponibles en el catálogo).
+**Puntaje optativo completado: 52 pts** (de 229 pts disponibles en el catálogo).
 
 ---
 
 ## Resumen de avance y puntaje
 
-**Total implementado de punta a punta: 145 pts** (104 obligatorios + 41 optativos).
+**Total implementado de punta a punta: 156 pts** (104 obligatorios + 52 optativos).
 
 ## Mínimo de puntos por tamaño de equipo
 

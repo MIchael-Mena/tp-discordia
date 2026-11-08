@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-07T04:43:14.325Z",
+  "last_updated": "2026-11-08T00:14:17.226Z",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -135,14 +135,14 @@
       "id": "TSK-054",
       "checkpoint": 3,
       "title": "text-channel: POST REST para enviar mensajes y su relay en gateway",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-07",
       "severity": "should",
       "origin": [
         "TSK-039"
       ],
       "context": "Pendiente descubierto en TSK-039. El envio de mensajes sigue siendo WS-only: falta POST /channels/{channel_id}/messages en text-channel y su relay en gateway, con la misma autorizacion que el frame message (endpoint interno de permiso), la misma convencion de un solo intento para mutaciones y el mismo contrato de errores (401/403/404 y 5xx convertido en 502). Asi el cliente puede enviar sin depender de una WebSocket abierta.",
-      "pull_request": null,
+      "pull_request": "text-channel #26; gateway #74",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -150,8 +150,8 @@
       "id": "TSK-055",
       "checkpoint": 3,
       "title": "text-channel: replay consistente en la reanudacion (ediciones y tombstones) y E2E del ancla eliminada",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-07",
       "severity": "should",
       "origin": [
         "TSK-034",
@@ -159,7 +159,7 @@
         "TSK-042"
       ],
       "context": "Pendientes descubiertos en TSK-034, TSK-039 y TSK-042. La reanudacion solo re-emite mensajes posteriores al cursor: (1) las ediciones anteriores al cursor no se re-emiten; (2) un borrado anterior al cursor y fuera de la ventana de RESUME_MAX_MESSAGES no se re-emite, y el catch-up REST no elimina esos tombstones del estado local. Cerrarlo requiere un log de cambios con cursor propio (o exponer edited_at y deleted_at en el catch-up REST). Falta ademas la cobertura E2E del resume cuando el mensaje ancla fue eliminado: ya hay un test de repositorio que prueba que el cursor sigue paginando.",
-      "pull_request": null,
+      "pull_request": "text-channel #28; web-client #183",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
