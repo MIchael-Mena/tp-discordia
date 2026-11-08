@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-08T00:14:17.226Z",
+  "last_updated": "2026-11-08",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -90,14 +90,14 @@
       "id": "TSK-051",
       "checkpoint": 3,
       "title": "Suspension de cuentas: cerrar los huecos en voice-calls, el kick de WebSocket y la UI",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-08",
       "severity": "must",
       "origin": [
         "TSK-038"
       ],
       "context": "Pendientes descubiertos en TSK-038. (1) voice-calls no consume account_events: un usuario suspendido sigue conectado a su sala de voz (el CA 2 de HU 29 solo esta cubierto para las WebSockets de text-channel); falta un consumidor de AccountSuspended en la replica que mantiene el estado en memoria. (2) El kick de WebSockets depende de un publish fire-and-forget: si RabbitMQ esta caido al suspender, la conexion ya establecida sigue abierta y el gateway no revalida el token despues del handshake (repetir la suspension republica el evento, los consumidores son idempotentes). (3) web-client no maneja el frame session_ended ni el codigo de cierre: el usuario suspendido ve una desconexion generica en lugar de un mensaje de cuenta suspendida. Estado 2026-10-29: la UI de suspension ya existe en el repo backoffice (listado con busqueda por usuario/email y filtro por estado, suspender con confirmacion y reactivar), asi que HU 29/30/31 quedan completas de punta a punta junto con el kick de WebSockets de text-channel (frame session_ended y cierre) y la revocacion de access tokens en el gateway por los sid devueltos. Siguen abiertos: (1) voice-calls no consume account_events; (2) el publish sigue siendo fire-and-forget y el gateway no revalida el token despues del handshake; (3) web-client no maneja el frame session_ended (solo reacciona al cierre 4401 como sesion vencida), asi que un suspendido no ve un mensaje especifico.",
-      "pull_request": null,
+      "pull_request": "voice-calls #9; infra #42; gateway #76; web-client #185",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -105,14 +105,14 @@
       "id": "TSK-052",
       "checkpoint": 3,
       "title": "Perfil publico: rate limit estricto, restriccion por servidor compartido y endpoint batch",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-08",
       "severity": "must",
       "origin": [
         "TSK-045"
       ],
       "context": "Pendientes descubiertos en TSK-045 (completado parcialmente en TSK-061). Hecho: `GET /profiles/{user_id}/public` ya tiene presupuesto propio en el gateway (`PUBLIC_PROFILE_RATE_LIMIT=10/second;120/minute` por IP real, ruta declarada antes del catch-all), lo que baja el techo de enumeracion de 1200/min a 120/min. Falta: (1) exigir que el solicitante comparta al menos un servidor con el perfil consultado antes de devolver la proyeccion publica (no vive en profile ni en gateway: hace falta un endpoint interno de co-membership en server); (2) recien con eso, `POST /profiles/public/batch` para que el chat resuelva varios autores en una sola request; (3) y entonces ajustar el limite a ~1 req/s, porque hoy la rafaga de 10/s existe para etiquetar una lista de 50 miembros con cache frio.",
-      "pull_request": null,
+      "pull_request": "server #47; profile #35; gateway #77; web-client #186",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -188,14 +188,14 @@
       "id": "TSK-057",
       "checkpoint": 3,
       "title": "Permisos: consistencia del evaluador (ADMINISTRATOR, MANAGE_ROLES) y permisos por canal",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-07",
       "severity": "should",
       "origin": [
         "TSK-041"
       ],
       "context": "Pendientes descubiertos en TSK-041. (1) Unificar la semantica de ADMINISTRATOR en ResolveMemberPermissions.hasPermission: hoy ManageMessagesPolicy evalua MANAGE_MESSAGES | ADMINISTRATOR por su cuenta y el resto de los chequeos solo compara el bit pedido. (2) Evaluar MANAGE_ROLES ademas de ADMINISTRATOR en DefaultManageRolesPolicy; depende de la comparacion por jerarquia de TSK-049 para no habilitar escalada de privilegios. (3) DecideChannelAccess no evalua VIEW_CHANNELS. (4) El modelo es aditivo: sin overrides con deny (o un rol por defecto configurable) no hay forma de revocar un permiso del baseline.",
-      "pull_request": null,
+      "pull_request": "server #46; web-client #184",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -203,14 +203,14 @@
       "id": "TSK-058",
       "checkpoint": 3,
       "title": "Mensajes eliminados: politica de purga o retencion del contenido",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-08",
       "severity": "should",
       "origin": [
         "TSK-042"
       ],
       "context": "Pendiente descubierto en TSK-042. El soft delete oculta el mensaje de toda la API pero el texto sigue en MongoDB: definir la politica de retencion (purga fisica diferida o plazo documentado) y su job, teniendo en cuenta que la reanudacion necesita los tombstones para no resucitar mensajes borrados.",
-      "pull_request": null,
+      "pull_request": "text-channel #29",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -218,8 +218,8 @@
       "id": "TSK-059",
       "checkpoint": 3,
       "title": "web-client: deuda pendiente de arquitectura y plataforma web",
-      "status": "pending",
-      "start_date": null,
+      "status": "completed",
+      "start_date": "2026-11-08",
       "severity": "should",
       "origin": [
         "TSK-019",
@@ -227,7 +227,7 @@
         "TSK-044"
       ],
       "context": "Pendientes descubiertos en TSK-019, TSK-036 y TSK-044. (1) Alinear el cliente con capas de Clean Architecture (dominio aislado y puertos) y corregir la inversion core->components: src/core/useGoogleSubmit.ts importa @/components/NotificationsProvider; hoy la arquitectura es por capas pragmatica (documentada en el README). (2) Las rutas dinamicas del export web estatico (/invitations/[code] y /pages/servers/[serverId]) no tienen generateStaticParams y dependen del hosting de EAS: verificar el deep link en produccion o pasar a output single/SPA con catch-all. (3) [RESUELTO en TSK-071] Sincronización en tiempo real vía WebSocket /ws/notifications y RabbitMQ server_events, eliminando la latencia de 20 s de useLiveSync y cerrando sockets en text-channel.",
-      "pull_request": null,
+      "pull_request": "web-client #187",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -245,11 +245,6 @@
       "pull_request": "gateway #59; web-client #158; profile #29 (HU-37, base); profile #30 (apilado); server #31 (HU-36, base); web-client #171 (fix Portal.Host + avatares en chat)",
       "exception_note": null,
       "discovered_pending_tasks": [
-        {
-          "description": "El rate limit del perfil publico baja el techo de enumeracion de 1200/min a 120/min, pero no lo cierra: falta validar que quien consulta comparte un servidor con el consultado. Con esa validacion se puede habilitar el endpoint batch y bajar el limite a 1 req/s sin romper el etiquetado de la lista de miembros.",
-          "severity": "must",
-          "resolved": false
-        },
         {
           "description": "La presencia en WS sigue siendo un oraculo de conexion (un id inexistente y uno desconectado son indistinguibles), pero con el token bucket por proceso: con N replicas de profile el techo se multiplica por N y el fan-out no cruza replicas. Mudar hub y bucket a Redis junto con la validacion de servidor compartido.",
           "severity": "should",
