@@ -135,7 +135,6 @@ Pendientes técnicos y deuda asumida que siguen abiertos, para poder retomarlos 
 
 ### Seguridad
 
-- **HU-36 — Enumeración de perfiles:** el techo de `GET /profiles/{id}/public` bajó de 1200/min a 120/min (`PUBLIC_PROFILE_RATE_LIMIT`, 10/s + 120/min), pero cerrarlo del todo exige validar que quien consulta **comparte un servidor** con el consultado —regla que no vive ni en `profile` ni en el `gateway`— y, con eso, el `POST /profiles/public/batch` que permitiría etiquetar una lista de miembros en una sola request.
 - **HU-36 — `WS /ws/presence`:** la presencia quedó como **suscripción por usuario** con token bucket (1 comando/s, ráfaga 3, agregado por usuario y retenido entre reconexiones) porque el fan-out original entregaba la presencia de toda la plataforma a cualquier sesión; el riesgo residual es que la presencia es un oráculo de conexión y no de existencia, y se cierra con la misma validación de servidor compartido (ADR-008).
 
 ### Escalabilidad multi-réplica
@@ -146,9 +145,5 @@ Pendientes técnicos y deuda asumida que siguen abiertos, para poder retomarlos 
 
 - **HU-27 (CA 3) — Indicador destacado por menciones:** queda pendiente porque depende de la optativa HU-46 (menciones), fuera de alcance.
 - **HU-41 — Auto-scroll durante el arrastre:** el auto-scroll de la lista mientras se arrastra un canal quedó fuera de alcance.
-
-### Despliegue e infraestructura
-
-- **HU-29/30/31 — Suspensión y voz:** `voice-calls` no consume `AccountSuspended`, así que un usuario suspendido no se desconecta de una sala de voz.
 
 Los pendientes de infraestructura y CI que no son deuda de código se siguen en [mejoras-ci-cd.md](mejoras-ci-cd.md).

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-08",
+  "last_updated": "2026-11-09T00:40:20.101220+00:00",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -466,6 +466,19 @@
       "origin": [],
       "context": "Mejora optativa de identidad visual en web-client para perfiles, modales, barra lateral, cabeceras y chats. Se preservan contratos HTTP/WS y permisos; las etapas quedaron publicadas en los PRs apilados #178 y #179.",
       "pull_request": "web-client #178; web-client #179",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-076",
+      "checkpoint": 3,
+      "title": "auth-service: resiliencia de conexiones postgres (psycopg_pool) y healthcheck veridico del email worker",
+      "status": "completed",
+      "start_date": "2026-11-08",
+      "severity": "must",
+      "origin": [],
+      "context": "Transmisión de las protecciones del ADR-009 de profile a auth-service: (1) psycopg_pool con kwargs de libpq (connect_timeout=10, options='-c statement_timeout=10000', tcp_user_timeout=10000, keepalives activos), check_connection, max_lifetime=1800, max_idle=300 y timeout=30 para evitar cuelgues de 15,4 min por conexiones ociosas cerradas silenciosamente por el NAT Gateway (350s) o RDS; acotamiento de /readyz en adquisición y ejecución. (2) email_worker con timeout explícito de envío HTTP (10s), pika ConnectionParameters con heartbeat=60, blocked_connection_timeout=30 y socket_timeout=10, y watchdog de tiempo de procesamiento en is_healthy() para que el heartbeat loop en thread separado no reporte healthy ante desconexión o handler colgado. ADR-003 y spec 001-connection-and-worker-resilience.",
+      "pull_request": "auth-service #34",
       "exception_note": null,
       "discovered_pending_tasks": []
     }
