@@ -1,6 +1,6 @@
 # Estado de las Historias de Usuario — Discordia
 
-**Actualizado:** 2026-11-07 (tener en cuenta que hay otros miembros del equipo que pueden haber avanzado en paralelo y no tienen acceso a este documento).
+**Actualizado:** 2026-11-09 (tener en cuenta que hay otros miembros del equipo que pueden haber avanzado en paralelo y no tienen acceso a este documento).
 
 Seguimiento de todas las HU: completadas y pendientes. Para ver el detalle y criterios de aceptación de cada historia, ver [Historias de Usuario](historias-usuario.md).
 
@@ -53,7 +53,7 @@ Los puntos no reemplazan los Requisitos No Funcionales: todos los RNF del enunci
 
 ---
 
-## Historias optativas — 52 / 229 pts
+## Historias optativas — 63 / 229 pts
 
 El puntaje optativo amplía las capacidades de la plataforma. La cantidad de puntos a implementar depende del tamaño del grupo (ver tabla de mínimos más abajo).
 
@@ -85,9 +85,9 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 56 | [Reordenar jerarquía de roles](historias-usuario.md#hu-56-reordenar-jerarquía-de-roles) | Roles y Permisos | 3 | 3 | Crear rol y asignar rol a un miembro |
 | 57 | [Sobrescribir permisos de un rol en un canal específico](historias-usuario.md#hu-57-sobrescribir-permisos-de-un-rol-en-un-canal-específico) | Roles y Permisos | 5 | 3 | Editar permisos de un rol y gestión de canales |
 | 58 | [Ver miembros por rol](historias-usuario.md#hu-58-ver-miembros-por-rol) | Roles y Permisos | 2 | 3 | Asignar rol a un miembro |
-| 59 | [Expulsar miembro del servidor](historias-usuario.md#hu-59-expulsar-miembro-del-servidor) | Moderación | 3 | - | Roles y membresía del servidor |
-| 60 | [Silenciar temporalmente a un miembro](historias-usuario.md#hu-60-silenciar-temporalmente-a-un-miembro) | Moderación | 5 | - | Roles, mensajería y voz |
-| 61 | [Ver registro de auditoría de moderación](historias-usuario.md#hu-61-ver-registro-de-auditoría-de-moderación) | Moderación | 3 | - | Acciones de moderación |
+| 59 | [Expulsar miembro del servidor](historias-usuario.md#hu-59-expulsar-miembro-del-servidor) | Moderación | 3 | 3 | Roles y membresía del servidor |
+| 60 | [Silenciar temporalmente a un miembro](historias-usuario.md#hu-60-silenciar-temporalmente-a-un-miembro) | Moderación | 5 | 5 | Roles, mensajería y voz |
+| 61 | [Ver registro de auditoría de moderación](historias-usuario.md#hu-61-ver-registro-de-auditoría-de-moderación) | Moderación | 3 | 3 | Acciones de moderación |
 | 62 | [Reportar mensaje o usuario](historias-usuario.md#hu-62-reportar-mensaje-o-usuario) | Moderación | 5 | - | Mensajería y backoffice |
 | 63 | [Filtro automático de palabras prohibidas](historias-usuario.md#hu-63-filtro-automático-de-palabras-prohibidas) | Moderación | 3 | - | Enviar mensaje en un canal |
 | 64 | [Silenciar notificaciones de un canal o servidor](historias-usuario.md#hu-64-silenciar-notificaciones-de-un-canal-o-servidor) | Notificaciones | 3 | - | Notificaciones obligatorias |
@@ -109,13 +109,13 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 80 | [Ver beneficios de servidor boosteado](historias-usuario.md#hu-80-ver-beneficios-de-servidor-boosteado) | Monetización | 3 | - | Usar puntos para boostear y gestionar emojis |
 | 81 | [Ver expediente de investigación de usuario o servidor](historias-usuario.md#hu-81-ver-expediente-de-investigación-de-usuario-o-servidor) | Administración | 5 | - | Reportar mensaje o usuario |
 
-**Puntaje optativo completado: 52 pts** (de 229 pts disponibles en el catálogo).
+**Puntaje optativo completado: 63 pts** (de 229 pts disponibles en el catálogo).
 
 ---
 
 ## Resumen de avance y puntaje
 
-**Total implementado de punta a punta: 156 pts** (104 obligatorios + 52 optativos).
+**Total implementado de punta a punta: 167 pts** (104 obligatorios + 63 optativos).
 
 ## Mínimo de puntos por tamaño de equipo
 

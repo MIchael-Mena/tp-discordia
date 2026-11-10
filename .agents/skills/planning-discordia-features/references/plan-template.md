@@ -94,7 +94,13 @@ flowchart LR
 - Funciones de cliente HTTP/WS y comportamiento ante errores conocidos y desconocidos, con mensajes localizados según las convenciones existentes y sin exigir traducción literal 1:1.
 
 ##### [NEW / MODIFY] [<ComponentesUI>](file:///ruta/absoluta/al/componente)
-- Estados visuales, accesibilidad (`accessibilityLabel`, `testID`), deshabilitación preventiva según permisos/jerarquía y actualización local del estado.
+- **Coherencia visual** (ver [frontend-guidelines.md](./frontend-guidelines.md)): indicar el módulo hermano tomado como referencia, los tokens del tema usados y qué componentes compartidos se reutilizan (sólo si corresponde) o por qué no. Sin estilos aislados salvo refactor visual pedido explícitamente.
+- Estados visuales (carga, vacío, error), accesibilidad (`accessibilityLabel`, `testID`), deshabilitación preventiva según permisos/jerarquía y actualización local del estado.
+- Navegación interna con `onBack` conservando filtros/scroll/página, y *fallback* para entidades no disponibles (ex-miembros), si aplican.
+- Filtros de UI alineados con los parámetros del backend (multi-valor si una pestaña agrupa acciones).
+
+##### [MODIFY] [<PuntosDeEntradaYCableado>](file:///ruta/absoluta/al/archivo)
+- Cadena completa hasta el archivo raíz: tipo de modal/ruta (`types.ts`), manejo (`HomeModals.tsx`), disparadores (`Sidebar.tsx`, `ServerMenu.tsx`) y `src/app/pages/index.tsx` (o equivalente) conectando `onShow<Feature>` con `modals.openModal({ type: '<tipo>' })`.
 
 ##### [NEW / MODIFY] [<TestsDeCliente>](file:///ruta/absoluta/al/test)
 - Pruebas de API, mapeo de errores y componentes.
@@ -117,7 +123,7 @@ flowchart LR
 
 - **Python:** `ruff` sin errores y cobertura >= 70% en la suite completa antes del PR; usar la configuración y el entorno del servicio. En `profile`, incluir `behave` si se tocaron escenarios BDD.
 - **`server`:** ejecutar tests y chequeos aplicables con `_JAVA_OPTIONS=-Duser.timezone=UTC`; documentar requisitos como Docker.
-- **Clientes Expo:** comprobar scripts en cada `package.json` antes de planificar lint, tipos y tests. Si falta un runner o script, informar la limitación y acordar cómo obtener evidencia; no afirmar que se ejecutaron tests inexistentes.
+- **Clientes Expo:** comprobar scripts en cada `package.json` antes de planificar lint, tipos y tests. Incluir siempre el chequeo de tipos (`npx --prefix web-client tsc --noEmit` y/o `npx --prefix backoffice tsc --noEmit`). Si falta un runner o script, informar la limitación y acordar cómo obtener evidencia; no afirmar que se ejecutaron tests inexistentes.
 - <Registrar comandos, SHA, resultados y cobertura real; si un gate obligatorio falla o no puede ejecutarse, detener la publicación e informar.>
 
 ### 2. Auditoría de Atomicidad, Autoría y Privacidad (previa al `git push`)
@@ -171,5 +177,7 @@ Siguiendo el protocolo en `.agents/rules/backlog.md` (lectura completa, modifica
 
 ##### [MODIFY] `estado-historias.md`
 - Sólo marcar una HU como completada y sumar sus puntos si todos sus PRs necesarios están abiertos o mergeados y todos sus CA fueron verificados de punta a punta; registrar evidencia y entorno. Un PR abierto no implica despliegue.
-- Para las HUs que cumplan ese criterio, mover/agregar a la tabla correspondiente, recalcular subtotales y puntaje total y actualizar las notas. Si falta evidencia, conservar el estado parcial o pendiente y explicar qué falta.
+- Para las HUs que cumplan ese criterio, mover/agregar a la tabla correspondiente, recalcular subtotales y puntaje total (partiendo de los valores **vigentes leídos del archivo en ese momento**, no de memoria) y actualizar encabezados/resúmenes. Si falta evidencia, conservar el estado parcial o pendiente y explicar qué falta.
+- > [!CAUTION]
+  > **No tocar `## Notas` con lo implementado.** Esa sección es exclusiva para pendientes técnicos abiertos sin resolver. Prohibido agregar PRs, evidencia de verificación o descripción de lo ya hecho (eso vive en `specs/`, ADRs y PRs). Sólo se agregan entradas si quedó deuda real sin resolver.
 `````

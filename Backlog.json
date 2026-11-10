@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-09T00:40:20.101220+00:00",
+  "last_updated": "2026-11-10T15:07:56.782Z",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -479,6 +479,66 @@
       "origin": [],
       "context": "Transmisión de las protecciones del ADR-009 de profile a auth-service: (1) psycopg_pool con kwargs de libpq (connect_timeout=10, options='-c statement_timeout=10000', tcp_user_timeout=10000, keepalives activos), check_connection, max_lifetime=1800, max_idle=300 y timeout=30 para evitar cuelgues de 15,4 min por conexiones ociosas cerradas silenciosamente por el NAT Gateway (350s) o RDS; acotamiento de /readyz en adquisición y ejecución. (2) email_worker con timeout explícito de envío HTTP (10s), pika ConnectionParameters con heartbeat=60, blocked_connection_timeout=30 y socket_timeout=10, y watchdog de tiempo de procesamiento en is_healthy() para que el heartbeat loop en thread separado no reporte healthy ante desconexión o handler colgado. ADR-003 y spec 001-connection-and-worker-resilience.",
       "pull_request": "auth-service #34",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-077",
+      "checkpoint": 3,
+      "title": "HU 59: expulsar miembro del servidor (server + gateway + web-client)",
+      "status": "completed",
+      "start_date": "2026-11-08",
+      "severity": "should",
+      "origin": [],
+      "context": "HU optativa 59 (3 pts). server: se introduce el permiso Permission.KICK_MEMBERS (1L << 7) append-only en el bitmask, la política KickMembersPolicy y las reglas puras de jerarquía KickTargetRules (con precedencia estricta de HIERARCHY sobre MODERATION_POWER, soporte de ADMINISTRATOR y validación de pertenencia antes de consultar roles). Caso de uso KickUser cancela transferencias pendientes cuyo destinatario sea targetUserId, elimina la membresía y publica MemberLeft a server_events tras commit, cortando conexiones en text-channel y actualizando notifications. Contrato enriquecido con canKickMembers en ServerResponse y kickable en ServerMemberRolesResponse evaluado una sola vez por página en ListServerMembers. gateway: relay de DELETE /servers/{server_id}/members/{user_id} ubicado después de /members/me con test de regresión. web-client: cliente api kickMember, mapeo de errores kickError en serversErrors, helper puro showKickAction, modal KickConfirmation accesible con motivo explicativo de reingreso y botón Expulsar en MembersPopup.",
+      "pull_request": "server #49; gateway #79; web-client #189",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+        {
+          "description": "voice-calls no consume MemberLeft de server_events: un miembro expulsado que se encuentre en una sala de voz continúa conectado a LiveKit Cloud hasta que se desconecte voluntariamente o se valide su acceso en una nueva conexión.",
+          "severity": "should",
+          "resolved": true
+        }
+      ]
+    },
+    {
+      "id": "TSK-078",
+      "checkpoint": 3,
+      "title": "HU 60: silenciar temporalmente a un miembro (server + voice-calls + gateway + web-client)",
+      "status": "completed",
+      "start_date": "2026-11-09",
+      "severity": "should",
+      "origin": [
+        "TSK-077"
+      ],
+      "context": "Implementación de punta a punta de la HU optativa 60 (Silenciar temporalmente a un miembro, 5 pts) y cierre de la desconexión en tiempo real de voice-calls ante MemberLeft/MemberBanned.",
+      "pull_request": "server #50; voice-calls #11; gateway #80; web-client #191",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-079",
+      "checkpoint": 3,
+      "title": "Navegación a perfil en modal de miembros, modal para compartir servidor y refinamiento visual de moderación (HU 36, HU 37, HU 58, HU 59, HU 60)",
+      "status": "completed",
+      "start_date": "2026-11-09",
+      "severity": "should",
+      "origin": [],
+      "context": "Refinamiento de UX y consistencia visual en web-client: botones compactos de moderación en MembersPopup; rediseño de MuteConfirmation con componentes temáticos; navegación interna a perfiles de miembros y usuarios baneados con soporte 404 y preservación del estado de listas; y ShareServerPopup con feedback de copiado y limpieza de timers.",
+      "pull_request": "web-client #193",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-080",
+      "checkpoint": 3,
+      "title": "HU 61: registro de auditoria de moderacion (server + gateway + web-client)",
+      "status": "completed",
+      "start_date": "2026-11-10",
+      "severity": "should",
+      "origin": [],
+      "context": "Implementar la auditoria append-only de baneos, revocaciones, expulsiones y silenciamientos en server; exponer el relay autenticado en gateway y una interfaz de consulta accesible solo a moderadores en web-client. Incluye autorizacion, persistencia transaccional, paginacion/filtros, manejo de ex-miembros y pruebas de extremo a extremo para HU 61.",
+      "pull_request": "server #53; gateway #83; web-client #195",
       "exception_note": null,
       "discovered_pending_tasks": []
     }
