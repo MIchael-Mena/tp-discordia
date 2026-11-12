@@ -234,7 +234,7 @@ Un mismo archivo `.tsx` concentra pestañas independientes, barras de filtros de
 *Detectar:* verificá si el popup tiene sub-secciones o tabs claramente separables (ej. `MembersPopup.tsx` mezclando el listado activo, la barra de chips de filtro por rol y toda la pestaña de baneados con su modal de revocación).
 *Posible refactor:* extraer subcomponentes cohesivos (`MemberRoleFilter`, `BannedMembersSection`) cuando reduzca responsabilidades y complejidad sin fragmentar innecesariamente la vista.
 
-**I4 · `StyleSheet.create` inline dentro del componente en vez de `src/styles/`.**
-Comprobá dónde se ubican los estilos en archivos comparables del repositorio. Definir `StyleSheet.create` junto al componente no es por sí solo un defecto de diseño.
+**I4 · Estilos definidos en el archivo del componente.**
+En `web-client`, ubicá los estilos en archivos separados bajo `src/styles/`, incluso cuando sean específicos de un componente. En otros clientes, comprobá la convención del repositorio.
 *Detectar:* `git grep "StyleSheet.create" src/components/ src/app/` sobre los archivos tocados por el PR.
-*Posible refactor:* mover o fusionar estilos si existe una convención aplicable o si mejora reutilización y mantenimiento, ponderando el alcance del PR.
+*Posible refactor:* reutilizar estilos compartidos cuando correspondan o mover los específicos a un archivo de estilos separado, sin forzar su reutilización.

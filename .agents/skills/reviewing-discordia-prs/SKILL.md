@@ -64,6 +64,7 @@ Para inspeccionar, obtené la cabeza del PR desde el repositorio base, confirmá
 3. Los specs del PR (`specs/<feature>/`) para comparar lo prometido contra lo implementado.
 4. **El otro lado de cada contrato**: si el PR consume una API, leé el productor; si la expone, leé el consumidor. La mitad de los hallazgos están ahí.
 5. **Calidad de diseño y oportunidades de refactor**: evaluá cohesión, responsabilidades, dependencias y duplicación según las convenciones comprobadas del repo. Proponé extracciones o patrones sólo cuando resuelvan un problema concreto y su beneficio justifique el costo. Ver sección **I** de [findings-catalog.md](./references/findings-catalog.md).
+6. **Estilos en clientes**: compará los estilos nuevos con componentes similares, estilos compartidos y tokens del tema existentes. Proponé reutilizarlos cuando correspondan y eviten duplicación o inconsistencias visuales; los estilos específicos son válidos cuando el componente los necesita, pero en `web-client` deben ubicarse en un archivo aparte bajo `src/styles/`, no junto al componente. Verificá la convención del repositorio para otros clientes, fundamentá la propuesta con referencias concretas y evitá forzar una abstracción compartida innecesaria.
 
 ### 4. Verificar
 

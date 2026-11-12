@@ -10,6 +10,7 @@ Aplicá esta guía al planificar cualquier cambio de UI en `web-client` o `backo
 - **Coherencia visual (obligatoria):** dos módulos con funcionalidades distintas deben verse como parte del mismo producto: mismos tokens del tema (colores semánticos, tipografía, espaciados, radios, iconografía), mismo patrón de encabezado, estados vacíos, carga y error, y mismo tono de textos.
 - **Reutilización de componentes (sugerida):** reutilizá un componente compartido **solo si corresponde** a la función. Módulos con funcionalidades diferentes pueden necesitar componentes distintos; lo que no cambia es el resultado visual. No fuerces un componente donde no encaja, ni dupliques uno que ya resuelve exactamente el caso.
 - **Prohibido** introducir paletas, tamaños o estilos aislados si existe un token del tema equivalente.
+- **Ubicación de estilos:** en `web-client`, reutilizá estilos compartidos cuando corresponda y ubicá los estilos específicos en un archivo separado bajo `src/styles/`, no en el archivo del componente. En otros clientes, verificá su convención antes de definir la ubicación.
 
 ## 2. Investigación previa (antes de redactar la sección de UI del plan)
 
@@ -17,6 +18,7 @@ Aplicá esta guía al planificar cualquier cambio de UI en `web-client` o `backo
 2. Revisá el tema del cliente (p. ej. `paperTheme` y los tokens que usan los módulos hermanos) y listá los tokens que va a usar el cambio.
 3. Si el cambio toca ambos clientes, verificá cada uno por separado; no asumas que comparten componentes (cada uno tiene su propio `src/components`).
 4. En el plan, registrá: qué módulo hermano se tomó como referencia, qué componentes se reutilizan y por qué, y cuáles no se reutilizan y por qué (si corresponde).
+5. Incluí los archivos de estilos separados que se crearán o modificarán según la convención del cliente.
 
 ## 3. Catálogo de componentes sugeridos (`web-client`)
 
@@ -80,6 +82,7 @@ Además lint y tests (dirigidos durante la iteración, suite completa al cierre;
 
 - [ ] Módulo hermano de referencia identificado y leído.
 - [ ] Tokens del tema listados; sin estilos aislados nuevos.
+- [ ] Estilos ubicados en archivos separados según la convención del cliente.
 - [ ] Componentes reutilizados (con motivo) o no reutilizados (con motivo).
 - [ ] Navegación interna con `onBack` y estado preservado, si aplica.
 - [ ] Cadena de cableado completa hasta el archivo raíz (`index.tsx`).

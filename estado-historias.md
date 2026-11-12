@@ -53,7 +53,7 @@ Los puntos no reemplazan los Requisitos No Funcionales: todos los RNF del enunci
 
 ---
 
-## Historias optativas — 63 / 229 pts
+## Historias optativas — 66 / 229 pts
 
 El puntaje optativo amplía las capacidades de la plataforma. La cantidad de puntos a implementar depende del tamaño del grupo (ver tabla de mínimos más abajo).
 
@@ -89,7 +89,7 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 60 | [Silenciar temporalmente a un miembro](historias-usuario.md#hu-60-silenciar-temporalmente-a-un-miembro) | Moderación | 5 | 5 | Roles, mensajería y voz |
 | 61 | [Ver registro de auditoría de moderación](historias-usuario.md#hu-61-ver-registro-de-auditoría-de-moderación) | Moderación | 3 | 3 | Acciones de moderación |
 | 62 | [Reportar mensaje o usuario](historias-usuario.md#hu-62-reportar-mensaje-o-usuario) | Moderación | 5 | - | Mensajería y backoffice |
-| 63 | [Filtro automático de palabras prohibidas](historias-usuario.md#hu-63-filtro-automático-de-palabras-prohibidas) | Moderación | 3 | - | Enviar mensaje en un canal |
+| 63 | [Filtro automático de palabras prohibidas](historias-usuario.md#hu-63-filtro-automático-de-palabras-prohibidas) | Moderación | 3 | 3 | Enviar mensaje en un canal |
 | 64 | [Silenciar notificaciones de un canal o servidor](historias-usuario.md#hu-64-silenciar-notificaciones-de-un-canal-o-servidor) | Notificaciones | 3 | - | Notificaciones obligatorias |
 | 65 | [Configurar preferencias de notificación](historias-usuario.md#hu-65-configurar-preferencias-de-notificación) | Notificaciones | 3 | - | Notificaciones obligatorias |
 | 66 | [Notificaciones push](historias-usuario.md#hu-66-notificaciones-push) | Notificaciones | 5 | - | Configurar preferencias y aplicación mobile |
@@ -109,13 +109,13 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 80 | [Ver beneficios de servidor boosteado](historias-usuario.md#hu-80-ver-beneficios-de-servidor-boosteado) | Monetización | 3 | - | Usar puntos para boostear y gestionar emojis |
 | 81 | [Ver expediente de investigación de usuario o servidor](historias-usuario.md#hu-81-ver-expediente-de-investigación-de-usuario-o-servidor) | Administración | 5 | - | Reportar mensaje o usuario |
 
-**Puntaje optativo completado: 63 pts** (de 229 pts disponibles en el catálogo).
+**Puntaje optativo completado: 66 pts** (de 229 pts disponibles en el catálogo).
 
 ---
 
 ## Resumen de avance y puntaje
 
-**Total implementado de punta a punta: 167 pts** (104 obligatorios + 63 optativos).
+**Total implementado de punta a punta: 170 pts** (104 obligatorios + 66 optativos).
 
 ## Mínimo de puntos por tamaño de equipo
 

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-10T15:07:56.782Z",
+  "last_updated": "2026-11-12T02:59:37.161Z",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -539,6 +539,21 @@
       "origin": [],
       "context": "Implementar la auditoria append-only de baneos, revocaciones, expulsiones y silenciamientos en server; exponer el relay autenticado en gateway y una interfaz de consulta accesible solo a moderadores en web-client. Incluye autorizacion, persistencia transaccional, paginacion/filtros, manejo de ex-miembros y pruebas de extremo a extremo para HU 61.",
       "pull_request": "server #53; gateway #83; web-client #195",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-081",
+      "checkpoint": 3,
+      "title": "HU 63: filtro automático de palabras prohibidas (server + gateway + text-channel + web-client)",
+      "status": "completed",
+      "start_date": "2026-11-11",
+      "severity": "should",
+      "origin": [
+        "HU-63"
+      ],
+      "context": "Implementación de filtro automático de palabras prohibidas configurables por moderadores en servidores, con bloqueo automático en envío/edición y modal de configuración.",
+      "pull_request": "server #54; gateway #86; text-channel #33; web-client #198",
       "exception_note": null,
       "discovered_pending_tasks": []
     }
