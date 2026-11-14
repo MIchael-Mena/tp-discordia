@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-12T02:59:37.161Z",
+  "last_updated": "2026-11-14T02:25:46.993Z",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -554,6 +554,47 @@
       ],
       "context": "Implementación de filtro automático de palabras prohibidas configurables por moderadores en servidores, con bloqueo automático en envío/edición y modal de configuración.",
       "pull_request": "server #54; gateway #86; text-channel #33; web-client #198",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-082",
+      "checkpoint": 3,
+      "title": "HU 62: reportar mensaje o usuario (text-channel + server + infra + gateway + web-client + backoffice)",
+      "status": "completed",
+      "start_date": "2026-11-13",
+      "severity": "should",
+      "origin": [
+        "HU-62"
+      ],
+      "context": "Implementación de punta a punta de la HU optativa 62 (Reportar mensaje o usuario, 5 pts). text-channel: endpoint interno GET /internal/messages/{message_id} para validar existencia, canal y autor al crear reportes; server: migración Flyway V16 (server_reports con índices únicos parciales para pendientes), createPending con ON CONFLICT DO NOTHING RETURNING id, inclusión de reportantes/reportados/auditores en co-membresía para moderadores, endpoints de servidor y staff (/servers/{id}/reports y /servers/admin/reports); infra: configuración de TEXT_CHANNEL_SERVICE_URL en discordia-server y scripts locales; gateway: relay autenticado de reportes de servidor y staff, acceso admin a /profiles/public/batch y soporte de búsqueda por ID numérico en GET /admin/accounts?q=<id>; web-client: reporte de mensajes de servidor (aislando DMs) y miembros sin modales superpuestos, más bandeja ReportsPopup con acciones disciplinarias y resolución automática ante éxito o 409; backoffice: bandeja global /admin/reports con filtros debounced, hidratación batch de perfiles públicos, confirmación y navegación directa a /admin?q=<targetUserId>.",
+      "pull_request": "text-channel #23; server #42; infra #44; gateway #87; web-client #199; backoffice #6",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-083",
+      "checkpoint": 3,
+      "title": "backoffice: refactor visual UI/UX, contraste accesible, modales y tablas flexibles (HU 29, HU 30, HU 31, HU 32, HU 62)",
+      "status": "completed",
+      "start_date": "2026-11-13",
+      "severity": "nice-to-have",
+      "origin": [],
+      "context": "Refactor transversal de la interfaz del portal de staff (backoffice): paleta semantica con contraste WCAG 1.4.3 (>= 4.5:1), variantes dangerSoft/successSoft/danger/success/secondary/ghost en AdminButton, sustitucion de Dialog genericos por AdminModal (cierre limpio con Escape/backdrop salvo busy), unificacion de breakpoints en src/styles/admin.ts (860/1120), reemplazo de DataTable por filas flexibles sin solapamiento, ReportDetailModal con campos seleccionables sin apilamiento de modales y navegacion integrada en AdminHeader.",
+      "pull_request": "backoffice #9",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-084",
+      "checkpoint": 3,
+      "title": "backoffice: auditoría, correcciones de sesión/paginación/accesibilidad y cobertura de tests >= 70%",
+      "status": "completed",
+      "start_date": "2026-11-13",
+      "severity": "should",
+      "origin": [],
+      "context": "Auditoría transversal de backoffice y ampliación de cobertura Jest (de 57,12% líneas / 54,49% statements a 95,57% líneas / 93,75% statements, 86,28% branches, 92,14% functions; 12 suites / 68 tests pasando): corrección de 401 sin token en login y single-flight refresh, paginación al mutar cuentas con filtro Todos y mapeo 409/404, guardas de sesión y batch de perfiles, accesibilidad en cabecera y buscadores, spec 003 y coverageThreshold CI del 70%.",
+      "pull_request": "backoffice #11",
       "exception_note": null,
       "discovered_pending_tasks": []
     }

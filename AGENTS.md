@@ -136,8 +136,8 @@ Todas las reglas obligatorias para consultar y modificar `Backlog.json` (búsque
 - **Regla de oro de Compose:** `infra/compose.prod.yaml` y `/opt/discordia/docker-compose.yml` en la EC2 deben ser idénticos (`git show HEAD:compose.prod.yaml | diff --strip-trailing-cr - /opt/discordia/docker-compose.yml` → vacío). Sincronizar en la VM antes de redesplegar si cambia.
 - **`discordia-key.pem`** en la raíz de `TP-Discordia/` es la clave privada SSH de la EC2: nunca commitear ni exponer.
 - **Timezone en Java (`server`):** ejecutar siempre tests y procesos locales con `_JAVA_OPTIONS=-Duser.timezone=UTC`.
-- **Usuarios de prueba (locales/ficticios):** `Rana` / `SoyUnaRana-99` y `JDo` / `JhonDo26`. La contraseña de `Rana` está pendiente de revisión (falló con 401 en un `auth-service` local recién levantado). No commitear estas credenciales en repositorios del equipo.
-- **Costo de entorno y verificación:** instalar dependencias sólo si cambió el lockfile, correr tests dirigidos durante la iteración y **una sola** suite completa al cierre, y preferir `git switch` sobre un worktree cuando el árbol está limpio. Reglas completas en [`env-cost.md`](.agents/rules/env-cost.md) (regla `always_on`); recetas en [`verification-recipes.md`](.agents/skills/reviewing-discordia-prs/references/verification-recipes.md).
+- **Usuarios de prueba (locales/ficticios):** `Rana` / `SoyUnaRana-99`, `JDo` / `JhonDo26`, y para `backoffice` (`role = 'admin'`, sembrado vía `auth-service/db/seed_admin.sh`): `Admin` (`admin@discordia.com`) / `Admin1234!`. No commitear estas credenciales en repositorios del equipo.
+- **Costo de entorno, aislamiento de ramas y compuerta pre-PR:** trabajar directamente con `git switch` (sin worktrees temporales por defecto), consultar al usuario ante un árbol sucio, instalar dependencias sólo si cambió el lockfile y pasar la compuerta pre-PR local antes de cualquier `git push` / `gh pr create`. Fuente única de verdad en [`env-cost.md`](.agents/rules/env-cost.md) (regla `always_on`); recetas por stack en [`verification-recipes.md`](.agents/skills/reviewing-discordia-prs/references/verification-recipes.md).
 
 ---
 
@@ -148,7 +148,7 @@ Skill del equipo para revisar PRs en cualquier repositorio: **`.agents/skills/re
 - **Detección automática de autoría (PR propio vs. PR de compañero)**:
   - **PR propio**: no publicar comentarios en GitHub; buscar errores, huecos de contrato y oportunidades de refactor (Clean Architecture, SOLID, DRY, custom hooks, separación vista/lógica), presentar las propuestas y usar `ask_question` para confirmar cuáles aplicar antes de commitear, pushear y rebasar PRs apilados.
   - **PR de compañero**: **primero el informe, después los comentarios**, publicando en GitHub solo con aprobación explícita del usuario.
-- Revisar en un **worktree temporal** cuando solo se inspecciona o el árbol local tiene cambios, siguiendo la receta de la skill para verificar los SHA y preservar la rama y el estado inicial del usuario al cerrar.
+- **Acceso escalonado sin worktree** (según [`env-cost.md`](.agents/rules/env-cost.md) §4): leer primero sin tocar el repo (`gh pr diff`, `git show`) y hacer `git switch` sólo cuando haya que ejecutar gates o modificar la rama, volviendo a la rama original al cerrar.
 - No afirmar defectos sin evidencia reproducible; clasificar por prioridad (**P1 antes del merge** / P2 / Refactor / nit); prohibido mencionar `Backlog.json`/`TSK-*`; verificar ambos lados de cada contrato y `infra/compose.prod.yaml`.
 - Referencias: `findings-catalog.md`, `verification-recipes.md` y `comment-style.md`.
 

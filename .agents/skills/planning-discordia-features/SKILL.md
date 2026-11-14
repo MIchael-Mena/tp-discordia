@@ -44,7 +44,7 @@ Guía y plantilla estándar para diseñar planes de implementación multi-servic
    git -C <repo> fetch origin
    gh pr list -R fiuba-IS2-Discordia/<repo> --state open
    ```
-   - Registrá rama, estado, remotos y worktrees iniciales; seguí `.agents/rules/env-cost.md` para aislar el trabajo y conservar el estado original. No descartes cambios existentes.
+   - Registrá rama actual y `git status -sb` (y `git worktree list` sólo si hay más de uno); seguí `.agents/rules/env-cost.md` §4 para trabajar directamente sobre la rama con `git switch` y aplicar el protocolo de árbol sucio antes de cambiar de rama. No descartes cambios existentes sin confirmación explícita.
    - Identificá repositorio base, repositorio de cabeza, rama y SHA del PR dependiente. Apilá sobre su cabeza sólo si corresponde al mismo repositorio y es accesible; una dependencia entre servicios no convierte su rama en base Git del otro repo. Ante divergencias, falta de acceso o una rama ocupada, detenete y consultá.
    - Si no hay una dependencia de rama en ese repositorio, partí de `origin/develop` (salvo `infra`, que usa únicamente `main`).
    - Si hay otro PR abierto tocando los mismos archivos (ej. routers o archivos de test en `gateway`), indicá en una nota `[!NOTE]` dónde ubicar el código nuevo para evitar conflictos de merge.
@@ -66,12 +66,12 @@ Antes de pedir aprobación, explicitá que aprobar el plan autoriza su ejecució
 
 Una vez que el usuario aprueba el plan:
 
-1. Leé `.agents/rules/backlog.md` antes de editar el backlog; al iniciar cada tarea registrá `in_progress` y su fecha real de inicio si aún no la tiene, sin modificar una fecha ya establecida. Creá cada rama desde la base acordada actualizada, verificando SHA, remoto, estado local y worktrees.
+1. Leé `.agents/rules/backlog.md` antes de editar el backlog; al iniciar cada tarea registrá `in_progress` y su fecha real de inicio si aún no la tiene, sin modificar una fecha ya establecida. En cada repositorio, aplicá `.agents/rules/env-cost.md` §4 (protocolo de árbol sucio, cambio de rama con `git switch` sin worktree por defecto y control anti-buffer-sucio) y creá cada rama desde la base acordada actualizada, verificando SHA y estado local.
 2. En cada etapa/repositorio, generá primero la spec/ADR y realizá **commits atómicos** a medida que completás cada unidad lógica (`docs`, `feat`, `test`), verificando que no se agreguen trailers `Co-authored-by`.
-3. Ejecutá pruebas dirigidas durante la implementación y, antes de publicar, la verificación completa aplicable al estado final de cada rama/PR. Reutilizá evidencia para el mismo SHA; no repitas suites por cada commit. En Python verificá cobertura >= 70% en la suite completa, conforme a `AGENTS.md`.
+3. Ejecutá pruebas dirigidas durante la implementación (`.agents/rules/env-cost.md` §2) y, antes de publicar cada PR, pasá la **compuerta pre-PR** completa (`.agents/rules/env-cost.md` §3) sobre el SHA final de la rama. Reutilizá evidencia para el mismo SHA; no repitas suites por cada commit.
 4. Ejecutá la auditoría de privacidad (`git -C <repo> log` y `git -C <repo> diff <base>...HEAD`) confirmando ausencia total de `TSK-`, `Backlog.json` y firmas de IA.
-5. Antes de cada push y creación, verificá el SHA local y remoto, la base y si ya existe un PR para la misma cabeza y base. Pusheá las ramas en orden topológico y publicá los PRs con `gh pr create --body-file ...` desde PowerShell. No fuerces un push ni reescribas historia sin autorización expresa.
-6. Cerrá las tareas y actualizá las historias que cumplan sus criterios siguiendo la plantilla y `.agents/rules/backlog.md`. Verificá que la rama y el estado inicial del repositorio original se conservaron y retirá sólo recursos propios cuando sea seguro.
+5. Antes de cada push y creación, verificá el SHA local y remoto, la base y si ya existe un PR para la misma cabeza y base. Pusheá las ramas en orden topológico y publicá los PRs con `gh pr create --body-file ...` desde PowerShell sólo con la compuerta pre-PR en verde. No fuerces un push ni reescribas historia sin autorización expresa.
+6. Cerrá las tareas y actualizá las historias que cumplan sus criterios siguiendo la plantilla y `.agents/rules/backlog.md`. Seguí `.agents/rules/env-cost.md` §4.5 y §6 para restaurar la rama/estado original cuando corresponda, retirar temporales propios y reportar el estado final por repositorio.
 
 Ante una validación fallida, divergencia, cambio material del plan o publicación parcial, detenete e informá evidencia, ramas y PRs ya publicados, pendientes y residuos. No marques como completo el trabajo incompleto. Para retomar, consultá de nuevo el estado remoto y reutilizá un PR existente sólo tras confirmar repositorio, cabeza, base y SHA; no dupliques ni sobrescribas trabajo ajeno.
 

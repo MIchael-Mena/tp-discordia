@@ -4,43 +4,42 @@ Recetas para Windows + PowerShell. Sustituí los marcadores y verificá las prec
 
 ---
 
-## Worktree aislado
+## Acceder al código del PR
 
-Registrá `git status --short --branch` y `git worktree list` antes de empezar. Identificá el remoto que apunta al repositorio **base** del PR; no presupongas que es `origin`. Obtené `headRefOid` y `baseRefOid` de GitHub y recuperá la cabeza incluso si procede de un fork:
+Política de aislamiento (rama directa, árbol sucio, worktree como excepción): [env-cost.md](../../../rules/env-cost.md) §4. Esta sección sólo da los comandos.
+
+Registrá `git status -sb` y la rama actual. Identificá el remoto que apunta al repositorio **base** del PR; no presupongas que es `origin`. Obtené `headRefOid` y `baseRefOid` de GitHub (`gh pr view`).
+
+### 1. Leer sin tocar el repo (por defecto)
 
 ```powershell
+gh pr diff <n> -R fiuba-IS2-Discordia/<repo>
 git -C "<repo>" fetch "<remoto-base>" "refs/pull/<n>/head"
 if ($LASTEXITCODE -ne 0) { throw "No se pudo obtener la cabeza del PR" }
 $head = git -C "<repo>" rev-parse FETCH_HEAD
 if ($LASTEXITCODE -ne 0 -or $head -ne "<headRefOid>") { throw "La cabeza no coincide con GitHub; volver a consultar el PR" }
-$worktree = Join-Path $env:TEMP ("discordia-pr-<n>-" + [guid]::NewGuid().ToString("N"))
-if (Test-Path -LiteralPath $worktree) { throw "La ruta temporal ya existe" }
-git -C "<repo>" worktree add --detach $worktree $head
-if ($LASTEXITCODE -ne 0) { throw "No se pudo crear el worktree" }
+git -C "<repo>" --no-pager show "${head}:<ruta/del/archivo>"      # archivo completo
+git -C "<repo>" --no-pager diff --stat "<baseRefOid>" $head        # mapa de cambios
 ```
 
-Leé y verificá desde ese worktree. Para comparar con la base, obtené su commit del repositorio base y comprobá que coincide con `baseRefOid`; si cambia, volvé a obtener los datos. Registrá los SHA revisados. Si se van a aplicar cambios aprobados, verificá el repositorio y remoto de la cabeza, permisos de push, SHA remoto y estado local; no uses `-b` con una rama existente ni `-B`, `--force` o checkout de una rama ocupada. Si la rama local existe, usala sólo si está libre y coincide con el SHA revisado; si no existe, podés crearla en el worktree desde ese SHA. Ante divergencias, detenete y consultá. Para un fork, no pushees por defecto al remoto base.
+`fetch` sólo agrega objetos: no cambia la rama, el índice ni los archivos del usuario. Registrá los SHA revisados. Si el PR cambia durante la revisión, volvé a obtener los datos.
 
-Pero antes de instalar nada: **un worktree nace sin `node_modules`** (Node no sube hasta el repo original) y casi nunca hace falta crearlo.
+### 2. Ejecutar tests/lint/typecheck: `git switch --detach`
+
+Sólo si hace falta correr algo. Primero aplicá el protocolo de árbol sucio de `env-cost.md` §4.2 y luego:
 
 ```powershell
-# Compará el commit que corresponde al node_modules existente con la cabeza revisada.
-git --no-pager -C "<repo>" diff --name-only "<sha-entorno>" $head -- package.json package-lock.json
+git -C "<repo>" switch --detach $head
+git -C "<repo>" status -sb      # anti-buffer-sucio (env-cost.md §4.3)
 ```
 
-| Resultado | Qué hacer en el worktree |
-|---|---|
-| Vacío | Si el entorno existente está disponible y es compatible, linkear: `New-Item -ItemType Junction -Path (Join-Path $worktree "node_modules") -Target "<repo>\node_modules"` |
-| Sólo `package.json` o `package-lock.json` | `npm install --prefer-offline --no-audit --no-fund` |
-| Validar lock ↔ package.json, o CI | `npm ci --no-audit --no-fund` (borra y recrea: minutos de disco) |
+Decidí si hay que instalar dependencias con `env-cost.md` §1 (comparar lockfile entre la rama del entorno y `$head`). Al terminar: `git -C "<repo>" switch <rama-original>`, `git status -sb` y comparación con el estado registrado.
 
-Confirmá también versión de Node, plataforma y estado real de la instalación: un diff vacío no garantiza por sí solo que el entorno sea válido. Con junction, nunca corras `npm install` dentro del worktree: escribiría sobre el `node_modules` del repo original.
+### 3. Modificar la rama de un PR propio
 
-### Retirar el worktree
+Verificá el repositorio y remoto de la cabeza, permisos de push, SHA remoto y estado local. No uses `-B`, `--force` ni `git reset --hard`. Si la rama local existe, usala sólo si coincide con el SHA revisado (`git switch <rama>`); si no existe, creala desde ese SHA (`git switch -c <rama> $head`). Ante divergencias, detenete y consultá. Para un fork, no pushees por defecto al remoto base.
 
-Confirmá que la ruta absoluta es exactamente la creada por esta tarea y figura en `git worktree list`. Inspeccioná su estado y archivos no rastreados o ignorados; preservá cualquier dato que no se pueda descartar con seguridad. Si creaste una junction, verificá que es esa junction y retirala **sin recorrer ni borrar su destino**. Luego intentá `git -C "<repo>" worktree remove "<ruta-exacta>"` sin `--force` y comprobá el código de salida y la lista de worktrees.
-
-Si hay cambios sin guardar, rutas largas, dudas sobre la propiedad de archivos o falla el retiro, detenete e informá la ruta y el error; no uses `git checkout -- .`, borrado recursivo, `robocopy /MIR` ni `worktree prune` como solución automática. Retirá sólo temporales propios identificados. Compará rama y estado del repo original con los registrados al inicio.
+Antes de publicar aplicá la **compuerta pre-PR** (`env-cost.md` §3).
 
 ### Propagar fixes/refactors a PRs apilados (Stacked PRs)
 
@@ -53,30 +52,17 @@ gh pr list -R fiuba-IS2-Discordia/<repo> --state open --limit 1000 --json number
 ```
 
 Comprobá los repositorios además de los nombres de rama y consultá más resultados si la lista está truncada. Mostrá ramas, autores y acciones propuestas; antes de reescribir historia o hacer push obtené aprobación explícita para las ramas afectadas, salvo autorización expresa previa. Verificá permisos, ausencia de cambios locales y SHA remoto de cada rama. Si están aprobadas, procesalas en orden de dependencia, ejecutá los gates y usá `--force-with-lease` con la referencia y el SHA remoto esperados explícitamente; ante divergencia, conflicto o fallo detenete e informá. No asumas autorización sobre ramas de compañeros.
----
-
-## Costo de verificación
-
-La máquina es de la persona usuaria: misma evidencia, menos CPU.
-
-| Momento | Qué correr |
-|---|---|
-| Cada iteración / hipótesis | sólo el archivo de test tocado |
-| Antes de cada commit atómico | los tests del módulo |
-| Una sola vez, al cerrar | suite completa + typecheck + lint |
-
-- Probar que un test de regresión falla en el código viejo requiere **un** experimento por hallazgo, no la suite completa por commit.
-- Sin `--coverage` salvo pedido explícito.
-- `--maxWorkers=50%` cuando el runner satura la máquina.
-- No relanzar una suite que ya está corriendo: `read_powershell` de esa sesión.
 
 ---
 
 ## Gates por stack
 
+Presupuesto de verificación, política de instalación de dependencias y **compuerta pre-PR**: [env-cost.md](../../../rules/env-cost.md) (§1–§3). Abajo los comandos y trampas específicas de cada stack.
+
 ### Java / Quarkus (`server`)
 
 ```powershell
+$env:_JAVA_OPTIONS="-Duser.timezone=UTC"
 .\gradlew.bat --no-daemon --offline compileJava compileTestJava
 .\gradlew.bat --no-daemon --offline test --tests "discordia.MiTest"
 ```
@@ -87,8 +73,9 @@ La máquina es de la persona usuaria: misma evidencia, menos CPU.
 ### Python (`gateway`, `voice-calls`, `profile`, `auth-service`, `text-channel`, `notifications`)
 
 ```powershell
-uv run pytest -q                      # crea .venv e instala; necesita red
+uv run pytest -q                      # suite completa (incluye cobertura >= 70%)
 uv run ruff check .
+uv run lint-imports                   # si el servicio lo define
 ```
 
 - `uv run --offline` falla si el cache no tiene algún wheel. Si la red está rara, reintentá sin `--offline`.
@@ -97,18 +84,7 @@ uv run ruff check .
 
 ### Node / Expo (`backoffice`, `web-client`)
 
-Primero decidí **si hay que instalar**: `npm ci` borra y recrea `node_modules` (≈200k archivos, 4-5 min) y en la mayoría de las reviews no hace falta.
-
-```powershell
-git --no-pager diff --name-only "<sha-entorno>" "<sha-revisado>" -- package.json package-lock.json
-```
-
-| Resultado | Qué hacer |
-|---|---|
-| Vacío | Si el entorno existe y es compatible, no instalar (en worktree: junction de `node_modules`, ver arriba) |
-| Sólo `package.json` | `npm install --prefer-offline --no-audit --no-fund` |
-| `package-lock.json` cambió | lo mismo; `npm ci` sólo si querés validar lock ↔ package.json |
-| CI | `npm ci --no-audit --no-fund` |
+Antes de instalar cualquier dependencia, aplicá [env-cost.md](../../../rules/env-cost.md) §1 (comparar `package.json` y `package-lock.json` entre la rama del entorno y el SHA revisado; nunca correr `npm ci` por defecto en local).
 
 Gates:
 
@@ -120,6 +96,7 @@ npm run lint          # expo lint
 
 # backoffice
 npm run typecheck     # tsc --noEmit
+$env:CI="true"; npm test -- --maxWorkers=50%
 npm run lint
 ```
 

@@ -23,7 +23,7 @@ Code review y auditoría de ingeniería en microservicios y clientes del TP: **n
    - **Si el PR es del usuario (`author.login` coincide con `gh api user --jq .login`):** **NO dejar comentarios en GitHub**. El objetivo es buscar errores, huecos de contrato y oportunidades de refactor siguiendo las mejores prácticas de ingeniería de software. Presentá el diagnóstico y consultá con la herramienta interactiva disponible qué propuestas aplicar antes de modificar código (salvo que el usuario ya haya ordenado explícitamente aplicar y pushear todo directo, en cuyo caso consultá sólo si hay decisiones de diseño ambiguas).
    - **Si el PR es de otro compañero:** Entregá el informe en el chat y publicá comentarios en GitHub **sólo** con aprobación explícita del usuario. Si pide ajustes al texto, corregí y volvé a mostrar antes de publicar.
    - **Identidad incierta:** si falla la autenticación, falta el autor o hay dudas sobre qué cuenta representa al usuario, consultá antes de elegir modo. Una cuenta autenticada distinta no demuestra por sí sola que el PR sea ajeno.
-2. **Preservar el working tree del usuario.** Registrá rama, estado y worktrees iniciales. Para inspección o si hay cambios locales, usá un worktree temporal; al cerrar verificá que el estado preexistente se conserve, sin descartar cambios ni exigir que un árbol inicialmente sucio quede limpio.
+2. **Preservar el working tree del usuario (sin worktree por defecto).** Seguí [env-cost.md](../../rules/env-cost.md) §4: registrá rama actual y `git status -sb` (y `git worktree list` sólo si hay más de uno). Leé el PR primero sin tocar el repo (`gh pr diff`, `git show`); hacé `git switch` sólo si necesitás ejecutar tests/lint/typecheck o modificar la rama, aplicando antes el protocolo de árbol sucio y la regla anti-buffer-sucio. Al cerrar, volvé a la rama original y verificá que el estado inicial se conserve.
 3. **Sin evidencia no hay hallazgo.** Si no podés reproducirlo (test, grep, probe, lectura del código de la librería instalada), degradalo a pregunta o descartalo.
 4. **Nunca** referenciar `Backlog.json`/`TSK-*` ni proponer "crear un ticket": el backlog es seguimiento local del usuario.
 5. Comentarios y mensajes en **español (es-AR)**.
@@ -53,14 +53,18 @@ Mirá de entrada:
 - **PRs hermanos abiertos**: dos PRs que implementan lo mismo son un hallazgo de coordinación (ver catálogo, H1).
 - **Revisión multi-PR / fullstack**: Si se revisan varios PRs de una misma HU o feature (p. ej. `server#32`, `gateway#61`, `backoffice#3`), relacioná los números, extraé los criterios de aceptación compartidos (de `infra/discordia-tp.md` o specs), verificá contratos de punta a punta y definí el orden de despliegue/merge.
 
-### 2. Aislar el código
+### 2. Acceder al código (escalonado, sin worktree)
 
-Para inspeccionar, obtené la cabeza del PR desde el repositorio base, confirmá que coincide con `headRefOid` y creá un worktree detached en una ruta temporal única. Para modificar una rama, verificá además el repositorio de origen, permisos, estado local y remoto y que la rama no esté ocupada por otro worktree; no sobrescribas ramas existentes. Consultá el procedimiento y la limpieza segura en [verification-recipes.md](./references/verification-recipes.md). Si el PR cambia durante la revisión, actualizá el diagnóstico o informá qué SHA se revisó.
+Seguí [env-cost.md](../../rules/env-cost.md) §4 y las recetas de [verification-recipes.md](./references/verification-recipes.md):
+
+1. **Lectura sin tocar el repo (por defecto):** hacé `git fetch <remoto-base> refs/pull/<n>/head`, confirmá que `FETCH_HEAD` coincide con `headRefOid` e inspeccioná con `gh pr diff` y `git show <headRefOid>:<ruta>`.
+2. **Ejecución de gates (`git switch --detach`):** sólo cuando haga falta correr tests/lint/typecheck. Si el árbol local está sucio, detenete y aplicá el protocolo de `env-cost.md` §4.2 antes de cambiar de rama; tras cada `git switch`, ejecutá `git status -sb` para limpiar cualquier archivo reaplicado por un buffer abierto del editor (`env-cost.md` §4.3).
+3. **Modificación de rama (PR propio):** verificá repositorio de origen, permisos, estado local/remoto y que la rama no esté ocupada por otro worktree antes de hacer `git switch <rama>`. Si el PR cambia durante la revisión, actualizá el diagnóstico o informá qué SHA se revisó.
 
 ### 3. Leer
 
 1. El diff completo (`gh pr diff`) para el mapa de cambios.
-2. Los archivos completos **en el worktree** (el diff esconde el contexto que explica el bug).
+2. Los archivos completos (`git show <headRefOid>:<ruta>` o en la rama si ya hiciste `git switch`, porque el diff esconde el contexto que explica el bug).
 3. Los specs del PR (`specs/<feature>/`) para comparar lo prometido contra lo implementado.
 4. **El otro lado de cada contrato**: si el PR consume una API, leé el productor; si la expone, leé el consumidor. La mitad de los hallazgos están ahí.
 5. **Calidad de diseño y oportunidades de refactor**: evaluá cohesión, responsabilidades, dependencias y duplicación según las convenciones comprobadas del repo. Proponé extracciones o patrones sólo cuando resuelvan un problema concreto y su beneficio justifique el costo. Ver sección **I** de [findings-catalog.md](./references/findings-catalog.md).
@@ -103,8 +107,8 @@ Estructura fija, en este orden:
 
 #### Caso A: PR propio — Aplicar fixes/refactors aprobados y propagar a PRs apilados
 1. Aplicá los fixes y refactors aprobados respetando las convenciones del repo (tests unitarios para toda lógica extraída a `src/core/` o casos de uso, sin romper tests existentes).
-2. Corré todos los gates del stack (`ruff` + `pytest`, `gradlew test`, o `tsc --noEmit` + `npm run lint` + `jest`).
-3. Creá commits atómicos en español (`fix(<scope>): ...`, `refactor(<scope>): ...`, `test(<scope>): ...`, sin `Co-authored-by` de IA) y hacé `git push` a la rama del PR.
+2. Ejecutá la **compuerta pre-PR** de [env-cost.md](../../rules/env-cost.md) §3 sobre el SHA final antes de hacer `git push`.
+3. Creá commits atómicos en español (`fix(<scope>): ...`, `refactor(<scope>): ...`, `test(<scope>): ...`, sin `Co-authored-by` de IA) y hacé `git push` a la rama del PR sólo con la compuerta en verde.
 4. **PRs apilados:** informá ramas hijas y posibles conflictos. Antes de reescribir o pushear cada rama, verificá su autoría, permisos y estado y obtené aprobación explícita para las ramas afectadas, salvo que el usuario ya haya autorizado expresamente esa propagación. Seguí las salvaguardas de [verification-recipes.md](./references/verification-recipes.md); ante conflicto o divergencia inesperada, detenete e informá.
 5. Si la revisión partió de comentarios de un compañero, entregá en el chat el texto sugerido de respuesta (en `es-AR`) explicando qué se refactorizó (con el hash del commit) o la justificación técnica de por qué se mantuvo una decisión.
 
@@ -121,7 +125,7 @@ Un solo POST de review con `event: COMMENT`; los inline van dentro de `comments`
 
 ### 8. Cerrar
 
-Retirá sólo los worktrees y temporales creados para la tarea, siguiendo la receta segura; si no podés hacerlo sin riesgo, dejalos e informalo. Confirmá que la rama y el estado inicial del repo del usuario se preservaron y que no quedaron procesos propios de la revisión.
+Seguí [env-cost.md](../../rules/env-cost.md) §4.5 y §6: volvé a la rama original, ejecutá `git status -sb` (aplicando anti-buffer-sucio si hace falta), restaurá el stash si se creó uno, retirá archivos temporales propios de la revisión, confirmá que no quedaron procesos hijos vivos y reportá el estado final por repositorio en una línea.
 
 ## Referencias
 
