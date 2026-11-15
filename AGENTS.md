@@ -84,6 +84,19 @@ Al desarrollar funcionalidades nuevas, modificar contratos o alterar lógica de 
 
 ### Formato de Pull Requests (PRs)
 - Publicar un PR **solo cuando el trabajo esté completo** y los linters/tests pasen. Usar GitHub CLI (`gh`) autenticado desde **PowerShell** (no Git Bash).
+- **Publicación y edición de cuerpos desde PowerShell (evitar caracteres corruptos, `\n`, `\t` y BOM):** en PowerShell, el acento grave (`` ` ``) es el carácter de escape dentro de strings con comillas dobles (`"..."` o `@"..."@`): los spans de código Markdown como `` `all` ``, `` `notifications` `` o `` `tests/` `` convierten `` `a `` en BEL (`U+0007`, que GitHub muestra como carácter de reemplazo `U+FFFD`), `` `n `` en salto de línea y `` `t `` en tabulación, borrando además los backticks. A su vez, `Out-File` / `Set-Content -Encoding utf8` en PowerShell 5.1 agrega BOM UTF-8. Para pasar descripciones o comentarios largos a `gh pr create` / `gh pr edit`, usá **siempre** un here-string literal con comillas simples (`@' ... '@`) escrito en UTF-8 sin BOM mediante `--body-file`, borrá el temporal al terminar y verificá el body publicado:
+
+  ```powershell
+  $body = @'
+  ## Resumen
+  ...
+  '@
+  $tmp = [System.IO.Path]::GetTempFileName()
+  [System.IO.File]::WriteAllText($tmp, $body, [System.Text.UTF8Encoding]::new($false))
+  gh pr create --base develop --title "feat(alcance): ..." --body-file $tmp
+  Remove-Item $tmp
+  ```
+
 - **Título:** Conventional Commits en español (`tipo(alcance): descripción breve`, ej. `feat(notifications): agregar consumidor de message_events`).
 - **Privacidad y autoría:** **PROHIBIDO** mencionar `TSK-*` o `Backlog.json` en título, descripción o comentarios (referenciar solo `HU XX`, `ADR-XXX` o `#PR`). **Sin firmas ni footers de IA**.
 - **Plantilla obligatoria para la descripción (Body):**

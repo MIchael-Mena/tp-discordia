@@ -1,6 +1,6 @@
 # Estado de las Historias de Usuario — Discordia
 
-**Actualizado:** 2026-11-13 (tener en cuenta que hay otros miembros del equipo que pueden haber avanzado en paralelo y no tienen acceso a este documento).
+**Actualizado:** 2026-11-15 (tener en cuenta que hay otros miembros del equipo que pueden haber avanzado en paralelo y no tienen acceso a este documento).
 
 Seguimiento de todas las HU: completadas y pendientes. Para ver el detalle y criterios de aceptación de cada historia, ver [Historias de Usuario](historias-usuario.md).
 
@@ -53,7 +53,7 @@ Los puntos no reemplazan los Requisitos No Funcionales: todos los RNF del enunci
 
 ---
 
-## Historias optativas — 76 / 229 pts
+## Historias optativas — 82 / 229 pts
 
 El puntaje optativo amplía las capacidades de la plataforma. La cantidad de puntos a implementar depende del tamaño del grupo (ver tabla de mínimos más abajo).
 
@@ -90,8 +90,8 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 61 | [Ver registro de auditoría de moderación](historias-usuario.md#hu-61-ver-registro-de-auditoría-de-moderación) | Moderación | 3 | 3 | Acciones de moderación |
 | 62 | [Reportar mensaje o usuario](historias-usuario.md#hu-62-reportar-mensaje-o-usuario) | Moderación | 5 | 3 | Mensajería y backoffice |
 | 63 | [Filtro automático de palabras prohibidas](historias-usuario.md#hu-63-filtro-automático-de-palabras-prohibidas) | Moderación | 3 | 3 | Enviar mensaje en un canal |
-| 64 | [Silenciar notificaciones de un canal o servidor](historias-usuario.md#hu-64-silenciar-notificaciones-de-un-canal-o-servidor) | Notificaciones | 3 | - | Notificaciones obligatorias |
-| 65 | [Configurar preferencias de notificación](historias-usuario.md#hu-65-configurar-preferencias-de-notificación) | Notificaciones | 3 | - | Notificaciones obligatorias |
+| 64 | [Silenciar notificaciones de un canal o servidor](historias-usuario.md#hu-64-silenciar-notificaciones-de-un-canal-o-servidor) | Notificaciones | 3 | 3 | Notificaciones obligatorias |
+| 65 | [Configurar preferencias de notificación](historias-usuario.md#hu-65-configurar-preferencias-de-notificación) | Notificaciones | 3 | 3 | Notificaciones obligatorias |
 | 66 | [Notificaciones push](historias-usuario.md#hu-66-notificaciones-push) | Notificaciones | 5 | - | Configurar preferencias y aplicación mobile |
 | 67 | [Centro de notificaciones con historial](historias-usuario.md#hu-67-centro-de-notificaciones-con-historial) | Notificaciones | 5 | - | Notificaciones obligatorias |
 | 68 | [Eliminar servidor desde el backoffice](historias-usuario.md#hu-68-eliminar-servidor-desde-el-backoffice) | Administración | 5 | - | Listado de servidores y eliminación en cascada |
@@ -109,13 +109,13 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 80 | [Ver beneficios de servidor boosteado](historias-usuario.md#hu-80-ver-beneficios-de-servidor-boosteado) | Monetización | 3 | - | Usar puntos para boostear y gestionar emojis |
 | 81 | [Ver expediente de investigación de usuario o servidor](historias-usuario.md#hu-81-ver-expediente-de-investigación-de-usuario-o-servidor) | Administración | 5 | - | Reportar mensaje o usuario |
 
-**Puntaje optativo completado: 76 pts** (de 229 pts disponibles en el catálogo).
+**Puntaje optativo completado: 82 pts** (de 229 pts disponibles en el catálogo).
 
 ---
 
 ## Resumen de avance y puntaje
 
-**Total implementado de punta a punta: 180 pts** (104 obligatorios + 76 optativos).
+**Total implementado de punta a punta: 186 pts** (104 obligatorios + 82 optativos).
 
 ## Mínimo de puntos por tamaño de equipo
 
@@ -143,7 +143,6 @@ Pendientes técnicos y deuda asumida que siguen abiertos, para poder retomarlos 
 
 ### Funcionalidad pendiente
 
-- **HU-27 (CA 3) — Indicador destacado por menciones:** queda pendiente porque depende de la optativa HU-46 (menciones), fuera de alcance.
 - **HU-41 — Auto-scroll durante el arrastre:** el auto-scroll de la lista mientras se arrastra un canal quedó fuera de alcance.
 
 Los pendientes de infraestructura y CI que no son deuda de código se siguen en [mejoras-ci-cd.md](mejoras-ci-cd.md).

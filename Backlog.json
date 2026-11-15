@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-14T02:25:46.993Z",
+  "last_updated": "2026-11-15",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -595,6 +595,54 @@
       "origin": [],
       "context": "Auditoría transversal de backoffice y ampliación de cobertura Jest (de 57,12% líneas / 54,49% statements a 95,57% líneas / 93,75% statements, 86,28% branches, 92,14% functions; 12 suites / 68 tests pasando): corrección de 401 sin token en login y single-flight refresh, paginación al mutar cuentas con filtro Todos y mapeo 409/404, guardas de sesión y batch de perfiles, accesibilidad en cabecera y buscadores, spec 003 y coverageThreshold CI del 70%.",
       "pull_request": "backoffice #11",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-085",
+      "checkpoint": 3,
+      "title": "HU 64: silenciar notificaciones de un canal o servidor (notifications + gateway + web-client)",
+      "status": "completed",
+      "start_date": "2026-11-14",
+      "severity": "should",
+      "origin": [
+        "HU-64"
+      ],
+      "context": "Implementación completa de silenciamiento de notificaciones por canal, servidor y DM (HU 64), alineación integral de HU 27/28/46 con mensajes directos (dm:{u1}:{u2}) y preparación de HU 65-67. notifications (#14): puerto MuteStore, casos de uso GetUserMutes/MuteChannel/UnmuteChannel/MuteServer/UnmuteServer (incluyendo DMs), MongoMuteStore idempotente con level=\"none\" y herencia servidor -> canal, MarkChannelRead/MarkAllRead sincronizando NoticeStore.mark_channel_read/mark_all_read y DMs, DirectMessageHandler, AuthorReadProjector evitando auto-no-leídos en DMs, TargetActivityStore DM y rutas REST/WS mute_updated y direct_message; gateway (#90): relay HTTP autenticado con X-User-Id y validación contra path traversal; web-client (#203): cliente mutes.ts, soporte WS/inbox/estado DM, exclusión de silenciados en getTotalUnreadCount (Set único) y lista activa de bandeja, secciones colapsables \"Silenciados con actividad\"/\"Silenciadas\", botón \"Marcar todo como leído\" habilitado también con silenciados limpiando unread y mentions, acción \"Marcar como leído\" en ChannelActionsMenu, estilos atenuados/bell-off, controles en DirectChatHeader/Sidebar/DirectChatPanel y sonido/háptica singleton (AudioContext perezoso, debounce 50 ms ante menciones/DMs, cooldown 1500 ms y resetNotificationSoundForTests). Ajuste posterior de bandeja (HU 27/28/46): GET /notifications/inbox devuelve roleId; useUnreadDirectory deduplica menciones activas via mentionedChannelIds sin ocultar canales fantasma y expone channelNamesById/extraServerIds; UnreadProvider.markChannelAsRead toma el timestamp maximo registrado; NotificationsInboxPopup agrupa avisos por servidor/DM reutilizando cabecera, resuelve <@userId> (con usuario autenticado Redux via useSafeAppSelector), <@&roleId> (getRoles protegido con useRef) y autor (por <Autor> / fallback Usuario), y solo marca leido el canal al confirmar la ultima mencion pendiente.",
+      "pull_request": "notifications #14; gateway #90; web-client #203",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-086",
+      "checkpoint": 3,
+      "title": "voice-calls + web-client: sincronización de desalojo de voz en expulsión/baneo/suspensión (HU 25, HU 59, HU 29), selector de unidades en silencio (HU 60) y Hero Preview en configuración de servidor (HU 39)",
+      "status": "completed",
+      "start_date": "2026-11-14",
+      "severity": "should",
+      "origin": [
+        "HU-25",
+        "HU-39",
+        "HU-59",
+        "HU-60"
+      ],
+      "context": "voice-calls (#15): puerto VoiceEventPublisher (app/core/gateway/voice_event_publisher.py), helper finalize_session_eviction en app/core/usecase/voice_eviction.py con try/except independientes entre kick_participant y publish(\"VoiceParticipantLeft\") ante MemberLeft, MemberBanned y AccountSuspended (reutilizando get_voice_event_publisher() en dependencies.py), spec 004 y cobertura unitaria + BDD; web-client (#205): selector segmentado Minutos/Horas/Días con tope equivalente a 28 días en MuteConfirmation (limpieza inmediata de errores al tocar chip y resaltado solo si monto válido coincide en segundos) + rediseño Hero Preview en EditServerSettingsForm con ProfileAuroraBanner, cápsula zIndex >= 10 y recorte minWidth: 0 / numberOfLines={2} / ellipsizeMode=\"tail\" + spec 052 y tests; web-client (#206): DisconnectReason.PARTICIPANT_REMOVED -> 'removed' en voiceRoom.web.ts y limpieza silenciosa idempotente evictLocally() en VoiceProvider ante 'removed' y subscribeServerSync (member_left, member_banned, server_deleted, channel_deleted) sin DROPPED ni DELETE /leave + spec 053 y tests.",
+      "pull_request": "voice-calls #15; web-client #205; web-client #206",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-087",
+      "checkpoint": 3,
+      "title": "HU 65: configurar preferencias de notificación (notifications + gateway + web-client)",
+      "status": "completed",
+      "start_date": "2026-11-15",
+      "severity": "should",
+      "origin": [
+        "HU-65"
+      ],
+      "context": "Implementación end-to-end de la HU optativa 65 (Configurar preferencias de notificación, 3 pts) unificada sobre el modelo de HU 64. notifications (#15): dominio NotificationLevel (all | mentions | none) con precedencia canal > servidor > all (spec 033), endpoints GET /notifications/preferences (conservando canales de servidores activos y dm:* con is_dm_participant), PUT/DELETE idempotentes para /notifications/preferences/channels/{channel_id} y /servers/{server_id}, evento WS preference_updated (level: null en DELETE), compatibilidad retroactiva de mutes y MongoMuteStore. gateway (#96): relay REST autenticado con X-User-Id, codificación _encode_path_segment y sin reintentos en PUT/DELETE (spec 044). web-client (#211): cliente REST notificationPreferences.ts, handler WS preference_updated y sincronización bidireccional con mute_updated sobre la fuente única serverPreferences/channelPreferences en unreadState.ts y UnreadProvider (manteniendo toggle all <-> none en DMs), componente reutilizable NotificationPreferencesPopup, estado pasivo unreadDotMuted para solo menciones, y transiciones modales mediante ActiveModal { type: 'notification_preferences', returnTo } evitando montar dos <Popup> simultáneos desde ChannelActionsMenu y NotificationsInboxPopup (spec 058).",
+      "pull_request": "notifications #15; gateway #96; web-client #211",
       "exception_note": null,
       "discovered_pending_tasks": []
     }
