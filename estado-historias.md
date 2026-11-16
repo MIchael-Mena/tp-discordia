@@ -53,7 +53,7 @@ Los puntos no reemplazan los Requisitos No Funcionales: todos los RNF del enunci
 
 ---
 
-## Historias optativas — 82 / 229 pts
+## Historias optativas — 131 / 229 pts
 
 El puntaje optativo amplía las capacidades de la plataforma. La cantidad de puntos a implementar depende del tamaño del grupo (ver tabla de mínimos más abajo).
 
@@ -73,14 +73,14 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 44 | [Editar mensaje](historias-usuario.md#hu-44-editar-mensaje) | Mensajería | 3 | 2 | Enviar mensaje en un canal o DM |
 | 45 | [Eliminar mensaje](historias-usuario.md#hu-45-eliminar-mensaje) | Mensajería | 3 | 2 | Enviar mensaje en un canal o DM |
 | 46 | [Menciones](historias-usuario.md#hu-46-menciones) | Mensajería | 5 | 3 | Mensajería, roles y notificaciones |
-| 47 | [Adjuntar archivos en mensajes](historias-usuario.md#hu-47-adjuntar-archivos-en-mensajes) | Mensajería | 5 | - | Mensajería y almacenamiento externo de objetos |
-| 48 | [Reacciones con emoji](historias-usuario.md#hu-48-reacciones-con-emoji) | Mensajería | 3 | - | Enviar mensaje en un canal |
-| 49 | [Buscar mensajes](historias-usuario.md#hu-49-buscar-mensajes) | Mensajería | 5 | - | Historial y reconexión; autorización por canal o DM |
-| 50 | [Iniciar y recibir llamada de voz privada](historias-usuario.md#hu-50-iniciar-y-recibir-llamada-de-voz-privada) | Canal de Voz | 13 | - | Mensajes directos y flujo de voz operativo |
+| 47 | [Adjuntar archivos en mensajes](historias-usuario.md#hu-47-adjuntar-archivos-en-mensajes) | Mensajería | 5 | 3 | Mensajería y almacenamiento externo de objetos |
+| 48 | [Reacciones con emoji](historias-usuario.md#hu-48-reacciones-con-emoji) | Mensajería | 3 | 3 | Enviar mensaje en un canal |
+| 49 | [Buscar mensajes](historias-usuario.md#hu-49-buscar-mensajes) | Mensajería | 5 | 3 | Historial y reconexión; autorización por canal o DM |
+| 50 | [Iniciar y recibir llamada de voz privada](historias-usuario.md#hu-50-iniciar-y-recibir-llamada-de-voz-privada) | Canal de Voz | 13 | 3 | Mensajes directos y flujo de voz operativo |
 | 51 | [Indicador de quién está hablando](historias-usuario.md#hu-51-indicador-de-quién-está-hablando) | Canal de Voz | 3 | - | Unirse a canal de voz de servidor |
 | 52 | [Silenciar a otro participante localmente](historias-usuario.md#hu-52-silenciar-a-otro-participante-localmente) | Canal de Voz | 2 | - | Unirse a canal de voz de servidor |
 | 53 | [Compartir pantalla](historias-usuario.md#hu-53-compartir-pantalla) | Canal de Voz | 8 | - | Flujo de voz operativo |
-| 54 | [Video en llamada](historias-usuario.md#hu-54-video-en-llamada) | Canal de Voz | 8 | - | Flujo de voz operativo |
+| 54 | [Video en llamada](historias-usuario.md#hu-54-video-en-llamada) | Canal de Voz | 8 | 3 | Flujo de voz operativo |
 | 55 | [Eliminar rol](historias-usuario.md#hu-55-eliminar-rol) | Roles y Permisos | 3 | 3 | Crear, asignar y editar roles |
 | 56 | [Reordenar jerarquía de roles](historias-usuario.md#hu-56-reordenar-jerarquía-de-roles) | Roles y Permisos | 3 | 3 | Crear rol y asignar rol a un miembro |
 | 57 | [Sobrescribir permisos de un rol en un canal específico](historias-usuario.md#hu-57-sobrescribir-permisos-de-un-rol-en-un-canal-específico) | Roles y Permisos | 5 | 3 | Editar permisos de un rol y gestión de canales |
@@ -92,9 +92,9 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 63 | [Filtro automático de palabras prohibidas](historias-usuario.md#hu-63-filtro-automático-de-palabras-prohibidas) | Moderación | 3 | 3 | Enviar mensaje en un canal |
 | 64 | [Silenciar notificaciones de un canal o servidor](historias-usuario.md#hu-64-silenciar-notificaciones-de-un-canal-o-servidor) | Notificaciones | 3 | 3 | Notificaciones obligatorias |
 | 65 | [Configurar preferencias de notificación](historias-usuario.md#hu-65-configurar-preferencias-de-notificación) | Notificaciones | 3 | 3 | Notificaciones obligatorias |
-| 66 | [Notificaciones push](historias-usuario.md#hu-66-notificaciones-push) | Notificaciones | 5 | - | Configurar preferencias y aplicación mobile |
-| 67 | [Centro de notificaciones con historial](historias-usuario.md#hu-67-centro-de-notificaciones-con-historial) | Notificaciones | 5 | - | Notificaciones obligatorias |
-| 68 | [Eliminar servidor desde el backoffice](historias-usuario.md#hu-68-eliminar-servidor-desde-el-backoffice) | Administración | 5 | - | Listado de servidores y eliminación en cascada |
+| 66 | [Notificaciones push](historias-usuario.md#hu-66-notificaciones-push) | Notificaciones | 5 | 3 | Configurar preferencias y aplicación mobile |
+| 67 | [Centro de notificaciones con historial](historias-usuario.md#hu-67-centro-de-notificaciones-con-historial) | Notificaciones | 5 | 3 | Notificaciones obligatorias |
+| 68 | [Eliminar servidor desde el backoffice](historias-usuario.md#hu-68-eliminar-servidor-desde-el-backoffice) | Administración | 5 | 3 | Listado de servidores y eliminación en cascada |
 | 69 | [Suspender servidor completo](historias-usuario.md#hu-69-suspender-servidor-completo) | Administración | 5 | - | Listado de servidores de la plataforma |
 | 70 | [Ver métricas de actividad de un servidor](historias-usuario.md#hu-70-ver-métricas-de-actividad-de-un-servidor) | Métricas | 5 | - | Eventos de membresía y mensajería |
 | 71 | [Ver métricas globales de la plataforma](historias-usuario.md#hu-71-ver-métricas-globales-de-la-plataforma) | Métricas | 5 | - | Eventos globales y acceso de staff |
@@ -109,13 +109,13 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 80 | [Ver beneficios de servidor boosteado](historias-usuario.md#hu-80-ver-beneficios-de-servidor-boosteado) | Monetización | 3 | - | Usar puntos para boostear y gestionar emojis |
 | 81 | [Ver expediente de investigación de usuario o servidor](historias-usuario.md#hu-81-ver-expediente-de-investigación-de-usuario-o-servidor) | Administración | 5 | - | Reportar mensaje o usuario |
 
-**Puntaje optativo completado: 82 pts** (de 229 pts disponibles en el catálogo).
+**Puntaje optativo completado: 131 pts** (de 229 pts disponibles en el catálogo).
 
 ---
 
 ## Resumen de avance y puntaje
 
-**Total implementado de punta a punta: 186 pts** (104 obligatorios + 82 optativos).
+**Total implementado de punta a punta: 235 pts** (104 obligatorios + 131 optativos).
 
 ## Mínimo de puntos por tamaño de equipo
 
@@ -144,5 +144,7 @@ Pendientes técnicos y deuda asumida que siguen abiertos, para poder retomarlos 
 ### Funcionalidad pendiente
 
 - **HU-41 — Auto-scroll durante el arrastre:** el auto-scroll de la lista mientras se arrastra un canal quedó fuera de alcance.
+
+- **HU-68 — DeleteServer media:** es deuda heredada previa de DeleteServer; como recomendación para un PR aparte, conviene llamar a deleteServerMedia para server.iconUrl() y server.bannerUrl() dentro de la cascada.
 
 Los pendientes de infraestructura y CI que no son deuda de código se siguen en [mejoras-ci-cd.md](mejoras-ci-cd.md).

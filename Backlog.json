@@ -645,6 +645,42 @@
       "pull_request": "notifications #15; gateway #96; web-client #211",
       "exception_note": null,
       "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-088",
+      "checkpoint": 3,
+      "title": "HU 66: notificaciones push (notifications + gateway + web-client)",
+      "status": "completed",
+      "start_date": "2026-11-15",
+      "severity": "should",
+      "origin": [
+        "HU-66"
+      ],
+      "context": "Implementación end-to-end de la HU optativa 66 (Notificaciones push, 5 pts). notifications (#17, spec 035): puerto PushStore y casos de uso GetPushSettings/SetPushSettings/RegisterPushToken/UnregisterPushToken/SyncPushPreferences/RemoveUserPushData; inclusión de pushEnabled en GET /notifications/preferences y frame WS push_settings_updated; MongoPushStore con aislamiento multi-cuenta por token (delete_many para distinto userId) y consulta batch filter_push_enabled sin N+1; PushDeliveryAdapter hacia Expo Push API para usuarios offline (registry.count(user_id) == 0) y no silenciados con sanitización de <@id>/<@&id> en params.snippet y limpieza posicional (zip) de tickets DeviceNotRegistered; endpoints REST GET/PUT /notifications/push-settings y POST/DELETE /notifications/push-tokens (261 tests, ruff y lint-imports limpios, 97,56% cobertura). gateway (#97, spec 045): rutas autenticadas /notifications/push-settings y /notifications/push-tokens reutilizando Depends(require_session) y _relay (632 tests, ruff limpio, 94,22% cobertura). web-client (#213, spec 060): cliente API y frame WS push_settings_updated; pushService.ts con sanitización vía formatNoticeSnippet, window.Notification web cuando document.visibilityState === \"hidden\" y gestión segura de token Expo móvil; UnreadProvider con cierre controlado de /ws/notifications ante AppState background/inactive sin timers de reconexión, reconexión limpia al volver a active y desregistro de token al cerrar sesión; NotificationPreferencesPopup con targetType=\"global\" y borrador draftPushEnabled confirmado al pulsar Guardar; accesos en UserMenu y NotificationsInboxPopup sin superponer modales y sin modificar index.tsx ni authThunks.ts (tsc, expo lint sin warnings y 220 suites / 2009 tests Jest pasando).",
+      "pull_request": "notifications #17; gateway #97; web-client #213",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+        {
+          "description": "Instalar expo-notifications y vincular el puente setNativePushProvider con el proyecto EAS en el arranque nativo de web-client al empaquetar builds mobile de producción.",
+          "severity": "should",
+          "resolved": false
+        }
+      ]
+    },
+    {
+      "id": "TSK-089",
+      "checkpoint": 3,
+      "title": "HU 67: centro de notificaciones con historial (notifications + web-client)",
+      "status": "completed",
+      "start_date": "2026-11-15",
+      "severity": "should",
+      "origin": [
+        "HU-67"
+      ],
+      "context": "Centro de notificaciones con historial de 7 días (HU 67, optativa, 5 pts). En notifications (PR #18): GET /notifications/inbox soporta offset, days (1..90) y kind (comma-separated, 400 Invalid notification kind); se agregó normalize_utc en app/core/domain/time.py compartido entre GetInbox, as_utc (MongoNoticeStore) y FakeNoticeStore, validación limit >= 1 en GetInbox y delegación directa de validate_inbox_kinds en el caso de uso; índice compuesto notices_recipient_created_id_idx conservando los previos para evitar IndexKeySpecsConflict (ruff, lint-imports: 1 kept / 0 broken, 270 pytest passed, 97.50% cobertura). Gateway ya reenvía query params y códigos sin cambios. En web-client (PR #214): pestaña Historial extraída en NotificationsHistoryTab + hook useInboxHistory (caché en memoria por sesión entre pestañas, guardas de concurrencia y carrera entre carga inicial y loadMore, loadedKey asignado tras éxito para reintentar al fallar), resolveNoticeDisplayData, formatNoticeTimestamp con tolerancia a clock skew sin tiempos negativos, DM_SERVER_ID en useUnreadDirectory, estilos consolidados con noticeCardBase, sincronización markWhereRead tras resolverse ackNotification o al marcar canal/todo en Canales y Menciones, ocultamiento de ModalHeader en modo reporte vía onReportModeChange, limpieza tras onReported y cierre DM por onOpenDirectChat (tsc --noEmit, expo lint, 221 suites / 2032 Jest tests passed).",
+      "pull_request": "notifications #18; web-client #214",
+      "exception_note": null,
+      "discovered_pending_tasks": []
     }
   ]
 }
