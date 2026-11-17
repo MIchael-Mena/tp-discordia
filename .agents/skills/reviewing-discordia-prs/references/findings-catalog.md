@@ -78,6 +78,11 @@ El endpoint `PATCH` o `POST` valida múltiples campos (`name`, `iconUrl`, `banne
 *Detectar:* compará todos los mensajes de `400 Bad Request` que lanza el backend en ese endpoint contra el discriminador de errores de formulario del cliente.
 *Ejemplo:* `EditServerSettingsForm` usaba `serverNameFieldError` en vez de discriminar errores de `name`, `iconUrl` y `bannerUrl` (web-client #169).
 
+**B11 · Relay que autentica al caller pero omite propagar su identidad al servicio downstream.**
+La dependencia de autorización protege la ruta del gateway, pero el relay no recibe la identidad verificada ni la envía en el header que espera el servicio interno.
+*Detectar:* seguí la identidad desde el guard/dependency hasta la llamada HTTP saliente y compará los headers con el contrato del consumidor. Un test de status/autorización no demuestra que el downstream reciba `X-User-Id`.
+*Ejemplo:* el relay de detalle de cuenta en `gateway#101` omitía `X-User-Id`.
+
 ---
 
 ## C. Persistencia y esquema
@@ -106,6 +111,11 @@ No es atómico: dos altas concurrentes se pisan. Aceptable si está documentado;
 El creador/owner de una entidad (p. ej. un servidor) es miembro por regla de dominio, pero la tabla de membresías (`server_members`) no inserta fila para él al crearse el recurso. Si una query de conteo hace `count(m.id)` o `inner join` con miembros, un servidor recién creado reporta **0 miembros** (inconsistente con el dominio donde el owner siempre es miembro).
 *Detectar:* revisá si `exists` o `count` contemplan al owner (`m.user_id = :userId OR s.owner_id = :userId`), o si la creación del servidor omite el registro en la tabla de miembros.
 *Fix:* alinear la query (`count(m.id) + (case when ... then 1 else 0 end)` o coalesce/inclusión explícita del owner) o persistir la membresía del owner al crear el servidor.
+
+**C7 · Mapeo posicional de una fila SQL a un modelo.**
+`tuple(row)` o `Model(*row)` ata silenciosamente los campos del dominio al orden de la consulta; cambiar el `SELECT` puede cruzar valores sin alterar el número de columnas.
+*Detectar:* compará el orden de selección con el constructor y revisá si el driver expone filas por nombre. Preferí el mapeo por columna y probalo con un mapping cuyo orden difiera del `SELECT`.
+*Ejemplo:* el repositorio de detalle de cuenta en `auth-service#39`.
 
 ---
 
@@ -146,6 +156,11 @@ El caso clásico: conectar la sala y después pedir el micrófono. Si el micróf
 Borrar un canal mientras el usuario está conectado a su llamada de voz: la fila desaparece, el panel deja de ser alcanzable y el micrófono sigue abierto.
 *Detectar:* por cada borrado/desactivación, buscá quién más referencia ese id en el estado global (llamadas, sockets, selección, drafts).
 
+**E5 · Timeout por request que no limita una operación compuesta.**
+Cada llamada de una secuencia o lote respeta su propio timeout, pero las llamadas acumuladas exceden el presupuesto del caller y éste corta la respuesta antes de que opere el fallback.
+*Detectar:* sumá el peor tiempo de todos los intentos/lotes contra el timeout del siguiente salto. Usá un deadline compartido y probá más de una llamada lenta, no sólo una llamada aislada.
+*Ejemplo:* los lotes secuenciales de actividad de `server#60` podían exceder el timeout del relay.
+
 ---
 
 ## F. Validación de entrada
@@ -161,6 +176,11 @@ DTO con `JsonNode` + `asText()`: `{"name": 123}` se convierte en `"123"`. Acepta
 **F3 · Tipo de TypeScript que dice "siempre presente" sobre un payload que puede no traerlo.**
 `type: ChannelType` (requerido) mientras el código hace `channelType?: ChannelType` y trata `undefined` como `text`. Peor: si el PR del backend que agrega el campo no está mergeado, **todo** cae en el default y la feature nueva es invisible.
 *Detectar:* por cada campo nuevo del payload, verificá qué PR lo introduce y si ya está en la rama base.
+
+**F4 · Filtro ausente confundido con filtro explícitamente vacío.**
+Una condición como `if not channel_ids` transforma `[]` en "sin filtro"; una consulta que debía acotarse puede ampliarse a todos los registros.
+*Detectar:* distinguí `None`/campo omitido de lista vacía y seguí ambas ramas hasta la consulta. Definí el contrato para `[]` y probá que el caso no dispare una consulta global.
+*Ejemplo:* el resumen de actividad de `text-channel#43`.
 
 ---
 
@@ -182,6 +202,11 @@ Los que más importan: micrófono denegado, clic derecho, `401` que no debe prop
 
 **G5 · Cobertura alta, camino crítico sin cubrir.**
 97% no dice nada si el 3% es el error del usuario. Mirá el reporte por archivo, no el total.
+
+**G6 · Estado de paginación de una entidad reutilizado en otra, incluso tras un fallo.**
+Al navegar de un expediente a otro, se conserva un offset anterior; si la primera carga falla, el retry puede volver a solicitar una página fuera de rango y aparentar que no hay datos.
+*Detectar:* probá avanzar páginas, cambiar el id de entidad y forzar error/reintento. Verificá que la carga inicial use offset cero para reportes y auditoría.
+*Ejemplo:* los expedientes de usuario y servidor de `backoffice#14`.
 
 ---
 
@@ -210,6 +235,11 @@ El `plan.md` dice "controller-owned HTTP error mapping" cuando el repo tiene 13 
 
 **H7 · Documentación desalineada tras una convergencia.**
 El PR corrige `README` y `contracts` pero deja `data-model.md` con el contrato viejo, o marca `[X]` una tarea cuyo texto dice "Pending". *Detectar:* `grep` del término viejo en **todos** los `.md` del feature.
+
+**H8 · PRs concurrentes que colisionan por renombre de una ruta.**
+Un PR renombra una pantalla/archivo mientras otro todavía modifica la ruta anterior; una comparación de archivos actuales puede no detectar que el merge recreará ambos paths y registrará rutas duplicadas.
+*Detectar:* en PRs hermanos, compará también archivos renombrados/eliminados con los paths tocados por el otro PR. Informalo como coordinación y proponé acordar el orden de merge; no lo presentes automáticamente como bug aislado del PR.
+*Ejemplo:* `backoffice#14` y `backoffice#15`.
 
 ---
 

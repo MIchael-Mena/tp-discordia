@@ -69,10 +69,14 @@ Seguí [env-cost.md](../../rules/env-cost.md) §4 y las recetas de [verification
 4. **El otro lado de cada contrato**: si el PR consume una API, leé el productor; si la expone, leé el consumidor. La mitad de los hallazgos están ahí.
 5. **Calidad de diseño y oportunidades de refactor**: evaluá cohesión, responsabilidades, dependencias y duplicación según las convenciones comprobadas del repo. Proponé extracciones o patrones sólo cuando resuelvan un problema concreto y su beneficio justifique el costo. Ver sección **I** de [findings-catalog.md](./references/findings-catalog.md).
 6. **Estilos en clientes**: compará los estilos nuevos con componentes similares, estilos compartidos y tokens del tema existentes. Proponé reutilizarlos cuando correspondan y eviten duplicación o inconsistencias visuales; los estilos específicos son válidos cuando el componente los necesita, pero en `web-client` deben ubicarse en un archivo aparte bajo `src/styles/`, no junto al componente. Verificá la convención del repositorio para otros clientes, fundamentá la propuesta con referencias concretas y evitá forzar una abstracción compartida innecesaria.
+7. **Barrido de correctitud por cada cambio funcional (obligatorio)**: trazá el dato desde la entrada hasta la salida —validación, transformación/mapeo, persistencia o llamada downstream, y respuesta/UI— y revisá los tests asociados. No te detengas al encontrar un hallazgo ni uses una cantidad esperada de hallazgos como meta. Antes de cerrar, revisá todos los archivos de producción modificados y los casos borde pertinentes, aunque ya haya un P1/P2 o el CI esté verde.
+   - Considerá explícitamente, cuando aplique: ausente/null frente a valor vacío (`[]`, `""`, `0`); mapeos posicionales frente a campos por nombre; identidad/contexto que debe propagarse en cada salto además de autenticar la ruta; cambio de entidad seguido de error/reintento/paginación; tiempo total de operaciones secuenciales o por lotes frente al timeout del caller; y presencia/uso de configuración en plantillas locales, CI y despliegue.
+   - Para cada comportamiento importante, preguntá qué ocurre en éxito, entrada vacía o límite, y fallo/reintento. No impongas todos los casos a todos los cambios: seguí los datos y transiciones que el diff realmente afecta.
+   - Al comparar totales con desgloses, verificá que ambos incluyan la misma población antes de asumir que deben coincidir; exigí igualdad sólo si el contrato la promete.
 
 ### 4. Verificar
 
-Corré los gates del repo y, cuando un hallazgo dependa de comportamiento de una librería, **leelo o ejecutalo**. Recetas concretas en [verification-recipes.md](./references/verification-recipes.md).
+Corré los gates del repo y, cuando un hallazgo dependa de comportamiento de una librería, **leelo o ejecutalo**. Recetas concretas en [verification-recipes.md](./references/verification-recipes.md). Además, evaluá qué propiedad demuestra cada test: un status o caso feliz no prueba que no se haya llamado al downstream, que se haya propagado el header correcto ni que un reintento conserve estado válido. Si el test existente no cubre el borde que sustenta un hallazgo, reproducilo o degradá la conclusión a pregunta; no tomes cobertura global alta como evidencia de que ese camino está cubierto.
 
 ### 5. Clasificar
 
@@ -132,13 +136,3 @@ Seguí [env-cost.md](../../rules/env-cost.md) §4.5 y §6: volvé a la rama orig
 - [findings-catalog.md](./references/findings-catalog.md) — las fallas que ya aparecieron en esta cadena, con ejemplo y cómo detectarlas rápido.
 - [verification-recipes.md](./references/verification-recipes.md) — comandos por stack, cómo probar comportamiento real y trampas de Windows.
 - [comment-style.md](./references/comment-style.md) — formato del body y de los inline, y el payload de la API.
-
-## Checklist mínimo (si no hay tiempo para nada más)
-
-- [ ] ¿La autorización real existe? (no `return true`, no "existe el canal ⇒ permitido")
-- [ ] ¿Los ids que entran por la URL se validan antes de interpolarse en otra URL?
-- [ ] ¿Lo que la doc dice "interno" es realmente inalcanzable desde afuera? (`infra/compose.prod.yaml`, labels de Traefik)
-- [ ] ¿Cada knob de config (`*_TTL_*`, `*_TIMEOUT_*`, `*_URL`) tiene efecto observable?
-- [ ] ¿El esquema nuevo se aplica a bases que ya existen? (init script ≠ migración)
-- [ ] ¿Los tests fijan el contrato **real** del otro servicio, y verifican las propiedades de seguridad (no sólo el status)?
-- [ ] ¿Un error en el camino común libera el recurso? (sala, socket, stream, sesión)
