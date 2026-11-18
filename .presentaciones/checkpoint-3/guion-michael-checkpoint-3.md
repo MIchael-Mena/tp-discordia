@@ -1,7 +1,7 @@
 # Guion — Checkpoint 3 · Michael
 
 Diapositivas a cargo: **Sección 06 (`slide 8 from pdf`: `06`, `06.1`, `06.2`, `06.3`, `06.4`, `06.5`) + `Progreso` (`slide 10`) + `Cierre` (`slide 11`)**.
-Duración estimada: **~7–9 minutos** (recortable a **~4,5–5 minutos** salteando los párrafos marcados como `[Detalle técnico]` y comprimiendo `06` a una frase).
+Duración estimada: **~5,5–6 minutos** (recortable a **~3,5–4 minutos** siguiendo la guía rápida del final).
 
 | Diapo | Tema | Qué muestra la slide | Respaldo técnico principal |
 |---|---|---|---|
@@ -18,120 +18,115 @@ Duración estimada: **~7–9 minutos** (recortable a **~4,5–5 minutos** saltea
 
 ## Guion
 
-### Enganche desde la diapo anterior (`05.4 · Voz y llamadas en mobile`) y Diapo `06` — Notificaciones y presencia (Resumen)
+### Enganche desde `05.4` y Diapo `06` — Notificaciones y presencia (Resumen)
 
-Ya vimos voz y video en mobile —donde justamente quedó claro que las llamadas privadas hoy se recuperan con la app abierta y **no** disparan push—. Ahora cierro la parte funcional con la **sección 06: Notificaciones y presencia**.
+Venimos de ver cómo funcionan la voz y el video en mobile —donde quedó claro que las llamadas privadas todavía no mandan push—. Con la **sección 06** cerramos la parte funcional del producto: **notificaciones y presencia**.
 
-En esta sección cerramos la experiencia diaria del usuario final sobre dos ejes:
-1. **Notificaciones** (HU-27, 28, 67, 65, 64 y 66): que el usuario no pierda actividad importante, pueda consultar qué recibió incluso después de leerlo, decida canal por canal qué lo interrumpe y reciba avisos en el celular cuando no está mirando la app.
-2. **Identidad y presencia** (HU-36, 37 y 38): ver la ficha pública de otra persona, su disponibilidad en tiempo real y qué está haciendo con un estado corto personalizado, cuidando en todo momento qué información se expone y a quién.
+Todo el bloque gira sobre dos ejes de la experiencia diaria:
 
-Vamos uno por uno, arrancando por la bandeja.
+1. **Notificaciones:** que el usuario no pierda nada importante, conserve un historial de lo recibido, elija qué nivel de avisos quiere en cada canal o servidor y reciba push en el celular cuando no está en la app.
+2. **Identidad y presencia:** ver el perfil público de otra persona, su disponibilidad en tiempo real y un estado corto personalizado, cuidando siempre qué datos se exponen y a quién.
 
----
-
-### Diapo `06.1` — Ver y marcar notificaciones (HU-27, HU-28)
-
-Lo que ven a la derecha es literalmente la entrada principal del usuario: la **campana fija** arriba del riel de servidores con el contador rojo de canales con actividad o menciones pendientes. Si no hay pendientes, el badge no se muestra.
-
-Al abrirla se despliega la bandeja agrupada por servidor. Cada fila es un canal (o conversación directa en la pestaña de menciones/DMs), y el usuario puede hacer dos cosas: tocar la fila para saltar directo al canal y marcarlo leído, o tocar el `✓` para limpiarlo sin siquiera entrar. Arriba también tiene **"Marcar todo como leído"** para poner la bandeja en cero de una sola vez.
-
-Tres decisiones técnicas sostienen esta bandeja sin sorpresas:
-
-- **El usuario nunca se auto-notifica:** un mensaje propio actualiza el marcador de lectura del autor al instante (`AuthorReadProjector`), así que jamás aparece como no leído para quien lo escribió.
-- **Tolerancia a desfase horario (*clock skew*):** el navegador o el teléfono pueden tener el reloj atrasado o adelantado respecto del servidor. Al marcar leído un canal, el cliente manda `max(lastActivityAt, now)` para no quedarse corto por un reloj atrasado, y el backend lo recorta con `min(upTo, now)` del reloj propio para impedir que un cliente con reloj adelantado marque como leídos mensajes futuros.
-- **Visibilidad real de canales (`VIEW_CHANNELS`):** la lista de canales dentro de la bandeja se cruza contra los canales visibles del servidor, así un canal privado al que el miembro ya no tiene acceso nunca se muestra ahí —y si cambian permisos, la caché del cliente se invalida con el evento en vivo.
-
-`[Detalle técnico — saltear si falta tiempo]` Un matiz honesto de esta separación: `notifications` es dueño de marcadores y eventos, no de permisos de roles; por eso el filtro fino por `VIEW_CHANNELS` de la bandeja se resuelve en el cliente contrastando contra `GET /servers/{id}` cuando se arma el directorio, manteniendo desacoplado al microservicio de las reglas bitmask de Quarkus.
-
-> Con los canales al día, el paso siguiente es qué pasa con las menciones y mensajes directos una vez que ya los leíste. Eso lo resuelve el centro con historial.
+Arrancamos por la bandeja.
 
 ---
 
-### Diapo `06.2` — Centro de notificaciones con historial (HU-67)
+### Diapo `06.1` — Ver y marcar notificaciones
 
-Antes de esta mejora, confirmar una mención la hacía desaparecer de la lista de pendientes. En **HU-67** separamos **pendiente** de **eliminado**, y es exactamente el ciclo de tres pasos del diagrama:
+Lo que se ve a la derecha es la entrada principal del usuario: la **campana fija** arriba del riel de servidores con el contador rojo de canales y menciones pendientes. Si no hay nada sin leer, el badge desaparece.
 
-1. **Persistencia de avisos:** mientras la actividad común por canal se calcula al vuelo leyendo marcas de tiempo (sin guardar un documento por cada miembro de un servidor grande), las **menciones destacadas** y los **mensajes directos** sí generan un documento por destinatario en la colección `notices`. Además se empujan en vivo por WebSocket.
-2. **Leer no borra:** cuando el usuario toca la notificación o marca el canal como leído, el backend actualiza `read: true` sobre esos documentos, pero **conserva el registro**.
-3. **Dos vistas sobre la misma API (`GET /notifications/inbox`):** la pestaña activa consulta `unreadOnly=true` para mostrar solo lo pendiente; la pestaña **Historial** consulta sin ese filtro con ventana de 7 días y paginación incremental (de a 20 ítems en la UI, con tope de hasta 100 por request en API), diferenciando visualmente lo leído de lo nuevo y permitiendo navegar o reportar al autor desde la misma tarjeta.
+Al abrirla se despliega la bandeja agrupada por servidor. Cada fila es un canal o un mensaje directo: tocar la fila lleva directo a esa conversación y la marca leída, el `✓` la limpia sin entrar, y **"Marcar todo como leído"** pone la bandeja en cero de una sola vez.
 
-Fíjense en la regla de corte abajo a la izquierda: al marcar un canal como leído, el `UPDATE` en MongoDB filtra por `createdAt <= upTo`. Si justo en el mismo milisegundo entra una mención nueva mientras el usuario tocaba el check, **no** se la traga el marcado anterior. Y para que la paginación no saltee ni duplique avisos ante timestamps idénticos, las consultas ordenan de forma determinista por `(createdAt DESC, _id DESC)` sobre un índice compuesto dedicado.
+Tres decisiones sostienen esto sin sorpresas:
 
-> Ya podemos ver y consultar el historial; ahora falta darle al usuario control sobre cuánto ruido quiere recibir.
+- **Sin auto-notificaciones.** Un mensaje propio avanza al instante el marcador de lectura de quien lo envió, así que nunca aparece como no leído para el autor.
+- **Protección contra desfase de reloj.** El cliente manda el mayor timestamp entre la última actividad y su reloj local para no quedarse corto si está atrasado, y el backend lo recorta contra la hora del servidor para que un reloj adelantado no marque mensajes futuros.
+- **Visibilidad real de canales (`VIEW_CHANNELS`).** El servicio de notificaciones no conoce roles ni bitmasks; por eso la bandeja cruza lo pendiente contra los canales visibles que devuelve `server` e invalida su caché en vivo si cambian los permisos, manteniendo desacoplado al microservicio.
 
----
-
-### Diapo `06.3` — Preferencias (HU-65) y silenciamiento (HU-64)
-
-Acá unificamos dos historias —silenciar un canal o servidor (HU-64) y elegir granularidad de avisos (HU-65)— en un único modelo de tres niveles: **Todos los mensajes (`all`)**, **Solo menciones (`mentions`)** y **Ninguno (`none`)**. Silenciar de HU-64 equivale simplemente a fijar el nivel en `none`, y reactivarlo borra el override (`DELETE` idempotente, `204`) para volver a heredar.
-
-El diagrama de la derecha resume la precedencia cuando llega un mensaje: **`canal ?? servidor ?? all`**. Primero se busca si el usuario configuró algo explícito para ese canal; si no existe, hereda lo definido para el servidor; y si tampoco hay nada ahí, queda el default `all`. En la interfaz, si un canal tiene regla propia, el usuario ve la píldora **"Usar configuración del servidor"** para limpiar ese override y volver a heredar.
-
-Qué hace cada nivel en la práctica:
-- **`all`:** todo funciona normal: suma al badge, aparece en la bandeja activa y suena en vivo.
-- **`mentions`:** pensado para canales ruidosos. Los mensajes comunes muestran solo un punto discreto sin sumar al contador rojo de la campana ni sonar; únicamente las menciones directas, de rol o `@everyone` generan aviso destacado.
-- **`none`:** silenciado. No dispara avisos destacados, no suena, no suma al contador ni dispara push; sin embargo —como marca la regla al pie— la actividad nueva **sigue registrándose como no leída** y en la bandeja aparece agrupada aparte en una sección colapsable (*"Silenciados con actividad"* / *"Silenciadas"*), así nunca perdés un mensaje si decidís entrar a mirar.
-
-Cada cambio se persiste y se difunde por WebSocket (`mute_updated` y `preference_updated`) a todas las pestañas o dispositivos abiertos de ese usuario, manteniendo el estado sincronizado en tiempo real.
-
-> Todo esto gobierna lo que pasa con la aplicación abierta. Ahora veamos qué ocurre cuando el usuario guarda el teléfono o cambia de pestaña.
+> Con los canales al día, el paso siguiente es qué pasa con las menciones y los mensajes directos una vez que el usuario ya los leyó.
 
 ---
 
-### Diapo `06.4` — Notificaciones push en mobile (HU-66)
+### Diapo `06.2` — Centro de notificaciones con historial
 
-El diagrama de secuencia muestra el flujo completo de principio a fin:
+Antes, confirmar una mención la hacía desaparecer de la lista. Ahora **pendiente** y **eliminado** son cosas distintas, y el diagrama de la derecha muestra ese ciclo en tres pasos:
 
-1. **Ciclo de vida del token:** al iniciar sesión en mobile, la app pide permiso, obtiene el token con `expo-notifications` y lo registra en `POST /notifications/push-tokens`. Cuando el usuario cierra sesión, el cliente **desregistra el token primero** (con un timeout corto acotado) antes de revocar el JWT, mientras la sesión todavía es válida. Y si otra persona inicia sesión en el mismo teléfono sin haber cerrado antes, el backend borra cualquier vínculo previo de ese token con otro `userId` para evitar fugas entre cuentas.
-2. **Solo en segundo plano, sin duplicados:** cuando llega una `@mención` o un `DM`, el `PushDeliveryAdapter` evalúa tres condiciones: que el canal/DM **no** esté silenciado (`none`), que el interruptor global **`pushEnabled`** esté activo, y que el usuario tenga **cero WebSockets abiertos** (`ConnectionRegistry.count == 0`). En mobile, apenas la app pasa a `background` o `inactive`, `UnreadProvider` cierra limpiamente `/ws/notifications` (sin timers de reconexión en background) justamente para que el servidor lo vea sin conexiones abiertas e inmediatamente derive el aviso a Expo Push Service.
-3. **Privacidad en el texto y limpieza automática:** las menciones crudas como `<@id>` o `<@&rolId>` se sanean en el snippet a `@usuario` / `@rol` para no filtrar IDs internos en la pantalla bloqueada. Si Expo responde `DeviceNotRegistered`, el backend limpia automáticamente ese token vencido; y si una cuenta se suspende o elimina por RabbitMQ, se purgan todos sus tokens.
+1. **Solo se persiste lo relevante.** La actividad común por canal se calcula al vuelo comparando marcas de tiempo —sin escribir un documento por cada miembro de un servidor grande—; en cambio, las menciones destacadas y los mensajes directos sí generan un aviso guardado por destinatario y se empujan en vivo por WebSocket.
+2. **Leer no borra.** Al entrar al canal o marcarlo como leído, el backend cambia el estado a leído (`read: true`), pero conserva el registro.
+3. **Dos vistas sobre el mismo inbox.** La pestaña activa filtra solo lo pendiente; la pestaña **Historial** consulta los últimos siete días paginados de a poco, diferenciando lo nuevo de lo ya leído y dejando saltar al canal o abrir el perfil público del autor desde la misma tarjeta.
 
-Dos notas importantes de alcance real: en **web** también hay soporte de avisos vía Web Notifications API, pero **únicamente cuando la pestaña está oculta** (`visibilityState === 'hidden'`); y el interruptor global **"Notificaciones push"** con botón Guardar apaga el envío externo sin alterar ni los badges ni el historial dentro de la app.
+**Regla de corte.** El marcado de un canal corta por fecha de creación hasta el timestamp del corte. Si entra una mención en el mismo milisegundo en que el usuario toca el check, no se pierde debajo del marcado anterior.
 
-> Cerramos notificaciones. En la última diapo del bloque pasamos a la otra mitad: qué ve el usuario de las demás personas.
+> Ya podemos ver y consultar lo que llegó; ahora falta darle al usuario control sobre cuánto ruido quiere escuchar.
 
 ---
 
-### Diapo `06.5` — Perfil público (HU-36), estado de actividad (HU-37) y estado personalizado (HU-38)
+### Diapo `06.3` — Preferencias y silenciamiento
 
-Esta diapositiva reúne las tres historias de perfil y tiempo real, siguiendo el flujo de arriba hacia abajo en el diagrama:
+Acá unificamos silenciar un canal o servidor y elegir la granularidad de avisos en un solo modelo de tres niveles: **Todos los mensajes (`all`)**, **Solo menciones (`mentions`)** y **Ninguno (`none`)**. Silenciar equivale directamente a fijar `none`, y reactivar borra la excepción para volver a heredar.
 
-1. **Perfil público mínimo (HU-36):** `GET /profiles/{id}/public` devuelve únicamente la proyección pública (nombre, biografía, avatar, estado de presencia y estado personalizado), nunca metadatos internos de cuenta. Lo crítico es el control de acceso en el **Gateway**: antes de consultar `profile`, exige que quien consulta comparta al menos un servidor con el objetivo —o tenga una conversación directa previa, para no romper los nombres en la bandeja de DMs—. Si no comparten nada, la cuenta no existe o está suspendida, **siempre responde `404`**, cerrando la enumeración por IDs secuenciales. Además sumamos `POST /profiles/public/batch` (hasta 50 IDs) para hidratar chats y listas de miembros sin ráfagas de requests individuales.
-2. **Presencia en tiempo real por suscripción (HU-37):** el cliente abre `WS /ws/presence`, pero al conectar el snapshot arranca vacío: **no** hacemos broadcast global de toda la plataforma. Cada componente declara con `subscribe(user_ids)` los IDs que tiene en pantalla (miembros visibles o un perfil abierto), acotado a 200 IDs y protegido por un token bucket por usuario (3 de ráfaga y 1 por segundo, retenido 60 segundos entre reconexiones) para frenar escaneos masivos.
-   - Los estados visibles son cuatro: `ONLINE` al conectar, `AWAY` automático tras inactividad sin heartbeats de interacción (barrido cada 10 s con ventana de 300 s), `DO_NOT_DISTURB` manual, y `OFFLINE`. Si el usuario elige **`INVISIBLE`**, el modo manual persiste entre reconexiones para él, pero hacia afuera **siempre se proyecta como `OFFLINE`**: nunca se filtra por el socket ni por REST.
-   - Y dejamos explicitado el límite honesto de diseño: la suscripción WebSocket en `profile` no cruza co-membresía con `server`, pero consulta solo conectados, por lo que **es un oráculo de conexión, no de existencia** (un inexistente y un desconectado/invisible son indistinguibles).
-3. **Estado personalizado (HU-38):** una frase corta de hasta **64 caracteres** (contados por code points Unicode para soportar emojis, sin saltos de línea) configurable inline desde el menú de usuario o el perfil. Persiste en su propia tabla `custom_statuses` vía `PUT` y `DELETE` idempotente, **fuera** del bloqueo optimista (`If-Match`) de `profiles` para no colisionar con ediciones de perfil. Se propaga en vivo mediante `custom_status_changed` a los observadores suscriptos, pero el `presence_snapshot` inicial lo omite a propósito para que la lectura inicial siempre entre por el REST filtrado por co-membresía. Y es totalmente independiente del modo `INVISIBLE`.
+Como resume el diagrama, la precedencia es **`canal ?? servidor ?? all`**. Primero manda la regla del canal; si no tiene, hereda la del servidor, y por defecto queda en `all`. Cuando un canal tiene regla propia, la UI muestra **"Usar configuración del servidor"** para limpiar esa excepción.
 
-> Con notificaciones, presencia y perfil queda completo todo el bloque funcional del producto. Paso ahora al resumen general de avance para el Checkpoint 3.
+En la práctica, cada nivel cambia el comportamiento así:
+
+- **`all`:** todo suma al contador, aparece en bandeja y suena en vivo.
+- **`mentions`:** pensado para canales ruidosos. Los mensajes comunes muestran solo un punto discreto sin sumar al badge rojo ni sonar; únicamente las menciones destacan.
+- **`none`:** silenciado por completo: sin alertas destacadas, sin sonido, sin sumar al contador y sin push. Sin embargo, la actividad nueva **se sigue registrando como no leída** y aparece agrupada aparte en una sección colapsable de silenciados, para que el usuario nunca pierda contexto si decide entrar a mirar.
+
+Cada cambio se persiste y se sincroniza en tiempo real por WebSocket entre todas las pestañas y dispositivos abiertos del usuario.
+
+> Todo esto gobierna lo que pasa con la aplicación abierta. Veamos ahora qué ocurre cuando el usuario guarda el teléfono o cambia de pestaña.
+
+---
+
+### Diapo `06.4` — Notificaciones push en mobile
+
+El diagrama de secuencia muestra el camino completo de principio a fin:
+
+- **Ciclo de vida del token.** Al iniciar sesión en mobile, la app pide permiso, obtiene el token con Expo y lo registra en el backend. Al cerrar sesión, lo desregistra **antes** de revocar el JWT, mientras la sesión todavía es válida. Si otra persona entra en el mismo teléfono sin haber cerrado la cuenta anterior, el backend borra el vínculo previo; y si Expo informa un dispositivo vencido o una cuenta se suspende, los tokens se purgan solos.
+- **Solo en segundo plano y sin duplicados.** Cuando la app móvil pasa a segundo plano, cierra limpiamente su WebSocket de notificaciones. Así el servidor ve al usuario sin conexiones abiertas y, si entra una mención o un mensaje directo —y ni el canal está silenciado ni el interruptor global apagado—, deriva el aviso a Expo.
+- **Privacidad y alcance.** Antes de salir hacia Expo, el extracto reemplaza menciones internas crudas por `@usuario` o `@rol` para no filtrar IDs en la pantalla bloqueada. Dos aclaraciones de alcance: en web soportamos notificaciones del navegador únicamente cuando la pestaña está oculta, y el interruptor global **"Notificaciones push"** apaga los envíos externos sin alterar ni los badges ni el historial dentro de la app.
+
+> Cerramos notificaciones. En la última diapo del bloque pasamos a la otra mitad: qué muestra el usuario hacia afuera y qué ve de los demás.
+
+---
+
+### Diapo `06.5` — Perfil público, presencia y estado personalizado
+
+Acá cerramos las tres piezas de identidad y tiempo real, siguiendo el diagrama de arriba hacia abajo:
+
+- **Perfil público mínimo.** `GET /profiles/{id}/public` expone únicamente nombre, descripción, avatar, presencia y estado personalizado, nunca datos internos de cuenta. Lo crítico es el control de acceso en el **Gateway**: antes de consultar a `profile`, exige que ambos usuarios compartan al menos un servidor o tengan un mensaje directo previo. Si no comparten nada, la cuenta no existe o está suspendida, responde siempre **`404`** para frenar la enumeración de IDs. Sumamos además un endpoint en lote (`/public/batch`) para hidratar chats y listas de miembros sin ráfagas de pedidos.
+- **Presencia por suscripción.** Al abrir `WS /ws/presence`, la lista arranca vacía: no hay broadcast global de toda la plataforma. Cada vista pide solo los IDs que tiene en pantalla, con un tope por pedido y *rate limiting* por token bucket para frenar escaneos masivos.
+- **Estados e `INVISIBLE`.** Hacia afuera se ven cuatro estados: `ONLINE` al conectar, `AWAY` automático tras un tiempo sin interacción, `DO_NOT_DISTURB` manual y `OFFLINE`. Si el usuario elige **`INVISIBLE`**, ese modo persiste entre reconexiones para él, pero hacia el resto siempre se proyecta como `OFFLINE`. Y dejamos explícito el límite de diseño: el WebSocket consulta solo conectados y no cruza co-membresía con `server`, así que un ID inexistente, uno desconectado y uno invisible son indistinguibles —es un **oráculo de conexión, no de existencia**.
+- **Estado personalizado.** Una frase corta de hasta 64 caracteres junto al nombre, editable y borrable al instante. Se guarda en su propia tabla fuera del bloqueo optimista del perfil para no colisionar con cambios de nombre o avatar, se difunde en vivo al cambiar y es independiente del modo `INVISIBLE`. Y queda **fuera del snapshot inicial** del WebSocket a propósito, para que la primera lectura entre siempre por REST filtrada por co-membresía.
+
+> Con esto queda completo todo el bloque funcional del producto. Paso ahora al balance de avance del Checkpoint 3.
 
 ---
 
 ### Diapo `Progreso` (`slide 10`) — Resumen del avance de historias de usuario
 
-Esta lámina resume dónde queda parado todo el TP al cierre del Checkpoint 3 frente a lo que teníamos en el Checkpoint 2:
+Esta diapo resume dónde queda parado todo el TP frente al cierre del Checkpoint 2:
 
-- En la entrega anterior ya contábamos con una base de **23 historias obligatorias (80 pts)** y **4 optativas (16 pts)** —96 pts acumulados—.
-- En este **Checkpoint 3** sumamos **38 historias nuevas por 151 puntos**: completamos las **9 obligatorias que restaban (24 pts)** —transferencia de servidor, categorías, permisos de rol y rol por defecto, ban/unban, notificaciones base y listado de servidores— y agregamos **29 optativas (127 pts)**.
-- Con eso alcanzamos el **100% de las historias obligatorias (32/32 · 104 pts)** y **33 de las 49 optativas (143 de 229 pts)**, llegando a **247 puntos totales de 333** (65 de 81 historias). Para un equipo de 6 integrantes, el mínimo de optativas exigido era 112 pts (216 totales), así que quedamos **31 puntos por encima del umbral**.
-
-En la tabla de la derecha se ve el reparto de los 151 puntos nuevos de este checkpoint por las seis secciones que fuimos mostrando: **Moderación y operación** lideró en volumen (11 historias, 41 pts), seguida por **Mensajería y colaboración** (6 hist., 29 pts) y **Notificaciones y presencia** (9 hist., 29 pts, con las 2 obligatorias de bandeja y 7 optativas), más **Roles y permisos** (20 pts), **Voz y video** (21 pts) y **Administración y estructura** (11 pts).
+- **La foto macro.** En este **Checkpoint 3** sumamos **38 historias nuevas por 151 puntos**. Con las **9 obligatorias que restaban** —transferencia de servidor, categorías, permisos y rol por defecto, ban y desbaneo, notificaciones base y listado de servidores— cerramos el **100% de las obligatorias: 32 de 32 (104 puntos)**. Y con 29 optativas nuevas alcanzamos **247 puntos totales** de 333, quedando **31 puntos por encima** del mínimo de 216 exigido para un equipo de 6 integrantes.
+- **Dónde estuvo el esfuerzo.** Como muestra la tabla de la derecha, **Moderación y operación** lideró el aporte del checkpoint con 41 puntos, seguida por **Mensajería y colaboración** y **Notificaciones y presencia** con 29 puntos cada una, además del trabajo de **Voz y video**, **Roles y permisos** y **Administración y estructura**.
 
 ---
 
 ### Diapo `Cierre` (`slide 11`) — Cierre
 
-Con estas 38 historias implementadas de punta a punta entre frontend web/mobile, backoffice, API Gateway y los microservicios, llegamos a **247 puntos acumulados** y el contenido requerido para el TP queda concluido. Desde ya, muchas gracias; quedamos atentos a sus preguntas o para pasar directo a la demo.
+Con estas 38 historias integradas de punta a punta entre la app web y mobile, el backoffice, el API Gateway y los microservicios, cerramos el contenido requerido para el TP con **247 puntos acumulados**. Desde ya, muchas gracias; quedamos atentos a cualquier pregunta o para pasar directo a la demo en vivo.
 
 ---
 
-## Guía rápida si hay que acortar a ~4,5–5 minutos
+## Guía rápida si hay que acortar a ~3,5–4 minutos
 
-Si el reloj apura, seguí exactamente esta versión compacta:
-1. **`06` Resumen (~15 s):** solo nombrá los dos pilares (Notificaciones controlables + Presencia/Perfil en vivo sin exponer datos privados).
-2. **`06.1` Bandeja (~45 s):** mostrá campana + agrupación + `✓` / "Marcar todo" + regla `VIEW_CHANNELS` + reloj (`max` cliente / `min` backend).
-3. **`06.2` Historial (~40 s):** leer cambia `read: true` sin borrar; pestaña Historial a 7 días paginada; regla de corte `createdAt <= upTo`.
-4. **`06.3` Preferencias/Mutes (~45 s):** fórmula `canal ?? servidor ?? all`; diferencia entre `mentions` (punto pasivo para tráfico común, alerta solo en mención) y `none` (silenciado aparte pero mantiene no leído).
-5. **`06.4` Push (~45 s):** token Expo al loguear y desregistro *antes* del logout; mobile cierra WS en `background` → `count == 0` dispara push con texto saneado `<@id>` → `@usuario`; toggle global no toca badges/historial.
-6. **`06.5` Perfil/Presencia/Estado (~60 s):** co-membresía + excepción DM en Gateway (si no → `404`); `WS /ws/presence` por suscripción (3 ráfaga + 1/s, 200 IDs, `INVISIBLE` = `OFFLINE`, oráculo de conexión no existencia); `custom_status` 64 chars fuera de `If-Match` y sin entrar en `presence_snapshot`.
-7. **`Progreso` + `Cierre` (~40 s):** `38` HUs nuevas (`151 pts`), `32/32` obligatorias (`104 pts`), `143` optativas (`247 pts` totales sobre mínimo de `216`), tabla por secciones de un vistazo y cierre.
+Si el reloj apura, usá estos puntos cortos en cada diapo:
+
+1. **`06` Resumen (~15 s):** venimos de voz en mobile; cerramos el bloque funcional con dos ejes: notificaciones configurables y perfil/presencia en vivo cuidando la privacidad.
+2. **`06.1` Bandeja (~35 s):** campana fija con badge, bandeja por servidor con salto directo, `✓` y "Marcar todo"; el autor no se auto-notifica, cruce `max`/`min` de reloj, y filtro `VIEW_CHANNELS` contrastado contra `server`.
+3. **`06.2` Historial (~30 s):** solo menciones y DMs se guardan por usuario; leer marca `read: true` sin borrar; pestaña Historial paginada a 7 días; corte por fecha `<= upTo` para no tapar mensajes simultáneos.
+4. **`06.3` Preferencias (~35 s):** precedencia `canal ?? servidor ?? all`; `mentions` deja punto discreto sin sumar ni sonar; `none` silencia avisos y push pero mantiene la actividad en una sección colapsable; sincronizado por WS.
+5. **`06.4` Push (~35 s):** token Expo al entrar y desregistro *antes* del logout; en segundo plano mobile cierra el WS → 0 sockets abiertos dispara push saneando `<@id>` a `@usuario`; web solo notifica con pestaña oculta y el toggle global no toca badges ni historial.
+6. **`06.5` Perfil y presencia (~50 s):** Gateway exige co-membresía o DM previo y si no responde `404` uniforme; `WS /ws/presence` solo por suscripción con rate limit, `INVISIBLE` = `OFFLINE` (oráculo de conexión, no existencia); estado personalizado de 64 chars fuera del bloqueo optimista del perfil y fuera del snapshot inicial.
+7. **`Progreso` + `Cierre` (~30 s):** `38` historias nuevas (`151 pts`), `32/32` obligatorias cerradas (`104 pts`), `247 pts` totales (`+31` sobre el mínimo de `216`), tabla liderada por Moderación/Mensajería/Notificaciones y pase a preguntas o demo en vivo.
