@@ -1,6 +1,6 @@
 # Estado de las Historias de Usuario — Discordia
 
-**Actualizado:** 2026-11-15 (tener en cuenta que hay otros miembros del equipo que pueden haber avanzado en paralelo y no tienen acceso a este documento).
+**Actualizado:** 2026-11-17 (tener en cuenta que hay otros miembros del equipo que pueden haber avanzado en paralelo y no tienen acceso a este documento).
 
 Seguimiento de todas las HU: completadas y pendientes. Para ver el detalle y criterios de aceptación de cada historia, ver [Historias de Usuario](historias-usuario.md).
 
@@ -53,7 +53,7 @@ Los puntos no reemplazan los Requisitos No Funcionales: todos los RNF del enunci
 
 ---
 
-## Historias optativas — 131 / 229 pts
+## Historias optativas — 141 / 229 pts
 
 El puntaje optativo amplía las capacidades de la plataforma. La cantidad de puntos a implementar depende del tamaño del grupo (ver tabla de mínimos más abajo).
 
@@ -64,7 +64,7 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 35 | [Autenticación de dos factores (2FA)](historias-usuario.md#hu-35-autenticación-de-dos-factores-2fa) | Usuarios | 5 | - | Login con email y contraseña |
 | 36 | [Visualización de perfil público](historias-usuario.md#hu-36-visualización-de-perfil-público) | Perfil | 2 | 3 | Visualización de perfil propio |
 | 37 | [Estado de actividad](historias-usuario.md#hu-37-estado-de-actividad) | Perfil | 5 | 3 | Mensajería en tiempo real y sesiones autenticadas |
-| 38 | [Estado personalizado](historias-usuario.md#hu-38-estado-personalizado) | Perfil | 2 | - | Edición de perfil |
+| 38 | [Estado personalizado](historias-usuario.md#hu-38-estado-personalizado) | Perfil | 2 | 3 | Edición de perfil |
 | 39 | [Administrar configuración del servidor](historias-usuario.md#hu-39-administrar-configuración-del-servidor) | Servidores | 3 | 3 | Crear servidor |
 | 40 | [Eliminar servidor](historias-usuario.md#hu-40-eliminar-servidor) | Servidores | 5 | 2 | Administrar configuración del servidor |
 | 41 | [Reordenar canales](historias-usuario.md#hu-41-reordenar-canales) | Canales | 2 | 3 | Organizar canales en categorías |
@@ -95,7 +95,7 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 66 | [Notificaciones push](historias-usuario.md#hu-66-notificaciones-push) | Notificaciones | 5 | 3 | Configurar preferencias y aplicación mobile |
 | 67 | [Centro de notificaciones con historial](historias-usuario.md#hu-67-centro-de-notificaciones-con-historial) | Notificaciones | 5 | 3 | Notificaciones obligatorias |
 | 68 | [Eliminar servidor desde el backoffice](historias-usuario.md#hu-68-eliminar-servidor-desde-el-backoffice) | Administración | 5 | 3 | Listado de servidores y eliminación en cascada |
-| 69 | [Suspender servidor completo](historias-usuario.md#hu-69-suspender-servidor-completo) | Administración | 5 | - | Listado de servidores de la plataforma |
+| 69 | [Suspender servidor completo](historias-usuario.md#hu-69-suspender-servidor-completo) | Administración | 5 | 3 | Listado de servidores de la plataforma |
 | 70 | [Ver métricas de actividad de un servidor](historias-usuario.md#hu-70-ver-métricas-de-actividad-de-un-servidor) | Métricas | 5 | - | Eventos de membresía y mensajería |
 | 71 | [Ver métricas globales de la plataforma](historias-usuario.md#hu-71-ver-métricas-globales-de-la-plataforma) | Métricas | 5 | - | Eventos globales y acceso de staff |
 | 72 | [Gráfico de crecimiento de miembros](historias-usuario.md#hu-72-gráfico-de-crecimiento-de-miembros) | Métricas | 3 | - | Métricas de actividad de un servidor |
@@ -107,15 +107,15 @@ El puntaje optativo amplía las capacidades de la plataforma. La cantidad de pun
 | 78 | [Comprar puntos](historias-usuario.md#hu-78-comprar-puntos) | Monetización | 8 | - | Integración con pagos externos |
 | 79 | [Usar puntos para boostear un servidor](historias-usuario.md#hu-79-usar-puntos-para-boostear-un-servidor) | Monetización | 13 | - | Comprar puntos y membresía de servidor |
 | 80 | [Ver beneficios de servidor boosteado](historias-usuario.md#hu-80-ver-beneficios-de-servidor-boosteado) | Monetización | 3 | - | Usar puntos para boostear y gestionar emojis |
-| 81 | [Ver expediente de investigación de usuario o servidor](historias-usuario.md#hu-81-ver-expediente-de-investigación-de-usuario-o-servidor) | Administración | 5 | - | Reportar mensaje o usuario |
+| 81 | [Ver expediente de investigación de usuario o servidor](historias-usuario.md#hu-81-ver-expediente-de-investigación-de-usuario-o-servidor) | Administración | 5 | 3 | Reportar mensaje o usuario |
 
-**Puntaje optativo completado: 131 pts** (de 229 pts disponibles en el catálogo).
+**Puntaje optativo completado: 143 pts** (de 229 pts disponibles en el catálogo).
 
 ---
 
 ## Resumen de avance y puntaje
 
-**Total implementado de punta a punta: 235 pts** (104 obligatorios + 131 optativos).
+**Total implementado de punta a punta: 247 pts** (104 obligatorios + 143 optativos).
 
 ## Mínimo de puntos por tamaño de equipo
 

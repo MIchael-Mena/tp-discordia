@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-15",
+  "last_updated": "2026-11-17",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -681,6 +681,63 @@
       "pull_request": "notifications #18; web-client #214",
       "exception_note": null,
       "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-090",
+      "checkpoint": 3,
+      "title": "HU 81: ver expediente de investigacion de usuario o servidor (infra + text-channel + auth-service + server + gateway + backoffice)",
+      "status": "completed",
+      "start_date": "2026-11-17",
+      "severity": "should",
+      "origin": [
+        "HU-81"
+      ],
+      "context": "Implementación end-to-end de la HU optativa 81 (Ver expediente de investigación de usuario o servidor, 5 pts) cubriendo el CA 1 en sentido amplio con historial global de cuentas junto a la auditoría de servidores. infra (#50): actualización de ADR-015 y fichas de auth-service y gateway. auth-service (#39, spec 002): migración Alembic 0006 con tabla append-only account_status_events e índice compuesto (account_id, created_at DESC, id DESC); accounts_repository.set_status con SELECT ... FOR UPDATE (False solo si cuenta inexistente -> 404, True si existe escribiendo transición solo cuando previous_status != status manteniendo 200 idempotente sin duplicados); GET /account/{id}/status-events con LEFT JOIN accounts para actor_username y paginación clamped 1..100 (ruff limpio, lint-imports 1 kept / 0 broken, 290 pytest passed contra Postgres 16 con 97.97% cobertura incluyendo test_migrate_sh en 0006). gateway (#101, spec 046): GET /admin/accounts/{id}/status-events protegido por require_superautorization, helper _auth_identity_headers reenviando X-User-Id en PATCH/GET de cuentas (ruff limpio, 672 pytest passed, 93.95% cobertura). backoffice (#14, spec 004): cliente listAccountStatusEvents, helpers en src/core/dossiers.ts, componente AccountStatusEventList.tsx y actualización de src/app/admin/users/[id].tsx con sección Moderación de cuenta, respaldo actor_username, contador Suspensiones / reactivaciones y acción directa Suspender (AdminModal) / Reactivar que refresca loadStatusEvents(0, pageSize) al instante (tsc --noEmit limpio, expo lint 0 errors, 15 suites / 99 tests Jest passed con 90.91% statements y 93.06% lines).",
+      "pull_request": "infra #50; text-channel #43; auth-service #39; server #60; gateway #101; backoffice #14",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-091",
+      "checkpoint": 3,
+      "title": "web-client: refactor de responsividad, control de viewport 100dvh/overscroll, scrolls independientes y gestion del teclado movil",
+      "status": "completed",
+      "start_date": "2026-11-17",
+      "severity": "should",
+      "origin": [
+        "HU-14",
+        "HU-15",
+        "HU-16",
+        "HU-42",
+        "HU-44",
+        "HU-46",
+        "HU-47"
+      ],
+      "context": "Refactor transversal de UI/UX y responsividad en web-client (PR #230, spec 063). Viewport Web 100dvh con interactive-widget=resizes-content y overscroll-behavior: none en +html.tsx y _layout.tsx; responsiveLayout.ts (SPLIT_MIN_WIDTH = 768, 5 tramos, resolveWebScrollContainStyle/webScrollContainStyle aplicado exclusivamente a style de ScrollView); minHeight: 0 y overflow: hidden en estilos flex + attachmentStyles.imageBox 4/3 fluido; useKeyboardVisible colapsando insets.bottom en MessageComposer/MessageEditor; KeyboardAvoidingView en raiz de ChannelScreen (con redireccion a /pages?openServer=...&openChannel=... cuando split pasa a true) y DM movil (!split) con topInset en Sidebar y DirectChatHeader; proteccion de isNearBottomRef en MessageList ante eventos onScroll intermedios durante contraccion. tsc --noEmit limpio, expo lint limpio y 232 suites / 2154 tests Jest pasando.",
+      "pull_request": "web-client #230",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-092",
+      "checkpoint": 3,
+      "title": "HU 38: estado personalizado de perfil (profile + gateway + web-client)",
+      "status": "completed",
+      "start_date": "2026-11-17",
+      "severity": "should",
+      "origin": [
+        "HU-38"
+      ],
+      "context": "Implementación de la HU optativa 38 (Estado personalizado, 2 pts) en profile (#45), gateway (#106) y web-client (#231). profile: ADR-012, spec 005-custom-status, CustomStatusRepository y PostgresCustomStatusRepository sobre custom_statuses (upsert actualizando text y updated_at), PUT/DELETE /profiles/{user_id}/custom-status, proyección custom_status en lecturas de perfil y frame custom_status_changed por WS /ws/presence (ruff limpio, pytest 294 passed / 2 skipped sin TEST_DATABASE_URL con 87.41% cobertura, behave 8 features / 55 scenarios / 269 steps). gateway: spec 047-custom-status-relay y rutas explícitas PUT/DELETE en app/profiles.py con X-User-Id (ruff limpio, pytest 707 passed, 94.00% cobertura). web-client: spec 064-custom-status-ui, customStatus.ts, extracción de PresenceContext a src/core/presence/PresenceContext.ts, authSlice/authThunks, caché v3 con refreshProfileEntries anti-ráfaga en resolveProfileName.ts, useMemberCustomStatuses, CustomStatusPopup e integración en UserMenu/ProfileView/PublicProfilePopup/MembersPopup (tsc --noEmit limpio, expo lint 0 errors/warnings, jest 236 suites / 2191 tests passed). Pendiente únicamente verificación E2E en vivo con stack Docker/PostgreSQL levantado.",
+      "pull_request": "profile #45; gateway #106; web-client #231",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+        {
+          "description": "Ejecutar verificación end-to-end en vivo de los 3 CA de HU 38 contra Postgres (incluyendo test_postgres_profile_repository.py con TEST_DATABASE_URL), gateway y web-client levantados antes de marcar HU 38 en estado-historias.md.",
+          "severity": "should",
+          "resolved": false
+        }
+      ]
     }
   ]
 }
