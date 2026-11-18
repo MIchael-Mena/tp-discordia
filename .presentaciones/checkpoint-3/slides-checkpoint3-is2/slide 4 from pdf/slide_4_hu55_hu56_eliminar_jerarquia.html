@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 4 · HU-55 y HU-56 Eliminar y jerarquía</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-canvas: #061118;
+      --bg-box: #13303e;
+      --bg-node: #0d2430;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background-color: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lienzo 16:9 (1200 x 675) */
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      background-color: var(--bg-slide);
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-size: 2.65rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-title);
+      margin-bottom: 10px;
+    }
+
+    .slide-title.hu-detail {
+      font-size: 2.3rem;
+      margin-bottom: 8px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.12rem;
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+
+    /* Layout de 2 columnas (Texto izquierda + Diagrama derecha) */
+    .two-col-body {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 38px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Layout Slide 1 sin imagen (Ancho completo limpio) */
+    .full-width-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .hu-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 44px;
+      margin: auto 0;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: auto 0;
+    }
+
+    .hu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hu-item-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .purple-bar {
+      width: 4px;
+      height: 24px;
+      background-color: var(--purple);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .hu-item-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .hu-item-desc {
+      padding-left: 16px;
+      font-size: 0.94rem;
+      line-height: 1.48;
+      color: var(--text-body);
+    }
+
+    .rules-footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 3px solid var(--border-divider);
+    }
+
+    .rules-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .rules-text {
+      font-size: 0.9rem;
+      line-height: 1.42;
+      color: var(--text-body);
+    }
+
+    /* Contenedor de Diagrama a la derecha */
+    .diagram-box {
+      background-color: var(--bg-box);
+      border: 1.5px solid var(--border-box);
+      border-radius: 14px;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .box-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .box-tag.cyan {
+      background: rgba(81, 213, 200, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(81, 213, 200, 0.45);
+    }
+
+    .box-tag.purple {
+      background: rgba(152, 122, 234, 0.18);
+      color: #cbb6ff;
+      border: 1px solid rgba(152, 122, 234, 0.5);
+    }
+
+    .box-tag.amber {
+      background: rgba(226, 187, 112, 0.16);
+      color: var(--amber);
+      border: 1px solid rgba(226, 187, 112, 0.5);
+    }
+
+    @media print {
+      @page {
+        size: 1200px 675px;
+        margin: 0;
+      }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+    <section class="slide-frame">
+      <div>
+        <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 02.3 &nbsp;·&nbsp; HISTORIA DE USUARIO HU-55 Y HU-56</div>
+        <h2 class="slide-title hu-detail">Eliminar rol (HU-55) y jerarquía (HU-56)</h2>
+        <p class="slide-subtitle">La posición del rol decide qué rol pesa más y quién puede tocar a quién.</p>
+      </div>
+
+      <div class="two-col-body">
+        <div class="left-column">
+          <div class="hu-list">
+            <div class="hu-item">
+              <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">Eliminar un rol (HU-55)</h3></div>
+              <p class="hu-item-desc">Al borrarlo, ningún miembro conserva el rol y se eliminan también sus overrides de canal. Las posiciones restantes se renumeran sin huecos.</p>
+            </div>
+            <div class="hu-item">
+              <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">Reordenar la jerarquía (HU-56)</h3></div>
+              <p class="hu-item-desc">Arrastrar un rol a otra posición (0 = el más alto). El nuevo orden se aplica de inmediato para resolver conflictos entre roles.</p>
+            </div>
+            <div class="hu-item">
+              <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">Nadie escala por encima de su rol</h3></div>
+              <p class="hu-item-desc">Un administrador no dueño solo actúa sobre roles por debajo del suyo y no puede dejar un rol sobre su rol más alto (403).</p>
+            </div>
+          </div>
+
+          <div class="rules-footer">
+            <div class="rules-label">Reglas relevantes</div>
+            <p class="rules-text">No se elimina el rol por defecto (409) ni el único rol administrador propio (403). El Owner puede mover o borrar cualquier rol.</p>
+          </div>
+        </div>
+
+        <div class="diagram-box">
+          <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+            <span class="text-base font-bold text-white">Diagrama de Estados · Jerarquía de Roles</span>
+            <span class="box-tag amber">Posición 0 = tope</span>
+          </div>
+
+          <div class="flex-1 flex flex-col items-center justify-center gap-2.5 my-2">
+            <div class="w-full max-w-[470px] flex items-center gap-3">
+              <div class="w-[92px] text-[11px] font-bold text-[#987aea] text-center">1. ESTADO INICIAL</div>
+              <div class="flex-1 flex gap-1.5 text-xs font-bold">
+                <div class="flex-1 px-1 py-1.5 rounded-lg bg-[#13303e] border border-[#2e4b59] text-white text-center">0 Admins</div>
+                <div class="flex-1 px-1 py-1.5 rounded-lg bg-[#13303e] border border-[#2e4b59] text-white text-center">1 Mods</div>
+                <div class="flex-1 px-1 py-1.5 rounded-lg bg-[#13303e] border border-[#2e4b59] text-white text-center">2 Helpers</div>
+                <div class="flex-1 px-1 py-1.5 rounded-lg bg-[#13303e] border border-[#2e4b59] text-white text-center">3 Guests</div>
+              </div>
+            </div>
+
+            <svg width="26" height="22" viewBox="0 0 24 24" fill="none" stroke="#987aea" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m0 0l-5-5m5 5l5-5"/></svg>
+
+            <div class="w-full max-w-[470px] flex items-center gap-3">
+              <div class="w-[92px] text-[11px] font-bold text-[#987aea] text-center">2. REORDENAR HU-56<br/>Helpers al hueco 0</div>
+              <div class="flex-1 flex gap-1.5 text-xs font-bold">
+                <div class="flex-1 px-1 py-1.5 rounded-lg bg-[#987aea]/30 border border-[#987aea] text-white text-center">0 Helpers</div>
+                <div class="flex-1 px-1 py-1.5 rounded-lg bg-[#13303e] border border-[#2e4b59] text-white text-center">1 Admins</div>
+                <div class="flex-1 px-1 py-1.5 rounded-lg bg-[#13303e] border border-[#2e4b59] text-white text-center">2 Mods</div>
+                <div class="flex-1 px-1 py-1.5 rounded-lg bg-[#13303e] border border-[#2e4b59] text-white text-center">3 Guests</div>
+              </div>
+            </div>
+
+            <svg width="26" height="22" viewBox="0 0 24 24" fill="none" stroke="#e2bb70" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m0 0l-5-5m5 5l5-5"/></svg>
+
+            <div class="w-full max-w-[470px] flex items-center gap-3">
+              <div class="w-[92px] text-[11px] font-bold text-[#e2bb70] text-center">3. ELIMINAR HU-55<br/>Mods</div>
+              <div class="flex-1 flex gap-1.5 text-xs font-bold">
+                <div class="flex-1 px-1 py-1.5 rounded-lg bg-[#13303e] border border-[#2e4b59] text-white text-center">0 Helpers</div>
+                <div class="flex-1 px-1 py-1.5 rounded-lg bg-[#13303e] border border-[#2e4b59] text-white text-center">1 Admins</div>
+                <div class="flex-1 px-1 py-1.5 rounded-lg bg-[#13303e] border border-[#e2bb70] text-white text-center">2 Guests</div>
+                <div class="flex-1 px-1 py-1.5 rounded-lg border border-dashed border-[#2e4b59] text-[#7897a6] text-center line-through">Mods</div>
+              </div>
+            </div>
+
+            <div class="w-full max-w-[470px] rounded-xl bg-[#0b1f2a] border-2 border-[#51d5c8] p-2.5 text-center mt-1">
+              <div class="text-sm font-bold text-[#51d5c8]">Renumeración compacta 0..n-2</div>
+              <div class="text-xs text-[#b8cbd6] mt-0.5">Asignaciones y overrides del rol borrado se eliminan en cascada</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+</body>
+</html>

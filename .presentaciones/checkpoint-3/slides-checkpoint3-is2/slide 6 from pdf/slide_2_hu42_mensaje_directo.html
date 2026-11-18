@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 2 · HU-42 Mensaje directo</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-canvas: #061118;
+      --bg-box: #13303e;
+      --bg-node: #0d2430;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background-color: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lienzo 16:9 (1200 x 675) */
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      background-color: var(--bg-slide);
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-size: 2.65rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-title);
+      margin-bottom: 10px;
+    }
+
+    .slide-title.hu-detail {
+      font-size: 2.3rem;
+      margin-bottom: 8px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.12rem;
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+
+    /* Layout de 2 columnas (Texto izquierda + Diagrama derecha) */
+    .two-col-body {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 38px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Layout Slide 1 sin imagen (Ancho completo limpio) */
+    .full-width-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .hu-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 44px;
+      margin: auto 0;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: auto 0;
+    }
+
+    .hu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hu-item-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .purple-bar {
+      width: 4px;
+      height: 24px;
+      background-color: var(--purple);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .hu-item-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .hu-item-desc {
+      padding-left: 16px;
+      font-size: 0.94rem;
+      line-height: 1.48;
+      color: var(--text-body);
+    }
+
+    .rules-footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 3px solid var(--border-divider);
+    }
+
+    .rules-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .rules-text {
+      font-size: 0.9rem;
+      line-height: 1.42;
+      color: var(--text-body);
+    }
+
+    /* Contenedor de Diagrama a la derecha */
+    .diagram-box {
+      background-color: var(--bg-box);
+      border: 1.5px solid var(--border-box);
+      border-radius: 14px;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .box-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .box-tag.cyan {
+      background: rgba(81, 213, 200, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(81, 213, 200, 0.45);
+    }
+
+    .box-tag.purple {
+      background: rgba(152, 122, 234, 0.18);
+      color: #cbb6ff;
+      border: 1px solid rgba(152, 122, 234, 0.5);
+    }
+
+    .box-tag.amber {
+      background: rgba(226, 187, 112, 0.16);
+      color: var(--amber);
+      border: 1px solid rgba(226, 187, 112, 0.5);
+    }
+
+    @media print {
+      @page {
+        size: 1200px 675px;
+        margin: 0;
+      }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+    <section class="slide-frame">
+      <div>
+        <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 04.1 &nbsp;·&nbsp; HISTORIA DE USUARIO HU-42</div>
+        <h2 class="slide-title hu-detail">Mensaje directo (HU-42)</h2>
+        <p class="slide-subtitle">Conversaciones 1 a 1 fuera de los servidores, con autorización y almacenamiento propios.</p>
+      </div>
+
+      <div class="two-col-body">
+        <div class="left-column">
+          <div class="hu-list">
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Conversación idempotente por par</h3>
+              </div>
+              <p class="hu-item-desc">
+                El id es determinístico (dm:{min}:{max}): abrir una conversación existente la recupera, y el primer mensaje la crea sobre la marcha.
+              </p>
+            </div>
+
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Tiempo real o pendiente de lectura</h3>
+              </div>
+              <p class="hu-item-desc">
+                Si el destinatario está conectado, recibe el frame por WebSocket; si no, el mensaje queda persistido y lo ve por historial.
+              </p>
+            </div>
+
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Historial e identidad separados de los canales</h3>
+              </div>
+              <p class="hu-item-desc">
+                Los DMs viven en la colección direct_messages y solo los dos participantes pueden leer, conectarse o enviar.
+              </p>
+            </div>
+          </div>
+
+          <div class="rules-footer">
+            <div class="rules-label">Reglas relevantes</div>
+            <p class="rules-text">
+              No hay mensajes en blanco, el máximo es de 2000 caracteres y no se puede abrir una conversación con uno mismo. El servicio server nunca se consulta.
+            </p>
+          </div>
+        </div>
+
+        <div class="diagram-box">
+          <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+            <span class="text-base font-bold text-white">Diagrama de Secuencia · Envío de un DM</span>
+            <span class="box-tag cyan">Tiempo real / Pendiente</span>
+          </div>
+
+          <div class="flex-1 flex items-center justify-center my-2">
+            <svg viewBox="0 0 540 340" class="w-full h-full">
+<defs><marker id="arr-cyan-2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#51d5c8" /></marker><marker id="arr-purple-2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#987aea" /></marker><marker id="arr-amber-2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#e2bb70" /></marker></defs><line x1="90" y1="54" x2="90" y2="325" stroke="#2e4b59" stroke-width="2" stroke-dasharray="6,6" /><line x1="270" y1="54" x2="270" y2="325" stroke="#2e4b59" stroke-width="2" stroke-dasharray="6,6" /><line x1="450" y1="54" x2="450" y2="325" stroke="#2e4b59" stroke-width="2" stroke-dasharray="6,6" /><rect x="20" y="10" width="140" height="42" rx="8" fill="#0b1f2a" stroke="#987aea" stroke-width="2" /><text x="90" y="36" text-anchor="middle" fill="#f4f7f9" font-size="14" font-weight="700">Remitente</text><rect x="200" y="10" width="140" height="42" rx="8" fill="#0b1f2a" stroke="#51d5c8" stroke-width="2" /><text x="270" y="36" text-anchor="middle" fill="#51d5c8" font-size="14" font-weight="700">text-channel</text><rect x="380" y="10" width="140" height="42" rx="8" fill="#0b1f2a" stroke="#e2bb70" stroke-width="2" /><text x="450" y="36" text-anchor="middle" fill="#f4f7f9" font-size="14" font-weight="700">Destinatario</text><line x1="90" y1="88" x2="260" y2="88" stroke="#987aea" stroke-width="2.5" marker-end="url(#arr-purple-2)" /><text x="180" y="77" text-anchor="middle" fill="#f4f7f9" font-size="13" font-weight="600">1. Envía el mensaje al destinatario</text><text x="270" y="122" text-anchor="middle" fill="#51d5c8" font-size="12.5">Chequea bloqueo y crea/recupera dm:{min}:{max}</text><text x="270" y="138" text-anchor="middle" fill="#51d5c8" font-size="12.5">Guarda en la colección direct_messages</text><rect x="25" y="150" width="490" height="80" rx="10" fill="#0b1f2a" stroke="#51d5c8" stroke-width="1.5" stroke-opacity="0.7" /><text x="42" y="171" fill="#51d5c8" font-size="12" font-weight="800">SI EL DESTINATARIO ESTÁ CONECTADO</text><line x1="270" y1="204" x2="440" y2="204" stroke="#51d5c8" stroke-width="2.5" marker-end="url(#arr-cyan-2)" /><text x="360" y="193" text-anchor="middle" fill="#f4f7f9" font-size="13" font-weight="600">2a. Frame en tiempo real (WS)</text><text x="270" y="222" text-anchor="middle" fill="#b8cbd6" font-size="12.5">El remitente recibe también el eco de confirmación</text><rect x="25" y="240" width="490" height="84" rx="10" fill="#0b1f2a" stroke="#e2bb70" stroke-width="1.5" stroke-opacity="0.55" /><text x="42" y="261" fill="#e2bb70" font-size="12" font-weight="800">SI NO ESTÁ CONECTADO</text><text x="270" y="286" text-anchor="middle" fill="#b8cbd6" font-size="12.5">El mensaje queda guardado, pendiente de lectura</text><text x="270" y="306" text-anchor="middle" fill="#b8cbd6" font-size="12">Llega por historial o reanudación · MessageCreated → notifications</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+</body>
+</html>

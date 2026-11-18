@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 5 · HU-61</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-canvas: #061118;
+      --bg-box: #13303e;
+      --bg-node: #0d2430;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background-color: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lienzo 16:9 (1200 x 675) */
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      background-color: var(--bg-slide);
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-size: 2.65rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-title);
+      margin-bottom: 10px;
+    }
+
+    .slide-title.hu-detail {
+      font-size: 2.3rem;
+      margin-bottom: 8px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.12rem;
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+
+    /* Layout de 2 columnas (Texto izquierda + Diagrama derecha) */
+    .two-col-body {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 38px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Layout Slide 1 sin imagen (Ancho completo limpio) */
+    .full-width-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .hu-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 44px;
+      margin: auto 0;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: auto 0;
+    }
+
+    .hu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hu-item-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .purple-bar {
+      width: 4px;
+      height: 24px;
+      background-color: var(--purple);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .hu-item-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .hu-item-desc {
+      padding-left: 16px;
+      font-size: 0.94rem;
+      line-height: 1.48;
+      color: var(--text-body);
+    }
+
+    .rules-footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 3px solid var(--border-divider);
+    }
+
+    .rules-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .rules-text {
+      font-size: 0.9rem;
+      line-height: 1.42;
+      color: var(--text-body);
+    }
+
+    /* Contenedor de Diagrama a la derecha */
+    .diagram-box {
+      background-color: var(--bg-box);
+      border: 1.5px solid var(--border-box);
+      border-radius: 14px;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .box-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .box-tag.cyan {
+      background: rgba(81, 213, 200, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(81, 213, 200, 0.45);
+    }
+
+    .box-tag.purple {
+      background: rgba(152, 122, 234, 0.18);
+      color: #cbb6ff;
+      border: 1px solid rgba(152, 122, 234, 0.5);
+    }
+
+    .box-tag.amber {
+      background: rgba(226, 187, 112, 0.16);
+      color: var(--amber);
+      border: 1px solid rgba(226, 187, 112, 0.5);
+    }
+
+    @media print {
+      @page {
+        size: 1200px 675px;
+        margin: 0;
+      }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+    <section class="slide-frame">
+      <div>
+        <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 03.4 &nbsp;·&nbsp; MODERADORES Y STAFF &nbsp;·&nbsp; HISTORIA DE USUARIO HU-61</div>
+        <h2 class="slide-title hu-detail">Registro de auditoría (HU-61)</h2>
+        <p class="slide-subtitle">Historial inmutable de las decisiones disciplinarias: quién, a quién, cuándo y por qué.</p>
+      </div>
+
+      <div class="two-col-body">
+        <div class="left-column">
+          <div class="hu-list">
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Qué se registra</h3>
+              </div>
+              <p class="hu-item-desc">
+                BAN, UNBAN, KICK, MUTE y UNMUTE, solo cuando la acción se completa. Cada entrada guarda actor, objetivo, motivo o duración e instante.
+              </p>
+            </div>
+
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Misma transacción, solo agregar</h3>
+              </div>
+              <p class="hu-item-desc">
+                El registro se escribe en la misma transacción que la acción y no hay rutas para editar ni borrar entradas. UNMUTE solo si había un silencio vigente.
+              </p>
+            </div>
+
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Consulta ordenada y filtrable</h3>
+              </div>
+              <p class="hu-item-desc">
+                Listado de más reciente a más antiguo, con paginación (hasta 100 por página) y filtro por una o varias acciones.
+              </p>
+            </div>
+          </div>
+
+          <div class="rules-footer">
+            <div class="rules-label">Reglas relevantes</div>
+            <p class="rules-text">
+              Lo ven el owner, administradores y miembros con VIEW_AUDIT_LOG, BAN, KICK o MUTE; el resto recibe 403. La autorización se evalúa antes que filtros y paginación.
+            </p>
+          </div>
+        </div>
+
+        <div class="diagram-box">
+          <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+            <span class="text-base font-bold text-white">Maqueta · Vista del Registro</span>
+            <span class="box-tag purple">Append-only</span>
+          </div>
+
+          <div class="flex-1 flex items-center justify-center my-2">
+            <svg viewBox="0 0 540 340" class="w-full h-full">
+              <defs><marker id="arr-cyan-5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#51d5c8" /></marker><marker id="arr-purple-5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#987aea" /></marker><marker id="arr-amber-5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#e2bb70" /></marker></defs>
+<rect x="10" y="6" width="520" height="328" rx="9" fill="#0d2430" stroke="#2e4b59" stroke-width="1.8" stroke-opacity="1" /><text x="26" y="30" text-anchor="start" fill="#f4f7f9" font-size="13.5" font-weight="700">Registro de auditoría · Server</text><text x="514" y="30" text-anchor="end" fill="#7897a6" font-size="10.5" font-weight="700">VIEW_AUDIT_LOG</text><rect x="26" y="42" width="52" height="20" rx="5" fill="#3d2326" stroke="#e58b8b" stroke-width="1.2" /><text x="52.0" y="56" text-anchor="middle" fill="#e58b8b" font-size="10.5" font-weight="800">BAN</text><rect x="92" y="42" width="56" height="20" rx="5" fill="#0f3a3d" stroke="#51d5c8" stroke-width="1.2" /><text x="120.0" y="56" text-anchor="middle" fill="#51d5c8" font-size="10.5" font-weight="800">UNBAN</text><rect x="158" y="42" width="52" height="20" rx="5" fill="#2a2150" stroke="#987aea" stroke-width="1.2" /><text x="184.0" y="56" text-anchor="middle" fill="#987aea" font-size="10.5" font-weight="800">KICK</text><rect x="224" y="42" width="52" height="20" rx="5" fill="#3b3320" stroke="#e2bb70" stroke-width="1.2" /><text x="250.0" y="56" text-anchor="middle" fill="#e2bb70" font-size="10.5" font-weight="800">MUTE</text><rect x="290" y="42" width="64" height="20" rx="5" fill="#0f3a3d" stroke="#51d5c8" stroke-width="1.2" /><text x="322.0" y="56" text-anchor="middle" fill="#51d5c8" font-size="10.5" font-weight="800">UNMUTE</text><text x="26" y="92" text-anchor="start" fill="#7897a6" font-size="10.5" font-weight="800">ACCIÓN</text><text x="100" y="92" text-anchor="start" fill="#7897a6" font-size="10.5" font-weight="800">ACTOR → OBJETIVO</text><text x="268" y="92" text-anchor="start" fill="#7897a6" font-size="10.5" font-weight="800">MOTIVO / DURACIÓN</text><text x="514" y="92" text-anchor="end" fill="#7897a6" font-size="10.5" font-weight="800">CUÁNDO</text><line x1="22" y1="99" x2="518" y2="99" stroke="#2e4b59" stroke-width="1.5" /><rect x="26" y="108" width="52" height="20" rx="5" fill="#3d2326" stroke="#e58b8b" stroke-width="1.2" /><text x="52.0" y="122" text-anchor="middle" fill="#e58b8b" font-size="10.5" font-weight="800">BAN</text><text x="100" y="122" text-anchor="start" fill="#f4f7f9" font-size="12" font-weight="600">Moderador → Usuario</text><text x="268" y="122" text-anchor="start" fill="#b8cbd6" font-size="12" font-weight="500">motivo: spam</text><text x="514" y="122" text-anchor="end" fill="#b8cbd6" font-size="12" font-weight="500">hace 5 min</text><line x1="22" y1="136" x2="518" y2="136" stroke="#2e4b59" stroke-width="1" stroke-opacity="0.6" /><rect x="26" y="144" width="52" height="20" rx="5" fill="#3b3320" stroke="#e2bb70" stroke-width="1.2" /><text x="52.0" y="158" text-anchor="middle" fill="#e2bb70" font-size="10.5" font-weight="800">MUTE</text><text x="100" y="158" text-anchor="start" fill="#f4f7f9" font-size="12" font-weight="600">Moderador → Usuario</text><text x="268" y="158" text-anchor="start" fill="#b8cbd6" font-size="12" font-weight="500">300 s</text><text x="514" y="158" text-anchor="end" fill="#b8cbd6" font-size="12" font-weight="500">hace 22 min</text><line x1="22" y1="172" x2="518" y2="172" stroke="#2e4b59" stroke-width="1" stroke-opacity="0.6" /><rect x="26" y="180" width="60" height="20" rx="5" fill="#0f3a3d" stroke="#51d5c8" stroke-width="1.2" /><text x="56.0" y="194" text-anchor="middle" fill="#51d5c8" font-size="10.5" font-weight="800">UNMUTE</text><text x="100" y="194" text-anchor="start" fill="#f4f7f9" font-size="12" font-weight="600">Moderador → Usuario</text><text x="268" y="194" text-anchor="start" fill="#b8cbd6" font-size="12" font-weight="500">–</text><text x="514" y="194" text-anchor="end" fill="#b8cbd6" font-size="12" font-weight="500">hace 1 h</text><line x1="22" y1="208" x2="518" y2="208" stroke="#2e4b59" stroke-width="1" stroke-opacity="0.6" /><rect x="26" y="216" width="52" height="20" rx="5" fill="#2a2150" stroke="#987aea" stroke-width="1.2" /><text x="52.0" y="230" text-anchor="middle" fill="#987aea" font-size="10.5" font-weight="800">KICK</text><text x="100" y="230" text-anchor="start" fill="#f4f7f9" font-size="12" font-weight="600">Moderador → Usuario</text><text x="268" y="230" text-anchor="start" fill="#b8cbd6" font-size="12" font-weight="500">–</text><text x="514" y="230" text-anchor="end" fill="#b8cbd6" font-size="12" font-weight="500">hace 3 h</text><line x1="22" y1="244" x2="518" y2="244" stroke="#2e4b59" stroke-width="1" stroke-opacity="0.6" /><rect x="26" y="252" width="52" height="20" rx="5" fill="#0f3a3d" stroke="#51d5c8" stroke-width="1.2" /><text x="52.0" y="266" text-anchor="middle" fill="#51d5c8" font-size="10.5" font-weight="800">UNBAN</text><text x="100" y="266" text-anchor="start" fill="#f4f7f9" font-size="12" font-weight="600">Owner → Usuario</text><text x="268" y="266" text-anchor="start" fill="#b8cbd6" font-size="12" font-weight="500">–</text><text x="514" y="266" text-anchor="end" fill="#b8cbd6" font-size="12" font-weight="500">ayer</text><line x1="22" y1="280" x2="518" y2="280" stroke="#2e4b59" stroke-width="1" stroke-opacity="0.6" /><text x="26" y="302" text-anchor="start" fill="#7897a6" font-size="11.5" font-weight="500">Ilustrativo · más reciente primero · paginado · filtro por acción</text><text x="26" y="321" text-anchor="start" fill="#51d5c8" font-size="11.5" font-weight="600">GET /servers/{id}/audit-logs → items, total, limit, offset</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 4 · HU-54 Video en llamada</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-canvas: #061118;
+      --bg-box: #13303e;
+      --bg-node: #0d2430;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background-color: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lienzo 16:9 (1200 x 675) */
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      background-color: var(--bg-slide);
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-size: 2.65rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-title);
+      margin-bottom: 10px;
+    }
+
+    .slide-title.hu-detail {
+      font-size: 2.3rem;
+      margin-bottom: 8px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.12rem;
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+
+    /* Layout de 2 columnas (Texto izquierda + Diagrama derecha) */
+    .two-col-body {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 38px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Layout Slide 1 sin imagen (Ancho completo limpio) */
+    .full-width-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .hu-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 44px;
+      margin: auto 0;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: auto 0;
+    }
+
+    .hu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hu-item-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .purple-bar {
+      width: 4px;
+      height: 24px;
+      background-color: var(--purple);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .hu-item-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .hu-item-desc {
+      padding-left: 16px;
+      font-size: 0.94rem;
+      line-height: 1.48;
+      color: var(--text-body);
+    }
+
+    .rules-footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 3px solid var(--border-divider);
+    }
+
+    .rules-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .rules-text {
+      font-size: 0.9rem;
+      line-height: 1.42;
+      color: var(--text-body);
+    }
+
+    /* Contenedor de Diagrama a la derecha */
+    .diagram-box {
+      background-color: var(--bg-box);
+      border: 1.5px solid var(--border-box);
+      border-radius: 14px;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .box-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .box-tag.cyan {
+      background: rgba(81, 213, 200, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(81, 213, 200, 0.45);
+    }
+
+    .box-tag.purple {
+      background: rgba(152, 122, 234, 0.18);
+      color: #cbb6ff;
+      border: 1px solid rgba(152, 122, 234, 0.5);
+    }
+
+    .box-tag.amber {
+      background: rgba(226, 187, 112, 0.16);
+      color: var(--amber);
+      border: 1px solid rgba(226, 187, 112, 0.5);
+    }
+
+    @media print {
+      @page {
+        size: 1200px 675px;
+        margin: 0;
+      }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+
+</head>
+<body>
+    <section class="slide-frame">
+      <div>
+        <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 05.3 &nbsp;·&nbsp; HISTORIA DE USUARIO HU-54</div>
+        <h2 class="slide-title hu-detail">Video en llamada (HU-54)</h2>
+        <p class="slide-subtitle">Cámara opcional sobre la llamada de voz, con audio siempre independiente.</p>
+      </div>
+
+      <div class="two-col-body">
+        <div class="left-column">
+          <div class="hu-list">
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Cámara independiente del micrófono</h3>
+              </div>
+              <p class="hu-item-desc">
+                Arranca apagada y se activa o desactiva con su propio botón, sin salir de la sala ni cortar el audio. Silenciar el micrófono no afecta el video.
+              </p>
+            </div>
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Grilla adaptativa de participantes</h3>
+              </div>
+              <p class="hu-item-desc">
+                Tiles 16:9 estables: un tile para 1 persona, 2 columnas para 2 a 4 y 3 para 5 a 9, con scroll vertical por encima. Sin cámara se ve el avatar; con cámara, el video con nombre y estado del micro.
+              </p>
+            </div>
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Fallas sin cortar la llamada</h3>
+              </div>
+              <p class="hu-item-desc">
+                Si el navegador niega el permiso o no hay cámara, se muestra un aviso no bloqueante y la llamada sigue con audio.
+              </p>
+            </div>
+          </div>
+
+          <div class="rules-footer">
+            <div class="rules-label">Reglas relevantes</div>
+            <p class="rules-text">
+              Video disponible en canales de voz web y mobile. Las llamadas privadas siguen siendo audio-only. El video viaja directo por LiveKit: no se graba ni pasa por Notificaciones.
+            </p>
+          </div>
+        </div>
+
+        <div class="diagram-box">
+          <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+            <span class="text-base font-bold text-white">Maqueta · Panel de voz con video</span>
+            <span class="box-tag purple">Cámara ≠ micro</span>
+          </div>
+
+          <div class="flex-1 flex items-center justify-center my-2">
+            <svg viewBox="0 0 540 340" class="w-full h-full">
+              <defs><marker id="arr-cyan-54" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#51d5c8" /></marker><marker id="arr-purple-54" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#987aea" /></marker><marker id="arr-amber-54" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#e2bb70" /></marker></defs>
+              <text x="10" y="18" fill="#7897a6" font-size="12" font-weight="800" letter-spacing="1">GRILLA DE 2 COLUMNAS · TILES 16:9 · AVATAR SI NO HAY CÁMARA</text>
+              <rect x="10" y="30" width="252" height="142" rx="8" fill="#0b1f2a" stroke="#51d5c8" stroke-width="2" /><rect x="13" y="33" width="246" height="136" rx="6" fill="#1b4a5a" /><circle cx="136.0" cy="93.0" r="12" fill="#2d7184" /><path d="M 112.0 169 Q 136.0 107.0 160.0 169 z" fill="#2d7184" /><rect x="206.8" y="148" width="49.2" height="18" rx="5" fill="#000" fill-opacity="0.55" /><text x="214.8" y="161" fill="#f4f7f9" font-size="11" font-weight="600">Ana</text><circle cx="245" cy="157" r="4" fill="#51d5c8" />
+              <rect x="278" y="30" width="252" height="142" rx="8" fill="#0b1f2a" stroke="#2e4b59" stroke-width="1.5" /><circle cx="404.0" cy="101.0" r="20" fill="#987aea" fill-opacity="0.35" stroke="#987aea" stroke-width="1.5" /><text x="404.0" y="107.0" text-anchor="middle" fill="#f4f7f9" font-size="16" font-weight="700">B</text><rect x="468.4" y="148" width="55.6" height="18" rx="5" fill="#000" fill-opacity="0.55" /><text x="476.4" y="161" fill="#f4f7f9" font-size="11" font-weight="600">Beto</text><circle cx="513" cy="157" r="4" fill="#51d5c8" />
+              <rect x="10" y="184" width="252" height="142" rx="8" fill="#0b1f2a" stroke="#51d5c8" stroke-width="2" /><rect x="13" y="187" width="246" height="136" rx="6" fill="#1b4a5a" /><circle cx="136.0" cy="247.0" r="12" fill="#2d7184" /><path d="M 112.0 323 Q 136.0 261.0 160.0 323 z" fill="#2d7184" /><rect x="200.4" y="302" width="55.6" height="18" rx="5" fill="#000" fill-opacity="0.55" /><text x="208.4" y="315" fill="#f4f7f9" font-size="11" font-weight="600">Caro</text><circle cx="245" cy="311" r="4" fill="#e2625e" />
+              <rect x="278" y="184" width="252" height="142" rx="8" fill="#0b1f2a" stroke="#2e4b59" stroke-width="1.5" /><circle cx="404.0" cy="255.0" r="20" fill="#987aea" fill-opacity="0.35" stroke="#987aea" stroke-width="1.5" /><text x="404.0" y="261.0" text-anchor="middle" fill="#f4f7f9" font-size="16" font-weight="700">D</text><rect x="468.4" y="302" width="55.6" height="18" rx="5" fill="#000" fill-opacity="0.55" /><text x="476.4" y="315" fill="#f4f7f9" font-size="11" font-weight="600">Dani</text><circle cx="513" cy="311" r="4" fill="#e2625e" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+</body>
+</html>

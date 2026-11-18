@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 4 · HU-60</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-canvas: #061118;
+      --bg-box: #13303e;
+      --bg-node: #0d2430;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background-color: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lienzo 16:9 (1200 x 675) */
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      background-color: var(--bg-slide);
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-size: 2.65rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-title);
+      margin-bottom: 10px;
+    }
+
+    .slide-title.hu-detail {
+      font-size: 2.3rem;
+      margin-bottom: 8px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.12rem;
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+
+    /* Layout de 2 columnas (Texto izquierda + Diagrama derecha) */
+    .two-col-body {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 38px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Layout Slide 1 sin imagen (Ancho completo limpio) */
+    .full-width-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .hu-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 44px;
+      margin: auto 0;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: auto 0;
+    }
+
+    .hu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hu-item-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .purple-bar {
+      width: 4px;
+      height: 24px;
+      background-color: var(--purple);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .hu-item-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .hu-item-desc {
+      padding-left: 16px;
+      font-size: 0.94rem;
+      line-height: 1.48;
+      color: var(--text-body);
+    }
+
+    .rules-footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 3px solid var(--border-divider);
+    }
+
+    .rules-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .rules-text {
+      font-size: 0.9rem;
+      line-height: 1.42;
+      color: var(--text-body);
+    }
+
+    /* Contenedor de Diagrama a la derecha */
+    .diagram-box {
+      background-color: var(--bg-box);
+      border: 1.5px solid var(--border-box);
+      border-radius: 14px;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .box-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .box-tag.cyan {
+      background: rgba(81, 213, 200, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(81, 213, 200, 0.45);
+    }
+
+    .box-tag.purple {
+      background: rgba(152, 122, 234, 0.18);
+      color: #cbb6ff;
+      border: 1px solid rgba(152, 122, 234, 0.5);
+    }
+
+    .box-tag.amber {
+      background: rgba(226, 187, 112, 0.16);
+      color: var(--amber);
+      border: 1px solid rgba(226, 187, 112, 0.5);
+    }
+
+    @media print {
+      @page {
+        size: 1200px 675px;
+        margin: 0;
+      }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+    <section class="slide-frame">
+      <div>
+        <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 03.3 &nbsp;·&nbsp; MODERADORES Y STAFF &nbsp;·&nbsp; HISTORIA DE USUARIO HU-60</div>
+        <h2 class="slide-title hu-detail">Silenciar temporalmente (HU-60)</h2>
+        <p class="slide-subtitle">Restricción acotada en el tiempo: el miembro sigue en el servidor pero no participa.</p>
+      </div>
+
+      <div class="two-col-body">
+        <div class="left-column">
+          <div class="hu-list">
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Silencio con duración definida</h3>
+              </div>
+              <p class="hu-item-desc">
+                El moderador elige una duración y confirma. El miembro no puede enviar mensajes ni hablar por voz hasta que se cumpla el plazo.
+              </p>
+            </div>
+
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Expiración automática</h3>
+              </div>
+              <p class="hu-item-desc">
+                Al llegar a muted_until recupera mensajes y voz sin intervención manual: cada consulta de permisos compara el plazo con la hora actual.
+              </p>
+            </div>
+
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Levantar el silencio antes</h3>
+              </div>
+              <p class="hu-item-desc">
+                Un moderador puede revertirlo cuando quiera y el miembro recupera de inmediato su capacidad de enviar y hablar.
+              </p>
+            </div>
+          </div>
+
+          <div class="rules-footer">
+            <div class="rules-label">Reglas relevantes</div>
+            <p class="rules-text">
+              Máximo de 28 días. El miembro conserva el acceso de lectura al canal. No se puede silenciar al owner, a uno mismo ni a un rol igual o superior.
+            </p>
+          </div>
+        </div>
+
+        <div class="diagram-box">
+          <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+            <span class="text-base font-bold text-white">Diagrama de Estados · Ciclo del Silencio</span>
+            <span class="box-tag amber">Temporal y reversible</span>
+          </div>
+
+          <div class="flex-1 flex items-center justify-center my-2">
+            <svg viewBox="0 0 540 340" class="w-full h-full">
+              <defs><marker id="arr-cyan-4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#51d5c8" /></marker><marker id="arr-purple-4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#987aea" /></marker><marker id="arr-amber-4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#e2bb70" /></marker></defs>
+<rect x="20" y="4" width="500" height="64" rx="9" fill="#0b1f2a" stroke="#51d5c8" stroke-width="1.8" stroke-opacity="0.6" /><text x="36" y="24" text-anchor="start" fill="#51d5c8" font-size="12" font-weight="800">REGLAS DEL OBJETIVO Y PERMISO</text><text x="36" y="43" text-anchor="start" fill="#f4f7f9" font-size="12" font-weight="500">Requiere MUTE_MEMBERS, ADMINISTRATOR u owner · no al owner ni a uno mismo</text><text x="36" y="60" text-anchor="start" fill="#f4f7f9" font-size="12" font-weight="500">Rol inferior al propio · duración de 1 segundo a 28 días</text><rect x="15" y="110" width="120" height="70" rx="9" fill="#0b1f2a" stroke="#51d5c8" stroke-width="1.8" stroke-opacity="1" /><text x="75" y="138" text-anchor="middle" fill="#51d5c8" font-size="15" font-weight="700">Activo</text><text x="75" y="156" text-anchor="middle" fill="#b8cbd6" font-size="11.5" font-weight="500">envía y habla</text><rect x="345" y="98" width="180" height="94" rx="9" fill="#0b1f2a" stroke="#e2bb70" stroke-width="1.8" stroke-opacity="1" /><text x="435" y="122" text-anchor="middle" fill="#e2bb70" font-size="15" font-weight="700">Silenciado</text><text x="435" y="142" text-anchor="middle" fill="#f4f7f9" font-size="11.5" font-weight="600">muted_until &gt; ahora</text><text x="435" y="160" text-anchor="middle" fill="#b8cbd6" font-size="11.5" font-weight="500">No envía mensajes ni habla</text><text x="435" y="177" text-anchor="middle" fill="#b8cbd6" font-size="11.5" font-weight="500">Sigue viendo el canal</text><line x1="135" y1="122" x2="343" y2="122" stroke="#e2bb70" stroke-width="2.5" marker-end="url(#arr-amber-4)" /><text x="239" y="115" text-anchor="middle" fill="#f4f7f9" font-size="11.5" font-weight="600">PUT …/mute · duración</text><line x1="343" y1="150" x2="137" y2="150" stroke="#51d5c8" stroke-width="2.5" marker-end="url(#arr-cyan-4)" /><text x="239" y="143" text-anchor="middle" fill="#51d5c8" font-size="11.5" font-weight="600">Vence solo (muted_until ≤ ahora)</text><line x1="343" y1="178" x2="137" y2="178" stroke="#987aea" stroke-width="2.5" marker-end="url(#arr-purple-4)" /><text x="239" y="171" text-anchor="middle" fill="#cbb6ff" font-size="11.5" font-weight="600">Levantar antes: DELETE …/mute</text><rect x="20" y="214" width="500" height="112" rx="9" fill="#0b1f2a" stroke="#987aea" stroke-width="1.8" stroke-opacity="0.55" /><text x="36" y="234" text-anchor="start" fill="#cbb6ff" font-size="12" font-weight="800">EFECTOS</text><text x="36" y="255" text-anchor="start" fill="#b8cbd6" font-size="12.5" font-weight="500">· El silencio tiene prioridad incluso sobre ADMINISTRATOR</text><text x="36" y="275" text-anchor="start" fill="#b8cbd6" font-size="12.5" font-weight="500">· Se emiten MemberMuteUpdated y ServerUpdated (permisos)</text><text x="36" y="295" text-anchor="start" fill="#b8cbd6" font-size="12.5" font-weight="500">· Al vencer se avisa de nuevo para refrescar los cachés</text><text x="36" y="315" text-anchor="start" fill="#b8cbd6" font-size="12.5" font-weight="500">· Queda en el registro de auditoría (MUTE / UNMUTE)</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 2 · HU-22 Editar permisos</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-canvas: #061118;
+      --bg-box: #13303e;
+      --bg-node: #0d2430;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background-color: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lienzo 16:9 (1200 x 675) */
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      background-color: var(--bg-slide);
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-size: 2.65rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-title);
+      margin-bottom: 10px;
+    }
+
+    .slide-title.hu-detail {
+      font-size: 2.3rem;
+      margin-bottom: 8px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.12rem;
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+
+    /* Layout de 2 columnas (Texto izquierda + Diagrama derecha) */
+    .two-col-body {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 38px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Layout Slide 1 sin imagen (Ancho completo limpio) */
+    .full-width-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .hu-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 44px;
+      margin: auto 0;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: auto 0;
+    }
+
+    .hu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hu-item-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .purple-bar {
+      width: 4px;
+      height: 24px;
+      background-color: var(--purple);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .hu-item-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .hu-item-desc {
+      padding-left: 16px;
+      font-size: 0.94rem;
+      line-height: 1.48;
+      color: var(--text-body);
+    }
+
+    .rules-footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 3px solid var(--border-divider);
+    }
+
+    .rules-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .rules-text {
+      font-size: 0.9rem;
+      line-height: 1.42;
+      color: var(--text-body);
+    }
+
+    /* Contenedor de Diagrama a la derecha */
+    .diagram-box {
+      background-color: var(--bg-box);
+      border: 1.5px solid var(--border-box);
+      border-radius: 14px;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .box-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .box-tag.cyan {
+      background: rgba(81, 213, 200, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(81, 213, 200, 0.45);
+    }
+
+    .box-tag.purple {
+      background: rgba(152, 122, 234, 0.18);
+      color: #cbb6ff;
+      border: 1px solid rgba(152, 122, 234, 0.5);
+    }
+
+    .box-tag.amber {
+      background: rgba(226, 187, 112, 0.16);
+      color: var(--amber);
+      border: 1px solid rgba(226, 187, 112, 0.5);
+    }
+
+    @media print {
+      @page {
+        size: 1200px 675px;
+        margin: 0;
+      }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+    <section class="slide-frame">
+      <div>
+        <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 02.1 &nbsp;·&nbsp; HISTORIA DE USUARIO HU-22</div>
+        <h2 class="slide-title hu-detail">Editar permisos de un rol (HU-22)</h2>
+        <p class="slide-subtitle">El cambio de la máscara de permisos se aplica al instante a todos los miembros que tienen el rol.</p>
+      </div>
+
+      <div class="two-col-body">
+        <div class="left-column">
+          <div class="hu-list">
+            <div class="hu-item">
+              <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">Permisos con nombre legible</h3></div>
+              <p class="hu-item-desc">Al abrir un rol se ven todos los permisos (ver canales, enviar mensajes, banear, administrador...) y cuáles otorga. Solo se guarda si hubo cambios.</p>
+            </div>
+            <div class="hu-item">
+              <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">Aplicación inmediata y consistente</h3></div>
+              <p class="hu-item-desc">Los miembros con el rol ganan o pierden la capacidad sin volver a iniciar sesión, y los canales aplican el mismo evaluador de permisos.</p>
+            </div>
+            <div class="hu-item">
+              <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">Protección contra el bloqueo del servidor</h3></div>
+              <p class="hu-item-desc">Un administrador no dueño no puede quitar «Administrador» de un rol que él mismo tiene: el servidor nunca queda sin quién lo administre.</p>
+            </div>
+          </div>
+
+          <div class="rules-footer">
+            <div class="rules-label">Reglas relevantes</div>
+            <p class="rules-text">Solo el Owner o quien tiene ADMINISTRATOR edita permisos, y solo de roles por debajo del suyo. MANAGE_ROLES solo no alcanza (403).</p>
+          </div>
+        </div>
+
+        <div class="diagram-box">
+          <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+            <span class="text-base font-bold text-white">Mockup · Editor de permisos del rol «Mods»</span>
+            <span class="box-tag purple">Máscara de bits</span>
+          </div>
+
+          <div class="flex-1 flex flex-col justify-center gap-2 my-2">
+            <div class="flex items-center justify-between rounded-lg bg-[#0b1f2a] border border-[#2e4b59] px-3.5 py-2">
+              <span class="text-sm text-white">Ver canales</span>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#51d5c8]/20 text-[#51d5c8] border border-[#51d5c8]/50">ON</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-[#0b1f2a] border border-[#2e4b59] px-3.5 py-2">
+              <span class="text-sm text-white">Enviar mensajes</span>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#51d5c8]/20 text-[#51d5c8] border border-[#51d5c8]/50">ON</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-[#0b1f2a] border-2 border-[#987aea] px-3.5 py-2">
+              <span class="text-sm text-white font-semibold">Banear miembros <span class="text-[#cbb6ff] text-xs font-normal">· recién activado</span></span>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#987aea]/30 text-white border border-[#987aea]">ON</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-[#0b1f2a] border border-[#2e4b59] px-3.5 py-2">
+              <span class="text-sm text-white">Gestionar mensajes</span>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#13303e] text-[#7897a6] border border-[#2e4b59]">OFF</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-[#0b1f2a] border border-[#2e4b59] px-3.5 py-2">
+              <span class="text-sm text-white">Administrador</span>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#13303e] text-[#7897a6] border border-[#2e4b59]">OFF</span>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 mt-1">
+              <span class="text-xs font-bold px-3 py-1.5 rounded-lg bg-[#13303e] text-[#b8cbd6] border border-[#2e4b59]">Cancelar</span>
+              <span class="text-xs font-bold px-3 py-1.5 rounded-lg bg-[#51d5c8] text-[#0b1f2a]">Guardar cambios</span>
+            </div>
+
+            <div class="w-full rounded-lg bg-[#0b1f2a] border-2 border-[#51d5c8] p-2.5 text-center">
+              <div class="text-sm font-bold text-[#51d5c8]">Efecto inmediato</div>
+              <div class="text-xs text-[#b8cbd6] mt-0.5">Un miembro «Mods» ya puede banear, sin reiniciar sesión</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+</body>
+</html>

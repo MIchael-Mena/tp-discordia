@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 5 · HU-69 (alt)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-canvas: #061118;
+      --bg-box: #13303e;
+      --bg-node: #0d2430;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --green: #5ec98b;
+      --red: #e58b8b;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background-color: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      background-color: var(--bg-slide);
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .slide-title.hu-detail {
+      font-size: 2.3rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-title);
+      margin-bottom: 8px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.12rem;
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+
+    .two-col-body {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 38px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: auto 0;
+    }
+
+    .hu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hu-item-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .purple-bar { width: 4px; height: 24px; background-color: var(--purple); border-radius: 2px; flex-shrink: 0; }
+    .green-bar  { width: 4px; height: 24px; background-color: var(--green);  border-radius: 2px; flex-shrink: 0; }
+    .amber-bar  { width: 4px; height: 24px; background-color: var(--amber);  border-radius: 2px; flex-shrink: 0; }
+    .red-bar    { width: 4px; height: 24px; background-color: var(--red);    border-radius: 2px; flex-shrink: 0; }
+
+    .hu-item-title {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .hu-item-desc {
+      padding-left: 16px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-body);
+    }
+
+    .rules-footer {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 3px solid var(--border-divider);
+    }
+
+    .rules-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .rules-text {
+      font-size: 0.9rem;
+      line-height: 1.44;
+      color: var(--text-body);
+    }
+
+    .diagram-box {
+      background-color: var(--bg-box);
+      border: 1.5px solid var(--border-box);
+      border-radius: 14px;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .box-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .box-tag.cyan {
+      background: rgba(81, 213, 200, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(81, 213, 200, 0.45);
+    }
+
+    .box-tag.amber {
+      background: rgba(226, 187, 112, 0.16);
+      color: var(--amber);
+      border: 1px solid rgba(226, 187, 112, 0.5);
+    }
+
+    @media print {
+      @page { size: 1200px 675px; margin: 0; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <section class="slide-frame">
+    <div>
+      <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 03.8 &nbsp;·&nbsp; MODERADORES Y STAFF &nbsp;·&nbsp; HISTORIA DE USUARIO HU-69</div>
+      <h2 class="slide-title hu-detail">Suspender servidor completo (HU-69)</h2>
+      <p class="slide-subtitle">El staff bloquea la actividad de un servidor temporalmente, conservando todo su contenido.</p>
+    </div>
+
+    <div class="two-col-body">
+
+      <!-- Columna izquierda: bullet points para presentación -->
+      <div class="left-column">
+        <div class="hu-list">
+
+          <div class="hu-item">
+            <div class="hu-item-head">
+              <span class="purple-bar"></span>
+              <h3 class="hu-item-title">El contenido se conserva intacto</h3>
+            </div>
+            <p class="hu-item-desc">
+              La suspensión no borra nada: canales, mensajes, roles y miembros permanecen. Solo se bloquea el acceso mientras dure la investigación.
+            </p>
+          </div>
+
+          <div class="hu-item">
+            <div class="hu-item-head">
+              <span class="purple-bar"></span>
+              <h3 class="hu-item-title">Acceso bloqueado para todos los miembros</h3>
+            </div>
+            <p class="hu-item-desc">
+              Ningún miembro puede interactuar en el servidor suspendido. Pueden consultar el motivo de la medida, pero los canales quedan inaccesibles.
+            </p>
+          </div>
+
+          <div class="hu-item">
+            <div class="hu-item-head">
+              <span class="purple-bar"></span>
+              <h3 class="hu-item-title">Acción exclusiva del staff, con motivo obligatorio</h3>
+            </div>
+            <p class="hu-item-desc">
+              Solo cuentas con rol de staff acceden a esta acción desde el backoffice. La suspensión exige ingresar una justificación que queda registrada.
+            </p>
+          </div>
+
+          <div class="hu-item">
+            <div class="hu-item-head">
+              <span class="purple-bar"></span>
+              <h3 class="hu-item-title">Reversible: reactivación inmediata</h3>
+            </div>
+            <p class="hu-item-desc">
+              Una vez concluida la investigación, el staff levanta la suspensión y todos los miembros recuperan el acceso habitual sin pérdida de información.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="rules-footer">
+          <div class="rules-label">Reglas relevantes</div>
+          <p class="rules-text">
+            Exclusivo para rol staff en backoffice (403 para el resto). El motivo es obligatorio (hasta 500 car.) y los miembros bloqueados reciben 423 Locked. La reactivación es inmediata y no altera contenidos ni miembros.
+          </p>
+        </div>
+      </div>
+
+      <!-- Columna derecha: Diagrama de flujo simple y limpio -->
+      <div class="diagram-box">
+        <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+          <span class="text-base font-bold text-white">Diagrama de Flujo · Suspensión y Reactivación</span>
+          <span class="box-tag cyan">Acción reversible</span>
+        </div>
+
+        <div class="flex-1 flex items-center justify-center my-2">
+          <svg viewBox="0 0 540 340" class="w-full h-full">
+            <defs>
+              <marker id="arr-purple-9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#987aea" /></marker>
+              <marker id="arr-cyan-9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#51d5c8" /></marker>
+              <marker id="arr-amber-9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#e2bb70" /></marker>
+              <marker id="arr-green-9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#5ec98b" /></marker>
+            </defs>
+
+            <!-- 1. Staff en backoffice -->
+            <rect x="15" y="6" width="510" height="42" rx="9" fill="#0b1f2a" stroke="#987aea" stroke-width="1.8" />
+            <text x="270" y="24" text-anchor="middle" fill="#f4f7f9" font-size="13.5" font-weight="700">Staff de la plataforma (backoffice)</text>
+            <text x="270" y="40" text-anchor="middle" fill="#b8cbd6" font-size="11.5" font-weight="500">Sesión con rol admin · sección Servidores</text>
+
+            <line x1="270" y1="48" x2="270" y2="68" stroke="#987aea" stroke-width="2.5" marker-end="url(#arr-purple-9)" />
+
+            <!-- 2. Lista de servidores -->
+            <rect x="15" y="70" width="510" height="46" rx="9" fill="#0b1f2a" stroke="#51d5c8" stroke-width="1.8" stroke-opacity="0.8" />
+            <text x="32" y="89" text-anchor="start" fill="#51d5c8" font-size="12" font-weight="800">LISTA DE SERVIDORES DE LA PLATAFORMA</text>
+            <text x="32" y="106" text-anchor="start" fill="#f4f7f9" font-size="12" font-weight="500">GET /admin/servers · nombre, fecha de alta, miembros y estado</text>
+
+            <!-- Flechas de bifurcación -->
+            <line x1="210" y1="116" x2="140" y2="142" stroke="#e2bb70" stroke-width="2.2" marker-end="url(#arr-amber-9)" />
+            <line x1="330" y1="116" x2="400" y2="142" stroke="#5ec98b" stroke-width="2.2" marker-end="url(#arr-green-9)" />
+
+            <!-- 3A. Tarjeta Suspender (Izquierda) -->
+            <rect x="15" y="144" width="250" height="106" rx="9" fill="#0b1f2a" stroke="#e2bb70" stroke-width="1.8" stroke-opacity="0.9" />
+            <text x="28" y="165" fill="#e2bb70" font-size="12" font-weight="800">SUSPENDER SERVIDOR</text>
+            <text x="28" y="185" fill="#f4f7f9" font-size="11.5" font-weight="600">· Motivo obligatorio (hasta 500 c.)</text>
+            <text x="28" y="204" fill="#b8cbd6" font-size="11.5" font-weight="500">· Bloqueo a miembros (código 423)</text>
+            <text x="28" y="223" fill="#b8cbd6" font-size="11.5" font-weight="500">· El usuario puede ver el motivo</text>
+            <text x="28" y="242" fill="#7897a6" font-size="11" font-weight="500">Contenido protegido intacto</text>
+
+            <!-- 3B. Tarjeta Reactivar (Derecha) -->
+            <rect x="275" y="144" width="250" height="106" rx="9" fill="#0b1f2a" stroke="#5ec98b" stroke-width="1.8" stroke-opacity="0.9" />
+            <text x="288" y="165" fill="#5ec98b" font-size="12" font-weight="800">REACTIVAR SERVIDOR</text>
+            <text x="288" y="185" fill="#f4f7f9" font-size="11.5" font-weight="600">· Acción directa en 1 solo clic</text>
+            <text x="288" y="204" fill="#b8cbd6" font-size="11.5" font-weight="500">· Se levanta la suspensión</text>
+            <text x="288" y="223" fill="#b8cbd6" font-size="11.5" font-weight="500">· Restaura el acceso a canales</text>
+            <text x="288" y="242" fill="#7897a6" font-size="11" font-weight="500">Vuelve a la actividad normal</text>
+
+            <!-- Flechas de convergencia -->
+            <line x1="140" y1="250" x2="210" y2="272" stroke="#e2bb70" stroke-width="2.2" marker-end="url(#arr-cyan-9)" />
+            <line x1="400" y1="250" x2="330" y2="272" stroke="#5ec98b" stroke-width="2.2" marker-end="url(#arr-cyan-9)" />
+
+            <!-- 4. Garantías de la plataforma -->
+            <rect x="15" y="274" width="510" height="58" rx="9" fill="#0b1f2a" stroke="#51d5c8" stroke-width="1.8" stroke-opacity="0.8" />
+            <text x="32" y="293" fill="#51d5c8" font-size="12" font-weight="800">GARANTÍAS: CONSERVACIÓN Y TRAZABILIDAD</text>
+            <text x="32" y="311" fill="#f4f7f9" font-size="12" font-weight="500">· Canales, mensajes, roles y miembros se conservan 100% intactos</text>
+            <text x="32" y="326" fill="#b8cbd6" font-size="11.5" font-weight="500">· Acciones auditadas en historial con fecha, motivo y usuario del staff</text>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</body>
+</html>

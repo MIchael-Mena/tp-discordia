@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 5 · HU-39 Configuración</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-canvas: #061118;
+      --bg-box: #13303e;
+      --bg-node: #0d2430;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background-color: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lienzo 16:9 (1200 x 675) */
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      background-color: var(--bg-slide);
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-size: 2.65rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-title);
+      margin-bottom: 10px;
+    }
+
+    .slide-title.hu-detail {
+      font-size: 2.3rem;
+      margin-bottom: 8px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.12rem;
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+
+    /* Layout de 2 columnas (Texto izquierda + Diagrama derecha) */
+    .two-col-body {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 38px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Layout Slide 1 sin imagen (Ancho completo limpio) */
+    .full-width-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .hu-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 44px;
+      margin: auto 0;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: auto 0;
+    }
+
+    .hu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hu-item-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .purple-bar {
+      width: 4px;
+      height: 24px;
+      background-color: var(--purple);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .hu-item-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .hu-item-desc {
+      padding-left: 16px;
+      font-size: 0.94rem;
+      line-height: 1.48;
+      color: var(--text-body);
+    }
+
+    .rules-footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 3px solid var(--border-divider);
+    }
+
+    .rules-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .rules-text {
+      font-size: 0.9rem;
+      line-height: 1.42;
+      color: var(--text-body);
+    }
+
+    /* Contenedor de Diagrama a la derecha */
+    .diagram-box {
+      background-color: var(--bg-box);
+      border: 1.5px solid var(--border-box);
+      border-radius: 14px;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .box-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .box-tag.cyan {
+      background: rgba(81, 213, 200, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(81, 213, 200, 0.45);
+    }
+
+    .box-tag.purple {
+      background: rgba(152, 122, 234, 0.18);
+      color: #cbb6ff;
+      border: 1px solid rgba(152, 122, 234, 0.5);
+    }
+
+    .box-tag.amber {
+      background: rgba(226, 187, 112, 0.16);
+      color: var(--amber);
+      border: 1px solid rgba(226, 187, 112, 0.5);
+    }
+
+    @media print {
+      @page {
+        size: 1200px 675px;
+        margin: 0;
+      }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+    <section class="slide-frame">
+      <div>
+        <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 01.4 &nbsp;·&nbsp; HISTORIA DE USUARIO HU-39</div>
+        <h2 class="slide-title hu-detail">Administrar la configuración del servidor (HU-39)</h2>
+        <p class="slide-subtitle">Personalización de nombre, ícono y banner con subida directa a Amazon S3 y actualización en vivo.</p>
+      </div>
+
+      <div class="two-col-body">
+        <!-- Izquierda: Cambios clave -->
+        <div class="left-column">
+          <div class="hu-list">
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Edición de nombre, ícono y banner</h3>
+              </div>
+              <p class="hu-item-desc">
+                El servidor dejó de tener solo el nombre inicial: ahora se puede personalizar su identidad visual o quitar las imágenes cuando se desee.
+              </p>
+            </div>
+
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Subida directa a Amazon S3</h3>
+              </div>
+              <p class="hu-item-desc">
+                El backend valida permisos y firma una autorización temporal para que la aplicación suba la imagen directo a S3 sin saturar el servidor.
+              </p>
+            </div>
+
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Limpieza de S3 y sincronización en vivo</h3>
+              </div>
+              <p class="hu-item-desc">
+                Al guardar una nueva imagen, el servidor borra automáticamente la imagen vieja en S3 y avisa en vivo a todos los miembros conectados.
+              </p>
+            </div>
+          </div>
+
+          <div class="rules-footer">
+            <div class="rules-label">Reglas relevantes para la demo</div>
+            <p class="rules-text">
+              Solo el Owner o miembros con rol ADMINISTRATOR pueden editar estos ajustes. Se validan imágenes JPG, PNG o WEBP de hasta 5 MB.
+            </p>
+          </div>
+        </div>
+
+        <!-- Derecha: Diagrama de Secuencia HU-39 -->
+        <div class="diagram-box">
+          <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+            <span class="text-base font-bold text-white">Diagrama de Secuencia · Subida S3 y Ajustes</span>
+            <span class="box-tag cyan">3 Fases S3</span>
+          </div>
+
+          <div class="flex-1 flex items-center justify-center my-2">
+            <svg viewBox="0 0 540 340" class="w-full h-full">
+              <defs>
+                <marker id="arr-cyan-2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#51d5c8" />
+                </marker>
+                <marker id="arr-purple-2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#987aea" />
+                </marker>
+                <marker id="arr-amber-2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#e2bb70" />
+                </marker>
+              </defs>
+
+              <!-- Líneas de vida -->
+              <line x1="90" y1="54" x2="90" y2="325" stroke="#2e4b59" stroke-width="2" stroke-dasharray="6,6" />
+              <line x1="270" y1="54" x2="270" y2="325" stroke="#2e4b59" stroke-width="2" stroke-dasharray="6,6" />
+              <line x1="450" y1="54" x2="450" y2="325" stroke="#2e4b59" stroke-width="2" stroke-dasharray="6,6" />
+
+              <!-- Actores -->
+              <rect x="20" y="10" width="140" height="42" rx="8" fill="#0b1f2a" stroke="#987aea" stroke-width="2" />
+              <text x="90" y="36" text-anchor="middle" fill="#f4f7f9" font-size="14" font-weight="700">Admin (App)</text>
+
+              <rect x="200" y="10" width="140" height="42" rx="8" fill="#0b1f2a" stroke="#51d5c8" stroke-width="2" />
+              <text x="270" y="36" text-anchor="middle" fill="#51d5c8" font-size="14" font-weight="700">Servidor</text>
+
+              <rect x="380" y="10" width="140" height="42" rx="8" fill="#0b1f2a" stroke="#e2bb70" stroke-width="2" />
+              <text x="450" y="36" text-anchor="middle" fill="#e2bb70" font-size="14" font-weight="700">Amazon S3</text>
+
+              <!-- Paso 1 -->
+              <line x1="90" y1="95" x2="260" y2="95" stroke="#987aea" stroke-width="2.5" marker-end="url(#arr-purple-2)" />
+              <text x="175" y="84" text-anchor="middle" fill="#f4f7f9" font-size="13" font-weight="600">1. Solicita permiso de subida</text>
+
+              <!-- Respuesta firma -->
+              <line x1="270" y1="138" x2="100" y2="138" stroke="#51d5c8" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arr-cyan-2)" />
+              <text x="185" y="127" text-anchor="middle" fill="#51d5c8" font-size="12.5" font-weight="600">Devuelve firma temporal S3</text>
+
+              <!-- Paso 2: Subida directa a S3 -->
+              <line x1="90" y1="190" x2="440" y2="190" stroke="#e2bb70" stroke-width="2.5" marker-end="url(#arr-amber-2)" />
+              <text x="270" y="178" text-anchor="middle" fill="#e2bb70" font-size="13" font-weight="700">2. Sube Ícono / Banner directo a S3</text>
+
+              <!-- Paso 3: Guardar ajustes -->
+              <line x1="90" y1="242" x2="260" y2="242" stroke="#51d5c8" stroke-width="2.5" marker-end="url(#arr-cyan-2)" />
+              <text x="175" y="231" text-anchor="middle" fill="#f4f7f9" font-size="13" font-weight="600">3. Guarda nombre e imágenes</text>
+
+              <!-- Paso 4: Limpieza S3 + Aviso -->
+              <line x1="270" y1="284" x2="440" y2="284" stroke="#987aea" stroke-width="2" marker-end="url(#arr-purple-2)" />
+              <text x="355" y="273" text-anchor="middle" fill="#cbb6ff" font-size="12.5" font-weight="600">4. Elimina imagen anterior</text>
+
+              <rect x="45" y="302" width="450" height="28" rx="6" fill="#0b1f2a" stroke="#51d5c8" stroke-width="1" stroke-opacity="0.5" />
+              <text x="270" y="320" text-anchor="middle" fill="#51d5c8" font-size="12.5" font-weight="700">⚡ Notifica el cambio en tiempo real a todos los miembros</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+</body>
+</html>

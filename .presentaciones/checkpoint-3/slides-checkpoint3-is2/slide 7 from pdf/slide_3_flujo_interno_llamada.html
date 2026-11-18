@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 3 · Flujo interno de llamada</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-box: #13303e;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      background: var(--bg-slide);
+    }
+    .eyebrow { font-size: .8rem; font-weight: 700; letter-spacing: .18em; color: var(--cyan); margin-bottom: 10px; text-transform: uppercase; }
+    .slide-title { font-size: 2.3rem; line-height: 1.08; font-weight: 800; color: var(--text-title); margin-bottom: 8px; }
+    .slide-subtitle { font-size: 1.12rem; color: var(--cyan); margin-bottom: 20px; }
+    .two-col-body { display: grid; grid-template-columns: 1fr 1.12fr; gap: 38px; flex: 1; min-height: 0; }
+    .left-column { display: flex; flex-direction: column; justify-content: space-between; }
+    .hu-list { display: flex; flex-direction: column; gap: 16px; margin: auto 0; }
+    .hu-item { display: flex; flex-direction: column; gap: 5px; }
+    .hu-item-head { display: flex; align-items: center; gap: 12px; }
+    .purple-bar { width: 4px; height: 23px; background: var(--purple); border-radius: 2px; flex-shrink: 0; }
+    .hu-item-title { font-size: 1.08rem; font-weight: 700; color: var(--text-title); }
+    .hu-item-desc { padding-left: 16px; font-size: .88rem; line-height: 1.42; color: var(--text-body); }
+    .rules-footer { margin-top: 12px; padding-top: 12px; border-top: 3px solid var(--border-divider); }
+    .rules-label { font-size: .78rem; font-weight: 800; letter-spacing: .06em; color: var(--amber); margin-bottom: 4px; }
+    .rules-text { font-size: .84rem; line-height: 1.38; color: var(--text-body); }
+    .diagram-box { background: var(--bg-box); border: 1.5px solid var(--border-box); border-radius: 14px; padding: 19px 20px 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 0; }
+    .box-tag { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: .7rem; font-weight: 800; letter-spacing: .04em; }
+    .box-tag.cyan { background: rgba(81,213,200,.15); color: var(--cyan); border: 1px solid rgba(81,213,200,.45); }
+    .diagram-note { border-top: 1px solid var(--border-box); padding-top: 9px; font-size: .78rem; line-height: 1.35; color: var(--text-body); }
+    @media print { @page { size: 1200px 675px; margin: 0; } * { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+  </style>
+</head>
+<body>
+  <section class="slide-frame">
+    <div>
+      <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 05.2 &nbsp;·&nbsp; FLUJO INTERNO</div>
+      <h2 class="slide-title">¿Qué pasa al iniciar una llamada?</h2>
+      <p class="slide-subtitle">Gateway valida el DM; voz y señalización siguen caminos separados.</p>
+    </div>
+
+    <div class="two-col-body">
+      <div class="left-column">
+        <div class="hu-list">
+          <div class="hu-item">
+            <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">1. El cliente no elige al destinatario</h3></div>
+            <p class="hu-item-desc">Envía el ID de la conversación. Gateway valida la sesión JWT y pide a text-channel confirmar participación y bloqueos mutuos.</p>
+          </div>
+          <div class="hu-item">
+            <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">2. La identidad queda del lado servidor</h3></div>
+            <p class="hu-item-desc">text-channel deriva al otro participante. Gateway envía ese destinatario y el caller verificado a voice-calls.</p>
+          </div>
+          <div class="hu-item">
+            <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">3. La invitación es temporal</h3></div>
+            <p class="hu-item-desc">voice-calls comprueba busy, reserva a ambos usuarios por 30 s y publica un evento efímero para Notifications.</p>
+          </div>
+          <div class="hu-item">
+            <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">4. El callee recibe la invitación</h3></div>
+            <p class="hu-item-desc">Notifications entrega el frame por el socket abierto. Si el socket aún conectaba, el cliente recupera la invitación pendiente al recibir `ready`.</p>
+          </div>
+        </div>
+        <div class="rules-footer">
+          <div class="rules-label">Al aceptar</div>
+          <p class="rules-text">Cada participante obtiene su grant de micrófono. Ambos entran a la misma sala; el audio viaja directo entre los clientes y LiveKit, no por Gateway ni Notifications.</p>
+        </div>
+      </div>
+
+      <div class="diagram-box">
+        <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+          <span class="text-base font-bold text-white">Secuencia de inicio · HU-50</span>
+          <span class="box-tag cyan">Sin destinatario confiado al cliente</span>
+        </div>
+        <div class="flex-1 flex items-center justify-center my-2">
+          <svg viewBox="0 0 540 330" class="w-full h-full" role="img" aria-label="Flujo entre caller, Gateway, text-channel, voice-calls, Notifications y callee">
+            <defs>
+              <marker id="flow-arrow-cyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1 L10 5 L0 9 z" fill="#51d5c8" /></marker>
+              <marker id="flow-arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1 L10 5 L0 9 z" fill="#987aea" /></marker>
+              <marker id="flow-arrow-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1 L10 5 L0 9 z" fill="#e2bb70" /></marker>
+            </defs>
+            <rect x="8" y="38" width="155" height="72" rx="9" fill="#0b1f2a" stroke="#987aea" stroke-width="2" />
+            <text x="85" y="62" text-anchor="middle" fill="#f4f7f9" font-size="13" font-weight="800">Caller mobile</text>
+            <text x="85" y="82" text-anchor="middle" fill="#b8cbd6" font-size="11">DM · conversation_id</text>
+            <text x="85" y="98" text-anchor="middle" fill="#987aea" font-size="10">POST /voice/private-calls</text>
+
+            <rect x="192" y="38" width="155" height="72" rx="9" fill="#0b1f2a" stroke="#51d5c8" stroke-width="2" />
+            <text x="269" y="62" text-anchor="middle" fill="#51d5c8" font-size="13" font-weight="800">Gateway</text>
+            <text x="269" y="82" text-anchor="middle" fill="#b8cbd6" font-size="11">JWT · identidad caller</text>
+            <text x="269" y="98" text-anchor="middle" fill="#b8cbd6" font-size="10">relé autenticado</text>
+
+            <rect x="377" y="38" width="155" height="72" rx="9" fill="#0b1f2a" stroke="#e2bb70" stroke-width="2" />
+            <text x="454" y="62" text-anchor="middle" fill="#e2bb70" font-size="13" font-weight="800">text-channel</text>
+            <text x="454" y="82" text-anchor="middle" fill="#b8cbd6" font-size="10.5">membresía + bloqueos</text>
+            <text x="454" y="98" text-anchor="middle" fill="#b8cbd6" font-size="10">deriva counterpart</text>
+
+            <line x1="163" y1="74" x2="188" y2="74" stroke="#987aea" stroke-width="2.5" marker-end="url(#flow-arrow-purple)" />
+            <text x="175" y="62" text-anchor="middle" fill="#987aea" font-size="9" font-weight="700">1</text>
+            <line x1="347" y1="74" x2="373" y2="74" stroke="#51d5c8" stroke-width="2.5" marker-end="url(#flow-arrow-cyan)" />
+            <text x="360" y="62" text-anchor="middle" fill="#51d5c8" font-size="9" font-weight="700">2</text>
+
+            <rect x="377" y="178" width="155" height="72" rx="9" fill="#0b1f2a" stroke="#51d5c8" stroke-width="2" />
+            <text x="454" y="202" text-anchor="middle" fill="#51d5c8" font-size="13" font-weight="800">voice-calls</text>
+            <text x="454" y="222" text-anchor="middle" fill="#b8cbd6" font-size="10.5">busy · reserva 30 s</text>
+            <text x="454" y="238" text-anchor="middle" fill="#b8cbd6" font-size="10">emite invite efímero</text>
+
+            <rect x="192" y="178" width="155" height="72" rx="9" fill="#0b1f2a" stroke="#51d5c8" stroke-width="1.5" />
+            <text x="269" y="202" text-anchor="middle" fill="#51d5c8" font-size="13" font-weight="800">Notifications</text>
+            <text x="269" y="222" text-anchor="middle" fill="#b8cbd6" font-size="10.5">voice_events</text>
+            <text x="269" y="238" text-anchor="middle" fill="#b8cbd6" font-size="10">WebSocket privado</text>
+
+            <rect x="8" y="178" width="155" height="72" rx="9" fill="#0b1f2a" stroke="#e2bb70" stroke-width="2" />
+            <text x="85" y="202" text-anchor="middle" fill="#f4f7f9" font-size="13" font-weight="800">Callee mobile</text>
+            <text x="85" y="222" text-anchor="middle" fill="#b8cbd6" font-size="10.5">modal global</text>
+            <text x="85" y="238" text-anchor="middle" fill="#e2bb70" font-size="10">Aceptar / rechazar</text>
+
+            <line x1="454" y1="110" x2="454" y2="174" stroke="#51d5c8" stroke-width="2.5" marker-end="url(#flow-arrow-cyan)" />
+            <text x="466" y="148" fill="#51d5c8" font-size="9" font-weight="700">3</text>
+            <line x1="377" y1="214" x2="351" y2="214" stroke="#51d5c8" stroke-width="2.5" marker-end="url(#flow-arrow-cyan)" />
+            <text x="364" y="202" text-anchor="middle" fill="#51d5c8" font-size="9" font-weight="700">4</text>
+            <line x1="192" y1="214" x2="167" y2="214" stroke="#e2bb70" stroke-width="2.5" marker-end="url(#flow-arrow-amber)" />
+            <text x="180" y="202" text-anchor="middle" fill="#e2bb70" font-size="9" font-weight="700">5</text>
+
+            <rect x="8" y="274" width="524" height="40" rx="8" fill="#0b1f2a" stroke="#2e4b59" />
+            <text x="270" y="291" text-anchor="middle" fill="#b8cbd6" font-size="10.5">Al aceptar: Gateway → voice-calls entrega grants de micrófono</text>
+            <text x="270" y="306" text-anchor="middle" fill="#51d5c8" font-size="10.5" font-weight="700">Audio en sala LiveKit; no atraviesa los servicios de negocio</text>
+          </svg>
+        </div>
+        <div class="diagram-note">Si el evento se emite antes de que el socket esté listo, el cliente consulta la invitación `ringing` al reconectar. No se agrega push ni historial.</div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

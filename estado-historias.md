@@ -53,7 +53,7 @@ Los puntos no reemplazan los Requisitos No Funcionales: todos los RNF del enunci
 
 ---
 
-## Historias optativas — 141 / 229 pts
+## Historias optativas — 143 / 229 pts
 
 El puntaje optativo amplía las capacidades de la plataforma. La cantidad de puntos a implementar depende del tamaño del grupo (ver tabla de mínimos más abajo).
 

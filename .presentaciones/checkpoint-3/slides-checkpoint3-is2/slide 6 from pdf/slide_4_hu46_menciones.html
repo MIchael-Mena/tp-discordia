@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 4 · HU-46 Menciones</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-canvas: #061118;
+      --bg-box: #13303e;
+      --bg-node: #0d2430;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background-color: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lienzo 16:9 (1200 x 675) */
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      background-color: var(--bg-slide);
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-size: 2.65rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-title);
+      margin-bottom: 10px;
+    }
+
+    .slide-title.hu-detail {
+      font-size: 2.3rem;
+      margin-bottom: 8px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.12rem;
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+
+    /* Layout de 2 columnas (Texto izquierda + Diagrama derecha) */
+    .two-col-body {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 38px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Layout Slide 1 sin imagen (Ancho completo limpio) */
+    .full-width-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .hu-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 44px;
+      margin: auto 0;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: auto 0;
+    }
+
+    .hu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hu-item-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .purple-bar {
+      width: 4px;
+      height: 24px;
+      background-color: var(--purple);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .hu-item-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .hu-item-desc {
+      padding-left: 16px;
+      font-size: 0.94rem;
+      line-height: 1.48;
+      color: var(--text-body);
+    }
+
+    .rules-footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 3px solid var(--border-divider);
+    }
+
+    .rules-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .rules-text {
+      font-size: 0.9rem;
+      line-height: 1.42;
+      color: var(--text-body);
+    }
+
+    /* Contenedor de Diagrama a la derecha */
+    .diagram-box {
+      background-color: var(--bg-box);
+      border: 1.5px solid var(--border-box);
+      border-radius: 14px;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .box-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .box-tag.cyan {
+      background: rgba(81, 213, 200, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(81, 213, 200, 0.45);
+    }
+
+    .box-tag.purple {
+      background: rgba(152, 122, 234, 0.18);
+      color: #cbb6ff;
+      border: 1px solid rgba(152, 122, 234, 0.5);
+    }
+
+    .box-tag.amber {
+      background: rgba(226, 187, 112, 0.16);
+      color: var(--amber);
+      border: 1px solid rgba(226, 187, 112, 0.5);
+    }
+
+    @media print {
+      @page {
+        size: 1200px 675px;
+        margin: 0;
+      }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+    <section class="slide-frame">
+      <div>
+        <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 04.3 &nbsp;·&nbsp; HISTORIA DE USUARIO HU-46</div>
+        <h2 class="slide-title hu-detail">Menciones (HU-46)</h2>
+        <p class="slide-subtitle">Mencionar usuarios, roles o a todos para generar notificaciones dirigidas.</p>
+      </div>
+
+      <div class="two-col-body">
+        <div class="left-column">
+          <div class="hu-list">
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Tres tipos de mención</h3>
+              </div>
+              <p class="hu-item-desc">
+                Se escriben como &lt;@usuario&gt;, &lt;@&amp;rol&gt; y @everyone; el servidor las extrae a una estructura mentions que se guarda y se difunde.
+              </p>
+            </div>
+
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Permisos y roles mencionables</h3>
+              </div>
+              <p class="hu-item-desc">
+                Mencionar a todos o a un rol exige permiso; un rol además debe estar marcado como mencionable. Sin eso el texto se conserva sin generar alerta.
+              </p>
+            </div>
+
+            <div class="hu-item">
+              <div class="hu-item-head">
+                <span class="purple-bar"></span>
+                <h3 class="hu-item-title">Notificación destacada</h3>
+              </div>
+              <p class="hu-item-desc">
+                notifications crea una alerta de alta prioridad con bandeja persistente; el autor nunca recibe la suya.
+              </p>
+            </div>
+          </div>
+
+          <div class="rules-footer">
+            <div class="rules-label">Reglas relevantes</div>
+            <p class="rules-text">
+              Una mención sin permiso no se rechaza: el mensaje se envía como texto plano. Si un miembro es alcanzado por varias menciones, recibe una sola notificación.
+            </p>
+          </div>
+        </div>
+
+        <div class="diagram-box">
+          <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+            <span class="text-base font-bold text-white">Flujo · De la mención a la notificación</span>
+            <span class="box-tag purple">Alta prioridad</span>
+          </div>
+
+          <div class="flex-1 flex items-center justify-center my-2">
+            <svg viewBox="0 0 540 340" class="w-full h-full">
+<defs><marker id="arr-cyan-4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#51d5c8" /></marker><marker id="arr-purple-4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#987aea" /></marker><marker id="arr-amber-4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#e2bb70" /></marker></defs><rect x="70" y="6" width="400" height="50" rx="10" fill="#0b1f2a" stroke="#987aea" stroke-width="2" /><text x="270.0" y="28" text-anchor="middle" fill="#f4f7f9" font-size="13.5" font-weight="700">Mensaje con menciones</text><text x="270.0" y="47" text-anchor="middle" fill="#b8cbd6" font-size="12">&lt;@usuario&gt; · &lt;@&amp;rol&gt; · @everyone</text><line x1="270" y1="56" x2="270" y2="66" stroke="#987aea" stroke-width="2.5" marker-end="url(#arr-purple-4)" /><rect x="70" y="74" width="400" height="66" rx="10" fill="#0b1f2a" stroke="#51d5c8" stroke-width="2" /><text x="270.0" y="96" text-anchor="middle" fill="#f4f7f9" font-size="13.5" font-weight="700">text-channel · MentionParser</text><text x="270.0" y="115" text-anchor="middle" fill="#b8cbd6" font-size="12">Extrae ids y verifica canMentionEveryone,</text><text x="270.0" y="131" text-anchor="middle" fill="#b8cbd6" font-size="12">canMentionRoles y rol mencionable (server)</text><line x1="170" y1="140" x2="170" y2="160" stroke="#51d5c8" stroke-width="2.5" marker-end="url(#arr-cyan-4)" /><line x1="370" y1="140" x2="370" y2="160" stroke="#e2bb70" stroke-width="2.5" marker-end="url(#arr-amber-4)" /><rect x="20" y="160" width="230" height="64" rx="10" fill="#0b1f2a" stroke="#51d5c8" stroke-width="2" /><text x="135.0" y="182" text-anchor="middle" fill="#f4f7f9" font-size="13.5" font-weight="700">Con permiso</text><text x="135.0" y="201" text-anchor="middle" fill="#b8cbd6" font-size="12">mentions {users, roles,</text><text x="135.0" y="217" text-anchor="middle" fill="#b8cbd6" font-size="12">everyone} se guarda</text><rect x="290" y="160" width="230" height="64" rx="10" fill="#0b1f2a" stroke="#e2bb70" stroke-width="2" /><text x="405.0" y="182" text-anchor="middle" fill="#f4f7f9" font-size="13.5" font-weight="700">Sin permiso</text><text x="405.0" y="201" text-anchor="middle" fill="#b8cbd6" font-size="12">Texto plano: se guarda</text><text x="405.0" y="217" text-anchor="middle" fill="#b8cbd6" font-size="12">el mensaje, sin mención</text><line x1="135" y1="224" x2="135" y2="238" stroke="#51d5c8" stroke-width="2.5" marker-end="url(#arr-cyan-4)" /><rect x="20" y="246" width="230" height="64" rx="10" fill="#0b1f2a" stroke="#51d5c8" stroke-width="2" /><text x="135.0" y="268" text-anchor="middle" fill="#f4f7f9" font-size="13.5" font-weight="700">WebSocket + MessageCreated</text><text x="135.0" y="287" text-anchor="middle" fill="#b8cbd6" font-size="12">Frame del mensaje y evento</text><text x="135.0" y="303" text-anchor="middle" fill="#b8cbd6" font-size="12">con snippet de 100 caracteres</text><line x1="250" y1="278" x2="288" y2="278" stroke="#987aea" stroke-width="2.5" marker-end="url(#arr-purple-4)" /><rect x="290" y="246" width="230" height="64" rx="10" fill="#0b1f2a" stroke="#987aea" stroke-width="2" /><text x="405.0" y="268" text-anchor="middle" fill="#f4f7f9" font-size="13.5" font-weight="700">notifications</text><text x="405.0" y="287" text-anchor="middle" fill="#b8cbd6" font-size="12">highlighted_mention al</text><text x="405.0" y="303" text-anchor="middle" fill="#b8cbd6" font-size="12">usuario, rol o miembros</text><text x="270" y="328" text-anchor="middle" fill="#b8cbd6" font-size="12">Cada destinatario recibe una sola alerta (usuario &gt; rol &gt; everyone)</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+</body>
+</html>

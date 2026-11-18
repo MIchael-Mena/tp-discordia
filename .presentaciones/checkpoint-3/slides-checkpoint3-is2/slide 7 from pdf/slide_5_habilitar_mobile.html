@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 5 · Voz mobile</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-box: #13303e;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      background: var(--bg-slide);
+    }
+    .eyebrow { font-size: .8rem; font-weight: 700; letter-spacing: .18em; color: var(--cyan); margin-bottom: 10px; text-transform: uppercase; }
+    .slide-title { font-size: 2.3rem; line-height: 1.08; font-weight: 800; color: var(--text-title); margin-bottom: 8px; }
+    .slide-subtitle { font-size: 1.12rem; color: var(--cyan); margin-bottom: 20px; }
+    .two-col-body { display: grid; grid-template-columns: 1fr 1.12fr; gap: 38px; flex: 1; min-height: 0; }
+    .left-column { display: flex; flex-direction: column; justify-content: space-between; }
+    .hu-list { display: flex; flex-direction: column; gap: 18px; margin: auto 0; }
+    .hu-item { display: flex; flex-direction: column; gap: 5px; }
+    .hu-item-head { display: flex; align-items: center; gap: 12px; }
+    .purple-bar { width: 4px; height: 23px; background: var(--purple); border-radius: 2px; flex-shrink: 0; }
+    .hu-item-title { font-size: 1.08rem; font-weight: 700; color: var(--text-title); }
+    .hu-item-desc { padding-left: 16px; font-size: .88rem; line-height: 1.42; color: var(--text-body); }
+    .rules-footer { margin-top: 12px; padding-top: 12px; border-top: 3px solid var(--border-divider); }
+    .rules-label { font-size: .78rem; font-weight: 800; letter-spacing: .06em; color: var(--amber); margin-bottom: 4px; }
+    .rules-text { font-size: .84rem; line-height: 1.38; color: var(--text-body); }
+    .diagram-box { background: var(--bg-box); border: 1.5px solid var(--border-box); border-radius: 14px; padding: 19px 20px 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 0; }
+    .box-tag { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: .7rem; font-weight: 800; letter-spacing: .04em; }
+    .box-tag.purple { background: rgba(152,122,234,.18); color: #cbb6ff; border: 1px solid rgba(152,122,234,.5); }
+    .diagram-note { border-top: 1px solid var(--border-box); padding-top: 9px; font-size: .78rem; line-height: 1.35; color: var(--text-body); }
+    @media print { @page { size: 1200px 675px; margin: 0; } * { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+  </style>
+</head>
+<body>
+  <section class="slide-frame">
+    <div>
+      <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 05.4 &nbsp;·&nbsp; EVOLUCIÓN MOBILE</div>
+      <h2 class="slide-title">Voz y llamadas en mobile</h2>
+      <p class="slide-subtitle">Mismo flujo de producto, con transporte y ciclo de vida de Android.</p>
+    </div>
+
+    <div class="two-col-body">
+      <div class="left-column">
+        <div class="hu-list">
+          <div class="hu-item">
+            <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">WebRTC nativo, no un WebView</h3></div>
+            <p class="hu-item-desc">Se integra LiveKit React Native con Expo config plugins, permisos de cámara/micrófono y un build de desarrollo para Android.</p>
+          </div>
+          <div class="hu-item">
+            <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">Una sesión y audio del sistema</h3></div>
+            <p class="hu-item-desc">VoiceProvider conserva una sala única. Android mantiene el audio en background con un servicio foreground y notificación persistente; al minimizar, la cámara se apaga.</p>
+          </div>
+          <div class="hu-item">
+            <div class="hu-item-head"><span class="purple-bar"></span><h3 class="hu-item-title">Invites recuperables, sin push</h3></div>
+            <p class="hu-item-desc">Si el invite efímero se pierde mientras conecta el socket, la app consulta llamadas pendientes al recibir `ready` o reconectar; el `call_id` evita duplicar el modal.</p>
+          </div>
+        </div>
+        <div class="rules-footer">
+          <div class="rules-label">Alcance actual</div>
+          <p class="rules-text">Llamada privada 1 a 1 y solo audio. Sin push, CallKit, ConnectionService ni historial; las entrantes se recuperan con la app abierta.</p>
+        </div>
+      </div>
+
+      <div class="diagram-box">
+        <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+          <span class="text-base font-bold text-white">Recuperación de llamada entrante</span>
+          <span class="box-tag purple">Conexión / reconexión</span>
+        </div>
+        <div class="flex-1 flex items-center justify-center my-2">
+          <svg viewBox="0 0 540 330" class="w-full h-full" role="img" aria-label="Flujo de reconciliación de una llamada entrante al reconectar Notifications">
+            <defs>
+              <marker id="mobile-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1 L10 5 L0 9 z" fill="#51d5c8" /></marker>
+              <marker id="mobile-arrow-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1 L10 5 L0 9 z" fill="#e2bb70" /></marker>
+            </defs>
+            <rect x="76" y="18" width="388" height="42" rx="8" fill="#0b1f2a" stroke="#51d5c8" stroke-width="1.7" />
+            <text x="270" y="44" text-anchor="middle" fill="#51d5c8" font-size="13" font-weight="800">Notifications WebSocket → `ready`</text>
+            <line x1="270" y1="60" x2="270" y2="75" stroke="#51d5c8" stroke-width="2" marker-end="url(#mobile-arrow)" />
+
+            <rect x="76" y="80" width="388" height="42" rx="8" fill="#0b1f2a" stroke="#2e4b59" />
+            <text x="270" y="106" text-anchor="middle" fill="#f4f7f9" font-size="12" font-weight="700">UnreadProvider publica `notificationsReady`</text>
+            <line x1="270" y1="122" x2="270" y2="137" stroke="#51d5c8" stroke-width="2" marker-end="url(#mobile-arrow)" />
+
+            <rect x="76" y="142" width="388" height="48" rx="8" fill="#0b1f2a" stroke="#987aea" stroke-width="1.7" />
+            <text x="270" y="163" text-anchor="middle" fill="#cbb6ff" font-size="12" font-weight="800">Gateway → voice-calls</text>
+            <text x="270" y="179" text-anchor="middle" fill="#b8cbd6" font-size="10.5">GET /voice/private-calls/incoming · X-User-Id verificado</text>
+            <line x1="270" y1="190" x2="270" y2="205" stroke="#51d5c8" stroke-width="2" marker-end="url(#mobile-arrow)" />
+
+            <rect x="76" y="210" width="388" height="48" rx="8" fill="#0b1f2a" stroke="#2e4b59" />
+            <text x="270" y="231" text-anchor="middle" fill="#f4f7f9" font-size="12" font-weight="700">voice-calls: ¿callee + `ringing` + no expiró?</text>
+            <text x="270" y="247" text-anchor="middle" fill="#b8cbd6" font-size="10.5">Consulta de memoria; no emite token</text>
+            <line x1="270" y1="258" x2="270" y2="274" stroke="#51d5c8" stroke-width="2" marker-end="url(#mobile-arrow)" />
+
+            <rect x="24" y="278" width="238" height="40" rx="8" fill="#0b1f2a" stroke="#51d5c8" stroke-width="1.7" />
+            <text x="143" y="295" text-anchor="middle" fill="#51d5c8" font-size="11" font-weight="800">200 · modal entrante</text>
+            <text x="143" y="310" text-anchor="middle" fill="#b8cbd6" font-size="9.5">dedup por `call_id`</text>
+            <rect x="278" y="278" width="238" height="40" rx="8" fill="#0b1f2a" stroke="#e2bb70" stroke-width="1.5" />
+            <text x="397" y="302" text-anchor="middle" fill="#e2bb70" font-size="11" font-weight="800">204 · sin invitación</text>
+            <path d="M270 266 C270 274 143 270 143 276" fill="none" stroke="#51d5c8" stroke-width="2" marker-end="url(#mobile-arrow)" />
+            <path d="M270 266 C270 274 397 270 397 276" fill="none" stroke="#e2bb70" stroke-width="2" marker-end="url(#mobile-arrow-amber)" />
+          </svg>
+        </div>
+        <div class="diagram-note">El estado pendiente es efímero y dura 30 s. Si la app está cerrada o el proceso terminó, no hay push ni restauración automática.</div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

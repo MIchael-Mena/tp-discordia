@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Progreso vs Checkpoint 2</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-canvas: #061118;
+      --bg-box: #13303e;
+      --bg-node: #0d2430;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background-color: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lienzo 16:9 (1200 x 675) */
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      background-color: var(--bg-slide);
+      padding: 42px 54px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-size: 2.65rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-title);
+      margin-bottom: 10px;
+    }
+
+    .slide-title.hu-detail {
+      font-size: 2.3rem;
+      margin-bottom: 8px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.12rem;
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+
+    /* Layout de 2 columnas (Texto izquierda + Diagrama derecha) */
+    .two-col-body {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 38px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Layout Slide 1 sin imagen (Ancho completo limpio) */
+    .full-width-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .hu-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 44px;
+      margin: auto 0;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: auto 0;
+    }
+
+    .hu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hu-item-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .purple-bar {
+      width: 4px;
+      height: 24px;
+      background-color: var(--purple);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .hu-item-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .hu-item-desc {
+      padding-left: 16px;
+      font-size: 0.94rem;
+      line-height: 1.48;
+      color: var(--text-body);
+    }
+
+    .rules-footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 3px solid var(--border-divider);
+    }
+
+    .rules-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .rules-text {
+      font-size: 0.9rem;
+      line-height: 1.42;
+      color: var(--text-body);
+    }
+
+    /* Contenedor de Diagrama a la derecha */
+    .diagram-box {
+      background-color: var(--bg-box);
+      border: 1.5px solid var(--border-box);
+      border-radius: 14px;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .box-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .box-tag.cyan {
+      background: rgba(81, 213, 200, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(81, 213, 200, 0.45);
+    }
+
+    .box-tag.purple {
+      background: rgba(152, 122, 234, 0.18);
+      color: #cbb6ff;
+      border: 1px solid rgba(152, 122, 234, 0.5);
+    }
+
+    .box-tag.amber {
+      background: rgba(226, 187, 112, 0.16);
+      color: var(--amber);
+      border: 1px solid rgba(226, 187, 112, 0.5);
+    }
+
+    @media print {
+      @page {
+        size: 1200px 675px;
+        margin: 0;
+      }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .kpi { background:var(--bg-box); border:1.5px solid var(--border-box); border-radius:12px; padding:12px 12px; }
+    .kpi b { display:block; font-size:1.85rem; font-weight:800; line-height:1.1; }
+    .kpi span { display:block; margin-top:3px; font-size:.74rem; line-height:1.25; color:var(--text-body); }
+    .prog { margin-top:8px; }
+    .prog-label { display:flex; justify-content:space-between; font-size:.92rem; font-weight:700; margin-bottom:6px; }
+    .bar { display:flex; height:22px; border-radius:6px; overflow:hidden; background:var(--bg-node); border:1px solid var(--border-box); }
+    .seg-prev { background:#2e4b59; } .seg-new { background:var(--cyan); } .seg-opt { background:var(--purple); }
+    .legend { display:flex; flex-wrap:wrap; gap:4px 16px; font-size:.76rem; color:var(--text-muted); margin-top:6px; }
+    .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; }
+    table.t { width:100%; border-collapse:collapse; font-size:.86rem; }
+    table.t th { text-align:left; color:var(--text-muted); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; padding:4px 6px; border-bottom:1px solid var(--border-box); }
+    table.t td { padding:6px; border-bottom:1px solid #1d3f4d; color:var(--text-body); }
+    table.t td.n { text-align:center; } table.t th.n { text-align:center; }
+    table.t td.pts { color:var(--amber); font-weight:700; }
+    table.t tr.total td { color:var(--text-title); font-weight:800; border-bottom:0; }
+  </style>
+</head>
+<body>
+    <section class="slide-frame">
+      <div>
+        <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; PROGRESO FRENTE AL CHECKPOINT 2</div>
+        <h1 class="slide-title hu-detail">Resumen del avance de historias de usuario</h1>
+        <p class="slide-subtitle">Las 9 obligatorias que faltaban quedan cerradas y se suman 29 optativas sobre la base del Checkpoint 2.</p>
+      </div>
+
+      <div class="two-col-body">
+        <div class="left-column">
+          <div class="kpis">
+            <div class="kpi"><b style="color:var(--cyan)">38</b><span>historias nuevas en CP3</span></div>
+            <div class="kpi"><b style="color:var(--amber)">151</b><span>puntos entregados en CP3</span></div>
+            <div class="kpi"><b style="color:var(--purple)">32/32</b><span>obligatorias completas</span></div>
+            <div class="kpi"><b style="color:#5ec98b">247</b><span>pts totales TP (104+143)</span></div>
+          </div>
+
+          <div class="prog">
+            <div class="prog-label"><span>Obligatorias (104 pts)</span><span style="color:var(--text-muted)">23 previas + 9 en CP3</span></div>
+            <div class="bar"><div class="seg-prev" style="width:76.9%"></div><div class="seg-new" style="width:23.1%"></div></div>
+            <div class="legend"><span><i style="background:#2e4b59"></i>Base CP2 · 23 hist. · 80 pts</span><span><i style="background:var(--cyan)"></i>CP3 · 9 hist. · 24 pts</span></div>
+          </div>
+
+          <div class="prog">
+            <div class="prog-label"><span>Optativas (229 pts disponibles)</span><span style="color:var(--text-muted)">4 previas + 29 en CP3 · 143 pts</span></div>
+            <div class="bar"><div class="seg-prev" style="width:7.0%"></div><div class="seg-opt" style="width:55.5%"></div></div>
+            <div class="legend"><span><i style="background:#2e4b59"></i>Base CP2 · 4 hist. · 16 pts</span><span><i style="background:var(--purple)"></i>CP3 · 29 hist. · 127 pts (33/49 · mín. 48/80/112)</span></div>
+          </div>
+
+          <div class="rules-footer">
+            <div class="rules-label">Lectura</div>
+            <p class="rules-text">Base CP2 = 23 obligatorias (80 pts) + 4 optativas (16 pts) ya cerradas antes del CP3. Acumulado total del TP: 65 de 81 historias y 247 de 333 puntos.</p>
+          </div>
+        </div>
+
+        <div class="diagram-box" style="justify-content:flex-start;gap:18px">
+          <div class="flex items-center justify-between pb-3 border-b border-[#2e4b59]">
+            <span class="text-base font-bold text-white">Aporte del CP3 por sección</span>
+            <span class="box-tag amber">38 historias</span>
+          </div>
+          <table class="t" style="margin-top:4px">
+            <thead><tr><th>Sección</th><th class="n">Hist.</th><th class="n">Oblig.</th><th class="n">Optat.</th><th class="n">Pts</th></tr></thead>
+            <tbody>
+<tr><td>01 Administración y estructura</td><td class="n">4</td><td class="n">2</td><td class="n">2</td><td class="n pts">11</td></tr>
+<tr><td>02 Roles y permisos</td><td class="n">6</td><td class="n">2</td><td class="n">4</td><td class="n pts">20</td></tr>
+<tr><td>03 Moderación y operación</td><td class="n">11</td><td class="n">3</td><td class="n">8</td><td class="n pts">41</td></tr>
+<tr><td>04 Mensajería y colaboración</td><td class="n">6</td><td class="n">0</td><td class="n">6</td><td class="n pts">29</td></tr>
+<tr><td>05 Voz y video</td><td class="n">2</td><td class="n">0</td><td class="n">2</td><td class="n pts">21</td></tr>
+<tr><td>06 Notificaciones y presencia</td><td class="n">9</td><td class="n">2</td><td class="n">7</td><td class="n pts">29</td></tr>
+              <tr class="total"><td>Total CP3</td><td class="n">38</td><td class="n">9</td><td class="n">29</td><td class="n pts">151</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+</body>
+</html>

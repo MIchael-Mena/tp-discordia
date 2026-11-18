@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Checkpoint 3 · Slide 5 · HU-81</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg-slide: #0b1f2a;
+      --bg-canvas: #061118;
+      --bg-box: #13303e;
+      --bg-node: #0d2430;
+      --border-box: #2e4b59;
+      --border-divider: #2a5462;
+      --cyan: #51d5c8;
+      --purple: #987aea;
+      --amber: #e2bb70;
+      --green: #5ec98b;
+      --red: #e58b8b;
+      --text-title: #f4f7f9;
+      --text-body: #b8cbd6;
+      --text-muted: #7897a6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 1200px;
+      height: 675px;
+      overflow: hidden;
+      background-color: var(--bg-slide);
+      color: var(--text-title);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .slide-frame {
+      width: 1200px;
+      height: 675px;
+      background-color: var(--bg-slide);
+      padding: 30px 50px 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 6px;
+    }
+
+    .slide-title.hu-detail {
+      font-size: 2.15rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-title);
+      margin-bottom: 6px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.05rem;
+      color: var(--cyan);
+      margin-bottom: 16px;
+    }
+
+    .two-col-body {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 34px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 0;
+    }
+
+    .hu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      margin: auto 0;
+    }
+
+    .hu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .hu-item-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .purple-bar { width: 4px; height: 20px; background-color: var(--purple); border-radius: 2px; flex-shrink: 0; }
+    .green-bar  { width: 4px; height: 20px; background-color: var(--green);  border-radius: 2px; flex-shrink: 0; }
+    .amber-bar  { width: 4px; height: 20px; background-color: var(--amber);  border-radius: 2px; flex-shrink: 0; }
+    .red-bar    { width: 4px; height: 20px; background-color: var(--red);    border-radius: 2px; flex-shrink: 0; }
+
+    .hu-item-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .hu-item-desc {
+      padding-left: 14px;
+      font-size: 0.84rem;
+      line-height: 1.4;
+      color: var(--text-body);
+    }
+
+    .rules-footer {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 2.5px solid var(--border-divider);
+    }
+
+    .rules-label {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 3px;
+    }
+
+    .rules-text {
+      font-size: 0.83rem;
+      line-height: 1.38;
+      color: var(--text-body);
+    }
+
+    .diagram-box {
+      background-color: var(--bg-box);
+      border: 1.5px solid var(--border-box);
+      border-radius: 14px;
+      padding: 18px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .box-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .box-tag.cyan {
+      background: rgba(81, 213, 200, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(81, 213, 200, 0.45);
+    }
+
+    @media print {
+      @page { size: 1200px 675px; margin: 0; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <section class="slide-frame">
+    <div>
+      <div class="eyebrow">CHECKPOINT 3 &nbsp;·&nbsp; 03.9 &nbsp;·&nbsp; MODERADORES Y STAFF &nbsp;·&nbsp; HISTORIA DE USUARIO HU-81</div>
+      <h2 class="slide-title hu-detail">Expediente de investigación consolidado (HU-81)</h2>
+      <p class="slide-subtitle">Vista unificada de usuario y servidor en el backoffice para investigar denuncias con contexto completo.</p>
+    </div>
+
+    <div class="two-col-body">
+
+      <!-- Columna izquierda: 4 aspectos clave para presentación -->
+      <div class="left-column">
+        <div class="hu-list">
+
+          <div class="hu-item">
+            <div class="hu-item-head">
+              <span class="purple-bar"></span>
+              <h3 class="hu-item-title">Composición paralela en Backoffice</h3>
+            </div>
+            <p class="hu-item-desc">
+              El backoffice orquesta consultas en paralelo a los dueños de cada dato (cuentas, overviews, reportes y auditoría) a través del Gateway, sin requerir un microservicio BFF adicional.
+            </p>
+          </div>
+
+          <div class="hu-item">
+            <div class="hu-item-head">
+              <span class="purple-bar"></span>
+              <h3 class="hu-item-title">Expediente dual: Usuario y Servidor</h3>
+            </div>
+            <p class="hu-item-desc">
+              <strong>Usuario:</strong> estado de cuenta, registro, servidores, reportes y sanciones recibidas.<br />
+              <strong>Servidor:</strong> dueño, alta, miembros, canales, actividad semanal y auditoría.
+            </p>
+          </div>
+
+          <div class="hu-item">
+            <div class="hu-item-head">
+              <span class="purple-bar"></span>
+              <h3 class="hu-item-title">Privacidad estricta: actividad sin contenido</h3>
+            </div>
+            <p class="hu-item-desc">
+              La actividad solo expone conteos y timestamps de los últimos 7 días. Jamás se exponen mensajes directos (DMs) ni texto libre; solo se ven los snapshots de mensajes ya reportados.
+            </p>
+          </div>
+
+          <div class="hu-item">
+            <div class="hu-item-head">
+              <span class="purple-bar"></span>
+              <h3 class="hu-item-title">Resiliencia y tolerancia a fallos (Fail-Soft)</h3>
+            </div>
+            <p class="hu-item-desc">
+              Cada sección carga de forma independiente. Si el servicio de actividad no responde, el expediente muestra «Actividad no disponible» y el resto de la pantalla opera normalmente.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="rules-footer">
+          <div class="rules-label">Reglas relevantes</div>
+          <p class="rules-text">
+            Exclusivo para rol staff (401/403). Por privacidad nunca expone DMs ni mensajes libres (solo conteos de 7 días y reportes). Diseño fail-soft: si un servicio degrada, el resto de la vista opera normalmente.
+          </p>
+        </div>
+      </div>
+
+      <!-- Columna derecha: Diagrama de flujo de composición -->
+      <div class="diagram-box">
+        <div class="flex items-center justify-between pb-2.5 border-b border-[#2e4b59] shrink-0">
+          <span class="text-sm font-bold text-white">Diagrama de Flujo · Composición del Expediente</span>
+          <span class="box-tag cyan">Composición paralela</span>
+        </div>
+
+        <div class="flex-1 min-h-0 flex items-center justify-center pt-2">
+          <svg viewBox="0 0 540 340" preserveAspectRatio="xMidYMid meet" class="w-full h-full max-h-full">
+            <defs>
+              <marker id="arr-purple-81" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#987aea" /></marker>
+              <marker id="arr-cyan-81" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#51d5c8" /></marker>
+              <marker id="arr-amber-81" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#e2bb70" /></marker>
+              <marker id="arr-green-81" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#5ec98b" /></marker>
+            </defs>
+
+            <!-- 1. Staff en Backoffice -->
+            <rect x="15" y="4" width="510" height="42" rx="9" fill="#0b1f2a" stroke="#987aea" stroke-width="1.8" />
+            <text x="270" y="22" text-anchor="middle" fill="#f4f7f9" font-size="13.5" font-weight="700">Staff de la plataforma (Backoffice)</text>
+            <text x="270" y="38" text-anchor="middle" fill="#b8cbd6" font-size="11.5" font-weight="500">Consulta /admin/users/[id] o /admin/servers/[id]</text>
+
+            <line x1="270" y1="46" x2="270" y2="66" stroke="#987aea" stroke-width="2.5" marker-end="url(#arr-purple-81)" />
+
+            <!-- 2. Gateway Relay -->
+            <rect x="15" y="68" width="510" height="44" rx="9" fill="#0b1f2a" stroke="#51d5c8" stroke-width="1.8" stroke-opacity="0.8" />
+            <text x="32" y="87" text-anchor="start" fill="#51d5c8" font-size="12" font-weight="800">API GATEWAY (/admin/*)</text>
+            <text x="32" y="103" text-anchor="start" fill="#f4f7f9" font-size="11.5" font-weight="500">Valida autorización de staff (rol admin) y enruta consultas en paralelo</text>
+
+            <!-- Flechas divergentes hacia los 3 microservicios -->
+            <line x1="210" y1="112" x2="95" y2="134" stroke="#987aea" stroke-width="2.2" marker-end="url(#arr-purple-81)" />
+            <line x1="270" y1="112" x2="270" y2="134" stroke="#51d5c8" stroke-width="2.2" marker-end="url(#arr-cyan-81)" />
+            <line x1="330" y1="112" x2="445" y2="134" stroke="#e2bb70" stroke-width="2.2" marker-end="url(#arr-amber-81)" />
+
+            <!-- 3A. auth-service -->
+            <rect x="15" y="136" width="160" height="112" rx="9" fill="#0b1f2a" stroke="#987aea" stroke-width="1.8" stroke-opacity="0.9" />
+            <text x="95" y="155" text-anchor="middle" fill="#cbb6ff" font-size="11.5" font-weight="800">AUTH-SERVICE</text>
+            <text x="95" y="172" text-anchor="middle" fill="#f4f7f9" font-size="10.5" font-weight="600">GET /account/{id}</text>
+            <text x="95" y="191" text-anchor="middle" fill="#b8cbd6" font-size="10.5">· Estado y rol</text>
+            <text x="95" y="208" text-anchor="middle" fill="#b8cbd6" font-size="10.5">· Fecha de registro</text>
+            <text x="95" y="225" text-anchor="middle" fill="#7897a6" font-size="10">Email y username</text>
+            <text x="95" y="240" text-anchor="middle" fill="#7897a6" font-size="9.5">Sin datos sensibles</text>
+
+            <!-- 3B. server service -->
+            <rect x="190" y="136" width="160" height="112" rx="9" fill="#0b1f2a" stroke="#51d5c8" stroke-width="1.8" stroke-opacity="0.9" />
+            <text x="270" y="155" text-anchor="middle" fill="#51d5c8" font-size="11.5" font-weight="800">SERVER SERVICE</text>
+            <text x="270" y="172" text-anchor="middle" fill="#f4f7f9" font-size="10.5" font-weight="600">Overviews + Auditoría</text>
+            <text x="270" y="191" text-anchor="middle" fill="#b8cbd6" font-size="10.5">· Servidores y canales</text>
+            <text x="270" y="208" text-anchor="middle" fill="#b8cbd6" font-size="10.5">· Reportes recibidos</text>
+            <text x="270" y="225" text-anchor="middle" fill="#7897a6" font-size="10">Acciones de sanción</text>
+            <text x="270" y="240" text-anchor="middle" fill="#7897a6" font-size="9.5">Listados paginados</text>
+
+            <!-- 3C. text-channel -->
+            <rect x="365" y="136" width="160" height="112" rx="9" fill="#0b1f2a" stroke="#e2bb70" stroke-width="1.8" stroke-opacity="0.9" />
+            <text x="445" y="155" text-anchor="middle" fill="#e2bb70" font-size="11.5" font-weight="800">TEXT-CHANNEL</text>
+            <text x="445" y="172" text-anchor="middle" fill="#f4f7f9" font-size="10.5" font-weight="600">POST /internal/activity</text>
+            <text x="445" y="191" text-anchor="middle" fill="#b8cbd6" font-size="10.5">· Conteos de mensajes</text>
+            <text x="445" y="208" text-anchor="middle" fill="#b8cbd6" font-size="10.5">· Serie de 7 días</text>
+            <text x="445" y="225" text-anchor="middle" fill="#7897a6" font-size="10">Sin DMs ni texto libre</text>
+            <text x="445" y="240" text-anchor="middle" fill="#5ec98b" font-size="9.5" font-weight="600">Fail-soft resiliente</text>
+
+            <!-- Flechas convergentes hacia la UI -->
+            <line x1="95" y1="248" x2="180" y2="270" stroke="#987aea" stroke-width="2.2" marker-end="url(#arr-green-81)" />
+            <line x1="270" y1="248" x2="270" y2="270" stroke="#51d5c8" stroke-width="2.2" marker-end="url(#arr-green-81)" />
+            <line x1="445" y1="248" x2="360" y2="270" stroke="#e2bb70" stroke-width="2.2" marker-end="url(#arr-green-81)" />
+
+            <!-- 4. Expediente consolidado en Backoffice -->
+            <rect x="15" y="272" width="510" height="62" rx="9" fill="#0b1f2a" stroke="#5ec98b" stroke-width="1.8" stroke-opacity="0.8" />
+            <text x="32" y="291" fill="#5ec98b" font-size="12" font-weight="800">VISTA CONSOLIDADA EN BACKOFFICE (FAIL-SOFT)</text>
+            <text x="32" y="309" fill="#f4f7f9" font-size="12" font-weight="500">· Carga modular: si la actividad falla, el resto del expediente se muestra normalmente</text>
+            <text x="32" y="325" fill="#b8cbd6" font-size="11.5" font-weight="500">· Navegación integrada: salto directo entre usuario, servidor y reportes asociados</text>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</body>
+</html>

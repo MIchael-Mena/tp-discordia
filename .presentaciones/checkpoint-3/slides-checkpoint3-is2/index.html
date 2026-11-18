@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Checkpoint 3 · Visor</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #061118; color: #b8cbd6; font-family: Inter, -apple-system, 'Segoe UI', Roboto, sans-serif; overflow: hidden; }
+  #stage { position: fixed; inset: 0 0 40px 0; display: flex; align-items: center; justify-content: center; }
+  #frame-wrap { width: 1200px; height: 675px; transform-origin: center center; flex: none; box-shadow: 0 8px 40px rgba(0,0,0,.5); }
+  iframe { width: 1200px; height: 675px; border: 0; background: #0b1f2a; display: block; }
+  #bar { position: fixed; left: 0; right: 0; bottom: 0; height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-size: 13px; background: #0b1f2a; border-top: 1px solid #2e4b59; }
+  #bar button { background: #13303e; color: #f4f7f9; border: 1px solid #2e4b59; border-radius: 6px; padding: 4px 12px; cursor: pointer; }
+  #bar button:hover { border-color: #51d5c8; }
+  #name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; }
+  #grid { position: fixed; inset: 0; background: #061118; overflow: auto; padding: 20px; display: none; grid-template-columns: repeat(auto-fill, 300px); gap: 16px; align-content: start; z-index: 5; }
+  #grid.on { display: grid; }
+  .thumb { width: 300px; height: 169px; position: relative; cursor: pointer; border: 2px solid #2e4b59; border-radius: 6px; overflow: hidden; }
+  .thumb:hover { border-color: #51d5c8; }
+  .thumb iframe { transform: scale(.25); transform-origin: 0 0; pointer-events: none; position: absolute; }
+  .thumb span { position: absolute; right: 4px; bottom: 4px; background: #000a; color: #fff; font-size: 11px; padding: 1px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div id="stage"><div id="frame-wrap"><iframe id="f" title="slide"></iframe></div></div>
+<div id="grid"></div>
+<div id="bar">
+  <div><button id="prev">←</button> <button id="next">→</button> <button id="g">Índice (G)</button> <button id="fs">Pantalla completa (F)</button></div>
+  <div id="name"></div>
+  <div id="pos"></div>
+</div>
+<script>
+const SLIDES = ["slide 1 from pdf/slide_1_portada.html", "slide 2 from pdf/slide_1_resumen.html", "slide 3 from pdf/slide_1_resumen.html", "slide 3 from pdf/slide_2_hu10_propiedad.html", "slide 3 from pdf/slide_3_hu14_categorias.html", "slide 3 from pdf/slide_4_hu41_reordenar.html", "slide 3 from pdf/slide_5_hu39_configuracion.html", "slide 4 from pdf/slide_1_resumen.html", "slide 4 from pdf/slide_2_hu22_editar_permisos.html", "slide 4 from pdf/slide_3_hu24_rol_defecto.html", "slide 4 from pdf/slide_4_hu55_hu56_eliminar_jerarquia.html", "slide 4 from pdf/slide_5_hu57_override_canal.html", "slide 4 from pdf/slide_6_hu58_miembros_por_rol.html", "slide 5 from pdf/slide_1_resumen.html", "slide 5 from pdf/slide_2_hu25_hu26_banear.html", "slide 5 from pdf/slide_3_hu59_expulsar.html", "slide 5 from pdf/slide_4_hu60_silenciar.html", "slide 5 from pdf/slide_5_hu61_auditoria.html", "slide 5 from pdf/slide_6_hu62_reportar.html", "slide 5 from pdf/slide_7_hu63_palabras_prohibidas.html", "slide 5 from pdf/slide_8_hu68_eliminar_servidor.html", "slide 5 from pdf/slide_9b_hu69_suspension_servidor_alt.html", "slide 5 from pdf/slide_10_hu81_expediente_investigacion.html", "slide 6 from pdf/slide_1_resumen.html", "slide 6 from pdf/slide_2_hu42_mensaje_directo.html", "slide 6 from pdf/slide_3_hu43_bloqueo.html", "slide 6 from pdf/slide_4_hu46_menciones.html", "slide 6 from pdf/slide_5_hu47_adjuntos.html", "slide 6 from pdf/slide_6_hu48_reacciones.html", "slide 6 from pdf/slide_7_hu49_busqueda.html", "slide 7 from pdf/slide_1_resumen.html", "slide 7 from pdf/slide_2_hu50_llamada_privada.html", "slide 7 from pdf/slide_3_flujo_interno_llamada.html", "slide 7 from pdf/slide_4_hu54_video.html", "slide 7 from pdf/slide_5_habilitar_mobile.html", "slide 8 from pdf/slide_1_resumen.html", "slide 8 from pdf/slide_2_hu27_28_notificaciones.html", "slide 8 from pdf/slide_3_hu67_historial.html", "slide 8 from pdf/slide_4_hu65_hu64_preferencias.html", "slide 8 from pdf/slide_5_hu66_push.html", "slide 8 from pdf/slide_6_hu36_hu37_perfil_presencia.html", "slide 10 from pdf/slide_1_progreso.html", "slide 11 from pdf/slide_1_cierre.html"];
+const f = document.getElementById('f'), wrap = document.getElementById('frame-wrap'), grid = document.getElementById('grid');
+let i = 0;
+try { i = Math.min(SLIDES.length - 1, Math.max(0, parseInt(location.hash.slice(1) || localStorage.getItem('slide') || '1', 10) - 1 || 0)); } catch (e) {}
+function fit() {
+  const bar = document.fullscreenElement ? 0 : 40;
+  const s = Math.min(innerWidth / 1200, (innerHeight - bar) / 675);
+  wrap.style.transform = `scale(${s})`;
+}
+function show(n) {
+  i = Math.max(0, Math.min(SLIDES.length - 1, n));
+  f.src = SLIDES[i].split('/').map(encodeURIComponent).join('/');
+  document.getElementById('pos').textContent = `${i + 1} / ${SLIDES.length}`;
+  document.getElementById('name').textContent = SLIDES[i].replace('.html', '');
+  history.replaceState(null, '', '#' + (i + 1));
+  try { localStorage.setItem('slide', i + 1); } catch (e) {}
+}
+function toggleGrid() {
+  if (!grid.classList.toggle('on')) return;
+  if (!grid.children.length) SLIDES.forEach((s, k) => {
+    const t = document.createElement('div'); t.className = 'thumb';
+    t.innerHTML = `<iframe loading="lazy" src="${s.split('/').map(encodeURIComponent).join('/')}"></iframe><span>${k + 1}</span>`;
+    t.onclick = () => { grid.classList.remove('on'); show(k); };
+    grid.appendChild(t);
+  });
+}
+document.getElementById('prev').onclick = () => show(i - 1);
+document.getElementById('next').onclick = () => show(i + 1);
+document.getElementById('g').onclick = toggleGrid;
+const fs = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+document.getElementById('fs').onclick = fs;
+addEventListener('keydown', e => {
+  if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); show(i + 1); }
+  else if (['ArrowLeft', 'PageUp'].includes(e.key)) show(i - 1);
+  else if (e.key === 'Home') show(0);
+  else if (e.key === 'End') show(SLIDES.length - 1);
+  else if (e.key === 'g' || e.key === 'G') toggleGrid();
+  else if (e.key === 'f' || e.key === 'F') fs();
+  else if (e.key === 'Escape') grid.classList.remove('on');
+});
+addEventListener('resize', fit);
+document.addEventListener('fullscreenchange', () => { document.getElementById('bar').style.display = document.fullscreenElement ? 'none' : 'flex'; document.getElementById('stage').style.bottom = document.fullscreenElement ? '0' : '40px'; fit(); });
+fit(); show(i);
+</script>
+</body>
+</html>

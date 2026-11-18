@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-17",
+  "last_updated": "2026-11-18",
   "description": "Backlog del proyecto TP-Discordia. Ver AGENTS.md §6 para las reglas de uso. Los checkpoints 1 y 2 estan archivados en Backlog-checkpoint-2.json.",
   "checkpoints": {
     "1": {
@@ -692,8 +692,8 @@
       "origin": [
         "HU-81"
       ],
-      "context": "Implementación end-to-end de la HU optativa 81 (Ver expediente de investigación de usuario o servidor, 5 pts) cubriendo el CA 1 en sentido amplio con historial global de cuentas junto a la auditoría de servidores. infra (#50): actualización de ADR-015 y fichas de auth-service y gateway. auth-service (#39, spec 002): migración Alembic 0006 con tabla append-only account_status_events e índice compuesto (account_id, created_at DESC, id DESC); accounts_repository.set_status con SELECT ... FOR UPDATE (False solo si cuenta inexistente -> 404, True si existe escribiendo transición solo cuando previous_status != status manteniendo 200 idempotente sin duplicados); GET /account/{id}/status-events con LEFT JOIN accounts para actor_username y paginación clamped 1..100 (ruff limpio, lint-imports 1 kept / 0 broken, 290 pytest passed contra Postgres 16 con 97.97% cobertura incluyendo test_migrate_sh en 0006). gateway (#101, spec 046): GET /admin/accounts/{id}/status-events protegido por require_superautorization, helper _auth_identity_headers reenviando X-User-Id en PATCH/GET de cuentas (ruff limpio, 672 pytest passed, 93.95% cobertura). backoffice (#14, spec 004): cliente listAccountStatusEvents, helpers en src/core/dossiers.ts, componente AccountStatusEventList.tsx y actualización de src/app/admin/users/[id].tsx con sección Moderación de cuenta, respaldo actor_username, contador Suspensiones / reactivaciones y acción directa Suspender (AdminModal) / Reactivar que refresca loadStatusEvents(0, pageSize) al instante (tsc --noEmit limpio, expo lint 0 errors, 15 suites / 99 tests Jest passed con 90.91% statements y 93.06% lines).",
-      "pull_request": "infra #50; text-channel #43; auth-service #39; server #60; gateway #101; backoffice #14",
+      "context": "Implementación end-to-end de la HU optativa 81 (Ver expediente de investigación de usuario o servidor, 5 pts) cubriendo el CA 1 en sentido amplio con historial global de cuentas junto a la auditoría de servidores. infra (#50): actualización de ADR-015 y fichas de auth-service y gateway. auth-service (#39, spec 002): migración Alembic 0006 con tabla append-only account_status_events e índice compuesto (account_id, created_at DESC, id DESC); accounts_repository.set_status con SELECT ... FOR UPDATE (False solo si cuenta inexistente -> 404, True si existe escribiendo transición solo cuando previous_status != status manteniendo 200 idempotente sin duplicados); GET /account/{id}/status-events con LEFT JOIN accounts para actor_username y paginación clamped 1..100 (ruff limpio, lint-imports 1 kept / 0 broken, 290 pytest passed contra Postgres 16 con 97.97% cobertura incluyendo test_migrate_sh en 0006). gateway (#101, spec 046): GET /admin/accounts/{id}/status-events protegido por require_superautorization, helper _auth_identity_headers reenviando X-User-Id en PATCH/GET de cuentas (ruff limpio, 672 pytest passed, 93.95% cobertura). backoffice (#14, spec 004): cliente listAccountStatusEvents, helpers en src/core/dossiers.ts, componente AccountStatusEventList.tsx y actualización de src/app/admin/users/[id].tsx con sección Moderación de cuenta, respaldo actor_username, contador Suspensiones / reactivaciones y acción directa Suspender (AdminModal) / Reactivar que refresca loadStatusEvents(0, pageSize) al instante (tsc --noEmit limpio, expo lint 0 errors, 15 suites / 99 tests Jest passed con 90.91% statements y 93.06% lines). Fix de seguimiento: server (#64, spec 042 FR-025) fija HttpClient.Version.HTTP_1_1 en TextChannelActivityGatewayHttp y TextChannelMessageGatewayHttp evitando cabeceras h2c rechazadas por Uvicorn/h11 (113 suites / 1038 tests passed). backoffice (#19, spec 004 FR-020/FR-021) migra export web a SPA output single (public/index.html, public/_redirects, +not-found.tsx) erradicando error React #418 al recargar, ordena/pagina Mensajes por canal en ActivityPanel con TablePagination y escala global via reduce, y aclara subtitulos de Actividad (expo export SPA verificado, tsc/lint 0 errores, 16 suites / 109 tests Jest passed con 90.9% statements y 93.92% lines).",
+      "pull_request": "infra #50; text-channel #43; auth-service #39; server #60; gateway #101; backoffice #14; server #64; backoffice #19",
       "exception_note": null,
       "discovered_pending_tasks": []
     },
@@ -734,6 +734,48 @@
       "discovered_pending_tasks": [
         {
           "description": "Ejecutar verificación end-to-end en vivo de los 3 CA de HU 38 contra Postgres (incluyendo test_postgres_profile_repository.py con TEST_DATABASE_URL), gateway y web-client levantados antes de marcar HU 38 en estado-historias.md.",
+          "severity": "should",
+          "resolved": true
+        }
+      ]
+    },
+    {
+      "id": "TSK-093",
+      "checkpoint": 3,
+      "title": "Mejoras de UI/UX en expedientes de backoffice y perfil/estado en web-client",
+      "status": "completed",
+      "start_date": "2026-11-17",
+      "severity": "should",
+      "origin": [
+        "HU-36",
+        "HU-37",
+        "HU-38",
+        "HU-62",
+        "HU-81"
+      ],
+      "context": "Reestructurar ReportList en expedientes de backoffice (usuario reportado, reportante, motivo y cita alineados a AuditLogList) y mejorar la UX de web-client: reubicar Reportar usuario como IconButton en la cabecera de la tarjeta de PublicProfilePopup, reemplazar la apertura de modales por edicion inline de estado personalizado en UserMenu y ProfileView, y habilitar expansion inline de presencia por hover y clic/tap en UserMenu.",
+      "pull_request": "backoffice #18; web-client #233",
+      "exception_note": null,
+      "discovered_pending_tasks": []
+    },
+    {
+      "id": "TSK-094",
+      "checkpoint": 3,
+      "title": "Resiliencia de voz, alineacion de timeouts hacia server y deduplicacion de polling de participantes (voice-calls + gateway + web-client + infra)",
+      "status": "completed",
+      "start_date": "2026-11-18",
+      "severity": "must",
+      "origin": [
+        "HU-17",
+        "HU-20",
+        "HU-50"
+      ],
+      "context": "Corregir causas raiz de respuestas 502 Bad Gateway (voice-calls unreachable) en consultas de voz (HU 17, HU 20, HU 50): (1) voice-calls alinea timeout hacia server a 3s (< 5s de gateway) y adopta httpx.Client con pool keep-alive y cierre en lifespan; (2) gateway agrega reintentos acotados en GET idempotentes ante errores transitorios de transporte no-timeout preservando fail-fast en TimeoutException, 503 de LiveKit y un intento en mutaciones; (3) web-client agrega coordinador compartido voiceParticipantsStore con deduplicacion Sidebar+VoicePanel, cadencia WS-aware (180s/30s + catch-up) y backoff exponencial por serverId con cortocircuito en el mismo tick ante 5xx/red y 403 channel_access_unavailable; (4) infra alinea default VOICE_CALLS_ACCESS_TIMEOUT_SECONDS=3.",
+      "pull_request": "voice-calls #23; gateway #109; web-client #234; infra #51",
+      "exception_note": null,
+      "discovered_pending_tasks": [
+        {
+          "description": "Ejecutar verificacion manual en vivo en localhost con voice-calls levantado tras configurar credenciales de desarrollo de LiveKit Cloud en voice-calls/.env (y tras mergear infra #51, sincronizar /opt/discordia/docker-compose.yml en EC2 y redesplegar los servicios).",
           "severity": "should",
           "resolved": false
         }
